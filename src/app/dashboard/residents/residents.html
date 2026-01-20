@@ -1,0 +1,112 @@
+<header class="bg-white border-b border-gray-200 px-8 py-6 sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-extrabold text-gray-900">Resident Directory</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage and view all registered residents in the estate.</p>
+        </div>
+        <button
+            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm"
+            (click)="addResident()">
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            Add New Resident
+        </button>
+    </div>
+</header>
+<div class="max-w-7xl mx-auto w-full p-8 space-y-6">
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+        <div class="relative w-full lg:flex-1">
+            <span class="material-symbols-outlined absolute left-3 bottom-2.5 text-gray-400">search</span>
+            <input
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                placeholder="Search by name, email or unit..." type="text" [(ngModel)]="searchQuery" />
+        </div>
+        <div class="flex flex-wrap gap-3 w-full lg:w-auto">
+            <select
+                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px]"
+                (change)="onStatusChange(selectedStatus())" [(ngModel)]="selectedStatus">
+                <option *ngFor="let status of statuses()" [value]="status">{{status}}</option>
+            </select>
+            <select
+                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px]"
+                (change)="onBlockChange(selectedBlock())" [(ngModel)]="selectedBlock">
+                <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50/50 border-b border-gray-100">
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Resident</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Unit / House</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Contact Info</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lease Start</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngFor="let resident of paginatedResidents()">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div [ngClass]="getAvatarColor(resident)"
+                                    class="size-10 rounded-full flex items-center justify-center font-bold">
+                                    {{resident.firstName.charAt(0)}}{{resident.lastName.charAt(0)}}</div>
+                                <div>
+                                    <p class="font-bold text-sm"> {{resident.firstName}} {{resident.lastName}}</p>
+                                    <p class="text-xs text-gray-500">ID: {{resident.id}}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-700">{{resident.House}}</td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm font-medium">{{resident.phone}}</p>
+                            <p class="text-xs text-gray-500">{{resident.email}}</p>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-600">{{resident.createdAt}}</td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 uppercase">{{resident.status}}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <button
+                                    class="px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/5 rounded-md transition-all"
+                                    (click)="goToResidentDetails()">View
+                                    Details</button>
+                                <button class="p-1.5 text-gray-400 hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-xl">edit</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
+            <p class="text-sm text-gray-500">Showing <span class="font-bold text-gray-700">{{page() * pageSize() -
+                    pageSize() + 1}}-{{page() * pageSize()}}</span> of <span
+                    class="font-bold text-gray-700">{{residents.length}}</span> residents</p>
+            <div class="flex gap-2 items-center">
+                <p class="text-sm text-gray-500">Rows per page:</p>
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px]"
+                    [value]="pageSize()" (change)="SetPageSize($any($event).target.value)">
+                    <option *ngFor="let size of pageSizes()" [value]="size">{{size}}</option>
+                </select>
+                <button
+                    class="p-2 border border-gray-200 rounded-md hover:bg-white transition-colors disabled:opacity-40"
+                    [disabled]="page() === 1" (click)="goPreviousPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                </button>
+                <button
+                    class="p-2 border border-gray-200 rounded-md hover:bg-white transition-colors disabled:opacity-40"
+                    [disabled]="page() * pageSize() >= residents.length" (click)="goNextPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

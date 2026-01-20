@@ -1,0 +1,198 @@
+<header class="bg-white border-b border-gray-200 px-6 py-5 sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-extrabold text-gray-900">House Directory</h1>
+            <p class="text-xs lg:text-sm text-gray-500 mt-1">Monitor occupancy and manage individual house units.</p>
+        </div>
+        <button
+            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm text-sm">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            Add New House
+        </button>
+    </div>
+</header>
+<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+        <div class="relative w-full lg:flex-1">
+            <span class="material-symbols-outlined absolute left-3 bottom-2 text-gray-400">search</span>
+            <input
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                placeholder="Search by number or block..." type="text" />
+        </div>
+        <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar pb-1 lg:pb-0">
+            <select
+                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1 lg:flex-none">
+                <option>All Status</option>
+                <option>Occupied</option>
+                <option>Vacant</option>
+            </select>
+            <select
+                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px] flex-1 lg:flex-none">
+                <option>All Blocks</option>
+                <option>Block A</option>
+                <option>Block B</option>
+                <option>Block C</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+            <div class="flex justify-between items-start mb-4">
+                <div class="size-10 bg-blue-50 text-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">apartment</span>
+                </div>
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Occupied</span>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Block A, Unit 102</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-sm font-semibold text-gray-700">Johnathan Doe</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="showHouseDetails('1')">
+                    Manage House
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+            </div>
+        </div>
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+            <div class="flex justify-between items-start mb-4">
+                <div class="size-10 bg-gray-50 text-gray-400 rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">home_work</span>
+                </div>
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600 uppercase">Vacant</span>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Block A, Unit 103</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-sm font-semibold text-gray-400">No resident assigned</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="showHouseDetails('1')">
+                    Manage House
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+            </div>
+        </div>
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+            <div class="flex justify-between items-start mb-4">
+                <div class="size-10 bg-blue-50 text-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">apartment</span>
+                </div>
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Occupied</span>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Block B, Unit 405</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-sm font-semibold text-gray-700">Sarah Jenkins</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                <button class="text-primar  y font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="showHouseDetails('2')">
+                    Manage House
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+            </div>
+        </div>
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+            <div class="flex justify-between items-start mb-4">
+                <div class="size-10 bg-blue-50 text-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">apartment</span>
+                </div>
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Occupied</span>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Block C, Unit 201</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-sm font-semibold text-gray-700">Michael Wong</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="showHouseDetails('3')">
+                    Manage House
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+            </div>
+        </div>
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+            <div class="flex justify-between items-start mb-4">
+                <div class="size-10 bg-gray-50 text-gray-400 rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">home_work</span>
+                </div>
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-600 uppercase">Vacant</span>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Block B, Unit 310</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-sm font-semibold text-gray-400">No resident assigned</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="showHouseDetails('4')">
+                    Manage House
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+            </div>
+        </div>
+        <div
+            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+            <div class="flex justify-between items-start mb-4">
+                <div class="size-10 bg-blue-50 text-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined">apartment</span>
+                </div>
+                <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Occupied</span>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-gray-900 text-base">Block A, Unit 304</h3>
+                <div class="mt-2 space-y-1">
+                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-sm font-semibold text-gray-700">Emily Martinez</p>
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="showHouseDetails('3')">
+                    Manage House
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="flex items-center justify-between py-4">
+        <p class="text-xs lg:text-sm text-gray-500">Showing <span class="font-bold text-gray-700">6</span> of <span
+                class="font-bold text-gray-700">48</span> houses</p>
+        <div class="flex gap-2">
+            <button
+                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                disabled="">
+                <span class="material-symbols-outlined text-lg">chevron_left</span>
+            </button>
+            <button class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors">
+                <span class="material-symbols-outlined text-lg">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</div>

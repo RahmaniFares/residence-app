@@ -1,0 +1,208 @@
+<header class="bg-white border-b border-gray-200 px-4 lg:px-6 py-4 sticky top-0 z-20 shadow-sm lg:shadow-none">
+    <div class="max-w-7xl mx-auto flex items-center gap-4">
+        <button
+            class="size-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-600 transition-colors"
+            (click)="back()">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+                <span
+                    class="text-[10px] font-bold text-primary uppercase tracking-wider bg-primary/10 px-2 py-0.5 rounded">Plumbing</span>
+                <span class="text-[10px] font-medium text-gray-400">#INC-2023-089</span>
+            </div>
+            <h1 class="text-lg lg:text-xl font-extrabold text-gray-900 truncate">Leaking kitchen sink pipe</h1>
+        </div>
+        <div class="hidden sm:block">
+            <button class="text-gray-400 hover:text-gray-600">
+                <span class="material-symbols-outlined">more_vert</span>
+            </button>
+        </div>
+    </div>
+</header>
+<div class="flex-1 overflow-y-auto p-4 lg:p-8">
+    <div class="max-w-7xl mx-auto space-y-6">
+        <div
+            class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="size-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+                    <span class="material-symbols-outlined">pending_actions</span>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-900">Current Status</p>
+                    <p class="text-xs text-gray-500">Last updated 2 hours ago by You</p>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto">
+                <div class="relative">
+                    <select
+                        class="w-full sm:w-48 appearance-none bg-amber-50 border border-amber-200 text-amber-700 text-sm font-bold rounded-lg py-2.5 pl-4 pr-10 focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none cursor-pointer transition-all hover:bg-amber-100">
+                        <option selected="" value="open">Open</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-amber-700 pointer-events-none text-lg">expand_more</span>
+                </div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-gray-100">
+                        <h2 class="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-gray-400">info</span>
+                            Incident Details
+                        </h2>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-6">
+                            Water is pooling under the cabinet in the kitchen. Seems like the main drain pipe has a
+                            small crack or the seal has degraded. It started dripping slowly yesterday but has gotten
+                            worse overnight. I've placed a bucket underneath for now.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Reported Date</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-gray-400 text-sm">calendar_today</span>
+                                    <p class="text-sm font-semibold text-gray-900">Oct 24, 2023 • 10:30 AM</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <p class="text-xs text-gray-500 mb-1">Category</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-gray-400 text-sm">plumbing</span>
+                                    <p class="text-sm font-semibold text-gray-900">Plumbing Maintenance</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-6 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="size-12 rounded-full bg-blue-100 flex items-center justify-center text-primary ring-4 ring-white shadow-sm">
+                                <span class="material-symbols-outlined text-2xl">person</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Johnathan Doe</p>
+                                <div class="flex items-center gap-1 text-xs text-gray-500">
+                                    <span class="material-symbols-outlined text-[14px]">location_on</span>
+                                    Block A, Unit 102
+                                </div>
+                            </div>
+                        </div>
+                        <button class="text-primary hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                            <span class="material-symbols-outlined">call</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                    <h2 class="font-bold text-gray-900 text-lg mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gray-400">photo_library</span>
+                        Evidence Gallery
+                    </h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div
+                            class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center relative group cursor-pointer overflow-hidden">
+                            <span
+                                class="material-symbols-outlined text-gray-300 text-4xl group-hover:scale-110 transition-transform">image</span>
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                        </div>
+                        <div
+                            class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center relative group cursor-pointer overflow-hidden">
+                            <span
+                                class="material-symbols-outlined text-gray-300 text-4xl group-hover:scale-110 transition-transform">image</span>
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                        </div>
+                        <div
+                            class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center relative group cursor-pointer overflow-hidden border-2 border-dashed border-gray-200 hover:border-primary/50 hover:bg-blue-50 transition-all">
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-gray-400 text-2xl">add_a_photo</span>
+                                <p class="text-[10px] font-bold text-gray-400 mt-1">Add Photo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col h-[600px] sticky top-24">
+                    <div
+                        class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-xl">
+                        <h2 class="font-bold text-gray-900 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-gray-500 text-lg">forum</span>
+                            Comments
+                        </h2>
+                        <span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">3
+                            Messages</span>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                        <div class="flex gap-3">
+                            <div
+                                class="size-8 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center text-primary text-xs font-bold">
+                                JD</div>
+                            <div class="flex flex-col gap-1 max-w-[85%]">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-xs font-bold text-gray-700">Johnathan Doe</span>
+                                    <span class="text-[10px] text-gray-400">Yesterday, 10:35 AM</span>
+                                </div>
+                                <div class="bg-gray-100 rounded-2xl rounded-tl-none px-4 py-2.5 text-sm text-gray-700">
+                                    Hi, just wanted to add that the leak seems to happen mostly when we run the hot
+                                    water.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 flex-row-reverse">
+                            <div
+                                class="size-8 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white text-xs font-bold">
+                                AM</div>
+                            <div class="flex flex-col gap-1 items-end max-w-[85%]">
+                                <div class="flex items-baseline gap-2 flex-row-reverse">
+                                    <span class="text-xs font-bold text-gray-700">You</span>
+                                    <span class="text-[10px] text-gray-400">Yesterday, 11:00 AM</span>
+                                </div>
+                                <div class="bg-primary text-white rounded-2xl rounded-tr-none px-4 py-2.5 text-sm">
+                                    Thanks for the update, Johnathan. I've assigned a plumber. They should contact you
+                                    shortly to schedule a visit.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3">
+                            <div
+                                class="size-8 rounded-full bg-blue-100 flex-shrink-0 flex items-center justify-center text-primary text-xs font-bold">
+                                JD</div>
+                            <div class="flex flex-col gap-1 max-w-[85%]">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-xs font-bold text-gray-700">Johnathan Doe</span>
+                                    <span class="text-[10px] text-gray-400">Today, 9:15 AM</span>
+                                </div>
+                                <div class="bg-gray-100 rounded-2xl rounded-tl-none px-4 py-2.5 text-sm text-gray-700">
+                                    Great, thank you! I'll be home all day tomorrow if that works for them.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t border-gray-100 bg-white rounded-b-xl">
+                        <form action="#" onsubmit="return false;">
+                            <div class="relative">
+                                <textarea
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-lg pl-3 pr-3 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none outline-none transition-all placeholder:text-gray-400"
+                                    placeholder="Write a comment..." rows="3"></textarea>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <button class="text-gray-400 hover:text-gray-600 p-1" type="button">
+                                    <span class="material-symbols-outlined text-xl">attach_file</span>
+                                </button>
+                                <button
+                                    class="bg-primary hover:bg-blue-700 text-white text-sm font-bold px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2"
+                                    type="submit">
+                                    <span>Post Comment</span>
+                                    <span class="material-symbols-outlined text-sm">send</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

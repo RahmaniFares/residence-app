@@ -1,0 +1,112 @@
+<header class="bg-white border-b border-gray-200 px-6 py-5 sticky top-0 z-10">
+    <div class="max-w-4xl mx-auto flex items-center gap-4">
+        <button class="size-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+            (click)="back()">
+            <span class="material-symbols-outlined text-gray-600">arrow_back</span>
+        </button>
+        <div>
+            <h1 class="text-xl font-extrabold text-gray-900">Resident Profile</h1>
+            <p class="text-sm font-medium text-primary">Johnathan Doe</p>
+        </div>
+    </div>
+</header>
+<div class="max-w-4xl mx-auto w-full p-6 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div class="flex items-center gap-4 mb-6">
+                <div
+                    class="size-16 rounded-full bg-blue-100 text-primary flex items-center justify-center text-2xl font-bold">
+                    JD</div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900">Johnathan Doe</h2>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">ID: RES-10294</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-gray-400">home</span>
+                    <div>
+                        <p class="text-xs text-gray-500 font-medium">Residence</p>
+                        <p class="text-sm font-bold text-gray-800">Block A, Unit 102</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-gray-400">event</span>
+                    <div>
+                        <p class="text-xs text-gray-500 font-medium">Joined Date</p>
+                        <p class="text-sm font-bold text-gray-800">Jan 12, 2023</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Actions</h3>
+            <div class="flex-1 space-y-3">
+                <button
+                    class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[20px]">mail</span>
+                    Send Email
+                </button>
+                <button
+                    class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-all">
+                    <span class="material-symbols-outlined text-[20px] text-gray-500">sms</span>
+                    Send SMS
+                </button>
+                <button
+                    class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#25D366]/10 text-[#075E54] border border-[#25D366]/20 rounded-xl font-bold text-sm hover:bg-[#25D366]/20 transition-all">
+                    <span class="material-symbols-outlined text-[20px]">chat_bubble</span>
+                    Open WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Engagement Summary</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-green-600">check_circle</span>
+                    <span
+                        class="text-[10px] font-extrabold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">GOOD</span>
+                </div>
+                <p class="text-2xl font-extrabold text-gray-900">8</p>
+                <p class="text-xs font-bold text-gray-500">Paid Months</p>
+            </div>
+            <div class="p-4 bg-red-50 rounded-xl border border-red-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-red-600">error</span>
+                    <span
+                        class="text-[10px] font-extrabold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">PENDING</span>
+                </div>
+                <p class="text-2xl font-extrabold text-red-700">2</p>
+                <p class="text-xs font-bold text-red-500">Unpaid Months</p>
+            </div>
+            <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-orange-600">report_problem</span>
+                    <span
+                        class="text-[10px] font-extrabold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">ACTIVE</span>
+                </div>
+                <p class="text-2xl font-extrabold text-orange-700">1</p>
+                <p class="text-xs font-bold text-orange-500">Active Incidents</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="flex border-b border-gray-100">
+            <button class="flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary">Payment
+                History</button>
+            <button class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Incident
+                Logs</button>
+            <button
+                class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Documents</button>
+        </div>
+        <div class="p-8 text-center">
+            <div class="size-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-gray-300 text-3xl">receipt_long</span>
+            </div>
+            <p class="text-sm font-bold text-gray-800">Viewing payment history...</p>
+            <p class="text-xs text-gray-400 mt-1">Detailed transaction lists will appear here.</p>
+        </div>
+    </div>
+</div>

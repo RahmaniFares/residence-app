@@ -1,0 +1,109 @@
+<header class="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+    <div class="flex items-center p-4">
+        <button (click)="back()"
+            class="text-gray-900 dark:text-white p-1 -ml-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="ml-3">
+            <h1 class="text-[#0e121b] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Nouveau
+                Résident</h1>
+        </div>
+    </div>
+    <div class="px-4 pb-3">
+        <nav class="flex text-xs font-medium text-gray-500 dark:text-gray-400 gap-1 items-center">
+            <span>Résidents</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-primary">Ajouter un nouveau résident</span>
+        </nav>
+    </div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 px-4 py-6 overflow-y-auto pb-32">
+    <form class="space-y-6 max-w-lg mx-auto">
+        <!-- Section: Informations Personnelles -->
+        <div class="space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Informations Personnelles</h2>
+            <div class="flex flex-col gap-4">
+                <!-- Nom -->
+                <label class="flex flex-col group">
+                    <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Nom</span>
+                    <input
+                        class="form-input flex w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 text-base font-normal leading-normal"
+                        placeholder="Ex: Dupont" type="text" />
+                </label>
+                <!-- Prénom -->
+                <label class="flex flex-col group">
+                    <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Prénom</span>
+                    <input
+                        class="form-input flex w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 text-base font-normal leading-normal"
+                        placeholder="Ex: Jean" type="text" />
+                </label>
+            </div>
+        </div>
+        <!-- Section: Logement -->
+        <div class="space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Logement</h2>
+            <label class="flex flex-col">
+                <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Maison</span>
+                <div class="relative">
+                    <select
+                        class="form-select w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 pl-4 pr-10 focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none transition-all text-base font-normal">
+                        <option disabled="" selected="" value="">Sélectionnez une maison</option>
+                        <option value="1">Villa des Roses - Appt 4</option>
+                        <option value="2">Résidence Azur - Studio 12</option>
+                        <option value="3">Le Chalet - Maison B</option>
+                        <option value="4">Domaine du Parc - Appt 22</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                        <span class="material-symbols-outlined">expand_more</span>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <!-- Section: Contact -->
+        <div class="space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Coordonnées</h2>
+            <div class="flex flex-col gap-4">
+                <!-- Téléphone -->
+                <label class="flex flex-col group">
+                    <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Téléphone</span>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <span class="material-symbols-outlined text-xl">call</span>
+                        </div>
+                        <input
+                            class="form-input flex w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 pl-12 pr-4 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base font-normal"
+                            placeholder="06 12 34 56 78" type="tel" />
+                    </div>
+                </label>
+                <!-- Email -->
+                <label class="flex flex-col group">
+                    <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Email</span>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <span class="material-symbols-outlined text-xl">mail</span>
+                        </div>
+                        <input
+                            class="form-input flex w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 pl-12 pr-4 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base font-normal"
+                            placeholder="exemple@email.com" type="email" />
+                    </div>
+                </label>
+            </div>
+        </div>
+    </form>
+</main>
+<!-- Sticky Bottom Actions -->
+<footer
+    class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 pb-8 safe-area-inset-bottom">
+    <div class="max-w-lg mx-auto flex gap-3">
+        <button (click)="back()"
+            class="flex-1 h-14 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold text-base hover:bg-gray-100 transition-colors">
+            Annuler
+        </button>
+        <button (click)="save()"
+            class="flex-[2] h-14 rounded-xl bg-primary text-white font-bold text-base shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">save</span>
+            Enregistrer
+        </button>
+    </div>
+</footer>

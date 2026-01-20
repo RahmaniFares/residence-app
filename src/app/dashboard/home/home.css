@@ -1,0 +1,10 @@
+        .chart-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+        }
+
+        .doughnut-segment {
+            fill: none;
+            stroke-width: 8;
+        }
