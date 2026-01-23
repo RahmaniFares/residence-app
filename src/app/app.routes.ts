@@ -59,5 +59,9 @@ export const routes: Routes = [
     path: 'residents/add',
     loadComponent: () => import('./add-resident/add-resident').then((m) => m.AddResident),
   },
+  {
+    path: 'residents/add/:id',
+    loadComponent: () => import('./add-resident/add-resident').then((m) => m.AddResident),
+  },
 
 ];

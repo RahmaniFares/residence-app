@@ -9,4 +9,5 @@ export interface ResidentModel {
     createdAt: string;
     House: string;
     block: string;
+    birthDate?: string;
 }

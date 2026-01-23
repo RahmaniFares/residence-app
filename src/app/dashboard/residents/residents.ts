@@ -1,8 +1,11 @@
 import { Component, computed, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ResidentModel } from './resident-model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ResidentServices } from './resident-services';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-residents',
@@ -20,13 +23,20 @@ export class Residents {
   statuses = signal(['Active', 'Inactive']);
   blocks = signal(['Block A', 'Block B', 'Block C']);
 
-  selectedStatus = signal('Active');
-  selectedBlock = signal('Block A')
+  selectedStatus = signal('');
+  selectedBlock = signal('');
+  residentServices = inject(ResidentServices);
   onStatusChange(selectedStatus: string) {
     this.selectedStatus.set(selectedStatus);
   }
   onBlockChange(selectedBlock: string) {
     this.selectedBlock.set(selectedBlock);
+  }
+
+  resetFilters() {
+    this.searchQuery.set('');
+    this.selectedStatus.set('');
+    this.selectedBlock.set('');
   }
   constructor(private router: Router) { }
 
@@ -36,313 +46,13 @@ export class Residents {
   goToResidentDetails() {
     this.router.navigate(['dashboard/resident-details']);
   }
-  residents: ResidentModel[] = [
-    {
-      id: 'RES-1001',
-      firstName: 'Fares',
-      lastName: 'Rahmani',
-      email: 'fares.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1002',
-      firstName: 'Hassan',
-      lastName: 'Rahmani',
-      email: 'hassan.rahmani@example.com',
-      phone: '098-765-4321',
-      address: '456 Elm St',
-      status: 'Inactive',
-      House: 'Block B, Unit 202',
-      block: 'Block B',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1003',
-      firstName: 'Omar',
-      lastName: 'Rahmani',
-      email: 'omar.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1004',
-      firstName: 'Omar',
-      lastName: 'Rahmani',
-      email: 'omar.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1005',
-      firstName: 'Ahmed',
-      lastName: 'Rahmani',
-      email: 'ahmed.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1006',
-      firstName: 'sabeh',
-      lastName: 'Rahmani',
-      email: 'sabeh.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1007',
-      firstName: 'sara',
-      lastName: 'Rahmani',
-      email: 'sara.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1008',
-      firstName: 'sara',
-      lastName: 'Rahmani',
-      email: 'sara.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1009',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1010',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1011',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1012',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1013',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1014',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1015',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1016',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1017',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1018',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1019',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1020',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1021',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1022',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1023',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1024',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1025',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      createdAt: '2023-01-01',
-    }
-  ];
+
+  residents = toSignal(this.residentServices.residents$, { initialValue: [] });
 
   paginatedResidents = computed(() => {
-    let filteredResidents = this.residents;
+    let filteredResidents = this.residents();
     if (this.searchQuery()) {
-      filteredResidents = this.residents.filter(resident => resident.firstName.toLowerCase().includes(this.searchQuery().toLowerCase())
+      filteredResidents = this.residents().filter(resident => resident.firstName.toLowerCase().includes(this.searchQuery().toLowerCase())
         || resident.lastName.toLowerCase().includes(this.searchQuery().toLowerCase())
         || resident.House.toLowerCase().includes(this.searchQuery().toLowerCase()));
     }
@@ -391,5 +101,8 @@ export class Residents {
   SetPageSize(pageSize: any) {
     this.pageSize.set(Number(pageSize));
     this.page.set(1);
+  }
+  editResident(id: string) {
+    this.router.navigate(['residents/add', id]);
   }
 }

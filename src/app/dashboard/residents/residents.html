@@ -24,13 +24,21 @@
             <select
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px]"
                 (change)="onStatusChange(selectedStatus())" [(ngModel)]="selectedStatus">
+                <option value="">All Statuses</option>
                 <option *ngFor="let status of statuses()" [value]="status">{{status}}</option>
             </select>
             <select
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px]"
                 (change)="onBlockChange(selectedBlock())" [(ngModel)]="selectedBlock">
+                <option value="">All Blocks</option>
                 <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
             </select>
+            <button
+                class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+                (click)="resetFilters()">
+                <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+                Reset
+            </button>
         </div>
     </div>
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -41,7 +49,7 @@
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Resident</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Unit / House</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Contact Info</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Lease Start</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Birth Date</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
                             Actions</th>
@@ -65,10 +73,11 @@
                             <p class="text-sm font-medium">{{resident.phone}}</p>
                             <p class="text-xs text-gray-500">{{resident.email}}</p>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">{{resident.createdAt}}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">{{resident.birthDate}}</td>
                         <td class="px-6 py-4">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 uppercase">{{resident.status}}</span>
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase"
+                                [ngClass]="{'bg-green-100 text-green-700': resident.status === 'Active', 'bg-red-100 text-red-700': resident.status === 'Inactive'}">{{resident.status}}</span>
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
@@ -76,7 +85,8 @@
                                     class="px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/5 rounded-md transition-all"
                                     (click)="goToResidentDetails()">View
                                     Details</button>
-                                <button class="p-1.5 text-gray-400 hover:text-primary transition-colors">
+                                <button class="p-1.5 text-gray-400 hover:text-primary transition-colors"
+                                    (click)="editResident(resident.id)">
                                     <span class="material-symbols-outlined text-xl">edit</span>
                                 </button>
                             </div>
@@ -88,7 +98,7 @@
         <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
             <p class="text-sm text-gray-500">Showing <span class="font-bold text-gray-700">{{page() * pageSize() -
                     pageSize() + 1}}-{{page() * pageSize()}}</span> of <span
-                    class="font-bold text-gray-700">{{residents.length}}</span> residents</p>
+                    class="font-bold text-gray-700">{{residents().length}}</span> residents</p>
             <div class="flex gap-2 items-center">
                 <p class="text-sm text-gray-500">Rows per page:</p>
                 <select
@@ -103,7 +113,7 @@
                 </button>
                 <button
                     class="p-2 border border-gray-200 rounded-md hover:bg-white transition-colors disabled:opacity-40"
-                    [disabled]="page() * pageSize() >= residents.length" (click)="goNextPage()">
+                    [disabled]="page() * pageSize() >= residents().length" (click)="goNextPage()">
                     <span class="material-symbols-outlined text-lg">chevron_right</span>
                 </button>
             </div>
