@@ -15,17 +15,19 @@ import { inject } from '@angular/core';
 })
 export class Residents {
 
+  residentServices = inject(ResidentServices);
+  residents = toSignal(this.residentServices.residents$, { initialValue: [] });
+
   pageSizes = signal([5, 10, 25, 50]);
   page = signal(1);
   pageSize = signal(5);
   searchQuery = signal("");
 
-  statuses = signal(['Active', 'Inactive']);
-  blocks = signal(['Block A', 'Block B', 'Block C']);
+  statuses = computed(() => [...new Set(this.residents().map(r => r.status))].sort());
+  blocks = computed(() => [...new Set(this.residents().map(r => r.block))].filter(b => !!b).sort());
 
   selectedStatus = signal('');
   selectedBlock = signal('');
-  residentServices = inject(ResidentServices);
   onStatusChange(selectedStatus: string) {
     this.selectedStatus.set(selectedStatus);
   }
@@ -43,11 +45,11 @@ export class Residents {
   addResident() {
     this.router.navigate(['residents/add']);
   }
-  goToResidentDetails() {
-    this.router.navigate(['dashboard/resident-details']);
+  goToResidentDetails(id: string) {
+    this.router.navigate(['/dashboard/resident-details', id]);
   }
 
-  residents = toSignal(this.residentServices.residents$, { initialValue: [] });
+
 
   paginatedResidents = computed(() => {
     let filteredResidents = this.residents();

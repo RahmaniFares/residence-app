@@ -21,24 +21,25 @@
                 <div class="flex items-center justify-between mb-3">
                     <span
                         class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg">account_balance</span>
-                    <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+12%</span>
+                    <span
+                        class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+{{budgetStats().budgetChangePercentage}}%</span>
                 </div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Total Budget</p>
-                <p class="text-2xl font-extrabold text-gray-900 mt-1">$45,250.00</p>
+                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().totalBudget | currency}}</p>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <span class="material-symbols-outlined text-green-600 bg-green-50 p-2 rounded-lg">payments</span>
                 </div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Collected (Month)</p>
-                <p class="text-2xl font-extrabold text-gray-900 mt-1">$12,840.00</p>
+                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().collectedAmount | currency}}</p>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <span class="material-symbols-outlined text-red-500 bg-red-50 p-2 rounded-lg">priority_high</span>
                 </div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Outstanding</p>
-                <p class="text-2xl font-extrabold text-gray-900 mt-1">$3,150.00</p>
+                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().outstandingAmount | currency}}</p>
             </div>
         </div>
     </section>
@@ -69,7 +70,10 @@
                             Resident Name</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Month / Year</th>
+                            Payment Date</th>
+                        <th
+                            class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                            Period (Months)</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
                             Amount</th>
@@ -82,103 +86,46 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
-                    <tr class="hover:bg-gray-50/50 transition-colors">
+                    <tr *ngFor="let payment of payments()" class="hover:bg-gray-50/50 transition-colors">
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">Block A, 102</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-700">Johnathan Doe</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-600">February 2024</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-extrabold text-gray-900">$150.00</span>
+                            <span class="text-sm font-bold text-gray-900">{{getHouseDetails(payment.houseId)}}</span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
                             <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Overdue</span>
+                                class="text-sm font-medium text-gray-700">{{getResidentName(payment.residentId)}}</span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <button
-                                class="flex items-center justify-center size-8 rounded-full text-primary hover:bg-primary/10 transition-colors"
-                                title="Send Reminder">
-                                <span class="material-symbols-outlined text-[20px]">notifications_active</span>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">Block B, 204</span>
+                            <span class="text-sm font-semibold text-gray-600">{{payment.paymentDate ?
+                                (payment.paymentDate | date) : '-'}}</span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-700">Sarah Jenkins</span>
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-gray-500">{{payment.periodStart |
+                                    date:'mediumDate'}} - {{payment.periodEnd | date:'mediumDate'}}</span>
+                                <span
+                                    class="text-[10px] font-bold text-primary uppercase tracking-wider">{{getMonthsCount(payment.periodStart,
+                                    payment.periodEnd)}} Months</span>
+                            </div>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-600">February 2024</span>
+                            <span class="text-sm font-extrabold text-gray-900">${{payment.amount |
+                                number:'1.2-2'}}</span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-extrabold text-gray-900">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Overdue</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <button
-                                class="flex items-center justify-center size-8 rounded-full text-primary hover:bg-primary/10 transition-colors"
-                                title="Send Reminder">
-                                <span class="material-symbols-outlined text-[20px]">notifications_active</span>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">Block A, 305</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-700">Michael Ross</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-600">March 2024</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-extrabold text-gray-900">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 uppercase">Pending</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase"
+                                [ngClass]="{
+                                    'bg-green-100 text-green-700': payment.status === 'Paid',
+                                    'bg-yellow-100 text-yellow-700': payment.status === 'Pending',
+                                    'bg-red-100 text-red-700': payment.status === 'Overdue'
+                                }">
+                                {{payment.status}}
+                            </span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
                             <button
                                 class="flex items-center justify-center size-8 rounded-full text-gray-400 hover:bg-gray-100 transition-colors"
-                                title="Send Reminder">
-                                <span class="material-symbols-outlined text-[20px]">mail</span>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">Block C, 002</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-medium text-gray-700">Emma Watson</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-600">March 2024</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-extrabold text-gray-900">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 uppercase">Pending</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <button
-                                class="flex items-center justify-center size-8 rounded-full text-gray-400 hover:bg-gray-100 transition-colors"
-                                title="Send Reminder">
-                                <span class="material-symbols-outlined text-[20px]">mail</span>
+                                title="Actions">
+                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
                             </button>
                         </td>
                     </tr>

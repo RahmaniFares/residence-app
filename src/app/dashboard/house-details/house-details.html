@@ -1,176 +1,197 @@
-<header class="bg-white border-b border-gray-200 px-4 py-4 lg:px-6 lg:py-5 sticky top-0 z-10">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <button class="p-2 hover:bg-gray-100 rounded-full transition-colors" (click)="back()">
-                <span class="material-symbols-outlined text-gray-600">arrow_back</span>
-            </button>
-            <div>
-                <h1 class="text-lg lg:text-xl font-extrabold text-gray-900">Block A, Unit 102</h1>
-                <p class="text-[10px] lg:text-xs text-gray-500 font-bold uppercase tracking-wider">House Details</p>
-            </div>
-        </div>
-        <button
-            class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
-            (click)="showPaymentForm()">
-            <span class="material-symbols-outlined text-[18px]">add_card</span>
-            <span class="hidden sm:inline">Record Payment</span>
-            <span class="sm:hidden">Record</span>
-        </button>
-    </div>
-</header>
-<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
-    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
-            <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-xl">person</span>
-                Resident Information
-            </h2>
-            <span
-                class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Active</span>
-        </div>
-        <div class="p-5">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="size-16 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
-                    <span class="material-symbols-outlined text-3xl">account_circle</span>
-                </div>
+<div *ngIf="house() as h">
+    <header class="bg-white border-b border-gray-200 px-4 py-4 lg:px-6 lg:py-5 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button class="p-2 hover:bg-gray-100 rounded-full transition-colors" (click)="back()">
+                    <span class="material-symbols-outlined text-gray-600">arrow_back</span>
+                </button>
                 <div>
-                    <h3 class="text-lg font-extrabold text-gray-900">Johnathan Doe</h3>
-                    <p class="text-sm text-gray-500">Primary Resident</p>
+                    <h1 class="text-lg lg:text-xl font-extrabold text-gray-900">{{h.block}}, Unit {{h.unit}}</h1>
+                    <p class="text-[10px] lg:text-xs text-gray-500 font-bold uppercase tracking-wider">House Details</p>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Contact Email</p>
-                    <p class="text-sm font-semibold text-gray-700 mt-1">j.doe@example.com</p>
-                </div>
-                <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Phone Number</p>
-                    <p class="text-sm font-semibold text-gray-700 mt-1">+1 (555) 012-3456</p>
-                </div>
-                <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Occupancy Date</p>
-                    <p class="text-sm font-semibold text-gray-700 mt-1">March 12, 2023</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-xl">account_balance_wallet</span>
-                Syndicate Payment Tracking
-            </h2>
-            <div class="flex items-center bg-gray-100 p-1 rounded-lg w-fit">
-                <button
-                    class="px-4 py-1.5 text-xs font-bold bg-white text-primary rounded-md shadow-sm transition-all">Monthly</button>
-                <button
-                    class="px-4 py-1.5 text-xs font-bold text-gray-500 hover:text-gray-700 transition-all">Yearly</button>
-            </div>
-        </div>
-        <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50">
-                        <th
-                            class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Month / Year</th>
-                        <th
-                            class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Amount Due</th>
-                        <th
-                            class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Payment Date</th>
-                        <th
-                            class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Status</th>
-                        <th
-                            class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50">
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">February 2024</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-                            Feb 02, 2024
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-right">
-                            <button class="text-gray-400 hover:text-primary"><span
-                                    class="material-symbols-outlined text-lg">receipt_long</span></button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">January 2024</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-                            Jan 05, 2024
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-right">
-                            <button class="text-gray-400 hover:text-primary"><span
-                                    class="material-symbols-outlined text-lg">receipt_long</span></button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">December 2023</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
-                            —
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Overdue</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
-                            <button class="text-primary font-bold text-xs hover:underline">Remind</button>
-                        </td>
-                    </tr>
-                    <tr class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-bold text-gray-900">November 2023</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
-                            —
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span
-                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 uppercase">Pending</span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
-                            <button class="text-primary font-bold text-xs hover:underline">Update</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="p-4 border-t border-gray-100 bg-gray-50/30 flex justify-center">
-            <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
-                View Full History
-                <span class="material-symbols-outlined text-sm">expand_more</span>
+            <button
+                class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+                (click)="showPaymentForm()">
+                <span class="material-symbols-outlined text-[18px]">add_card</span>
+                <span class="hidden sm:inline">Record Payment</span>
+                <span class="sm:hidden">Record</span>
             </button>
         </div>
-    </section>
+    </header>
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+        <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+                <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-xl">person</span>
+                    Resident Information
+                </h2>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                    [ngClass]="{'bg-green-100 text-green-700': h.status === 'Occupied', 'bg-gray-100 text-gray-600': h.status === 'Vacant'}">{{h.status}}</span>
+            </div>
+
+            <div *ngIf="resident() as r; else noResident" class="p-5">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="size-16 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined text-3xl">account_circle</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-gray-900">{{r.firstName}} {{r.lastName}}</h3>
+                        <p class="text-sm text-gray-500">Primary Resident</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Contact Email</p>
+                        <p class="text-sm font-semibold text-gray-700 mt-1">{{r.email}}</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Phone Number</p>
+                        <p class="text-sm font-semibold text-gray-700 mt-1">{{r.phone}}</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Occupancy Date</p>
+                        <p class="text-sm font-semibold text-gray-700 mt-1">{{r.createdAt}}</p>
+                    </div>
+                </div>
+            </div>
+            <ng-template #noResident>
+                <div class="p-8 text-center">
+                    <div class="size-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span class="material-symbols-outlined text-gray-300">home_work</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-500">No resident assigned</p>
+                    <p class="text-xs text-gray-400 mt-1">This unit is currently vacant.</p>
+                </div>
+            </ng-template>
+        </section>
+
+        <!-- Use static payment data for now as mock data wasn't requested for payments -->
+        <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-xl">account_balance_wallet</span>
+                    Syndicate Payment Tracking
+                </h2>
+                <div class="flex items-center bg-gray-100 p-1 rounded-lg w-fit">
+                    <button
+                        class="px-4 py-1.5 text-xs font-bold bg-white text-primary rounded-md shadow-sm transition-all">Monthly</button>
+                    <button
+                        class="px-4 py-1.5 text-xs font-bold text-gray-500 hover:text-gray-700 transition-all">Yearly</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/50">
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Month / Year</th>
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Amount Due</th>
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Payment Date</th>
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Status</th>
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-bold text-gray-900">February 2024</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
+                                Feb 02, 2024
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-right">
+                                <button class="text-gray-400 hover:text-primary"><span
+                                        class="material-symbols-outlined text-lg">receipt_long</span></button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-bold text-gray-900">January 2024</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
+                                Jan 05, 2024
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-right">
+                                <button class="text-gray-400 hover:text-primary"><span
+                                        class="material-symbols-outlined text-lg">receipt_long</span></button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-bold text-gray-900">December 2023</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
+                                —
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Overdue</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-primary font-bold text-xs hover:underline">Remind</button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-bold text-gray-900">November 2023</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
+                                —
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span
+                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 uppercase">Pending</span>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
+                                <button class="text-primary font-bold text-xs hover:underline">Update</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 border-t border-gray-100 bg-gray-50/30 flex justify-center">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
+                    View Full History
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+                </button>
+            </div>
+        </section>
+    </div>
+</div>
+<div *ngIf="!house()" class="flex items-center justify-center h-full p-12">
+    <div class="text-center">
+        <span class="material-symbols-outlined text-gray-300 text-5xl mb-4">apartment</span>
+        <p class="text-gray-500 font-medium">House not found</p>
+        <button class="mt-4 text-primary font-bold text-sm hover:underline" (click)="back()">Go Back</button>
+    </div>
 </div>
