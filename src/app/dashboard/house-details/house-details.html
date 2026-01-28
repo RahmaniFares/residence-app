@@ -86,103 +86,77 @@
                         <tr class="bg-gray-50/50">
                             <th
                                 class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                                Month / Year</th>
-                            <th
-                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                                Amount Due</th>
-                            <th
-                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
                                 Payment Date</th>
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Period (Months)</th>
+                            <th
+                                class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                Amount</th>
                             <th
                                 class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
                                 Status</th>
                             <th
                                 class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            </th>
+                                Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-bold text-gray-900">February 2024</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                            </td>
+                        <tr *ngFor="let payment of visiblePayments()" class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-                                Feb 02, 2024
+                                {{payment.paymentDate ? (payment.paymentDate | date:'MMM dd, yyyy') : '—'}}
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-bold text-gray-500">{{payment.periodStart |
+                                        date:'mediumDate'}} - {{payment.periodEnd | date:'mediumDate'}}</span>
+                                    <span
+                                        class="text-[10px] font-bold text-primary uppercase tracking-wider">{{getMonthsCount(payment.periodStart,
+                                        payment.periodEnd)}} Months</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <span class="text-sm font-semibold text-gray-700">{{payment.amount | currency}}</span>
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-right">
-                                <button class="text-gray-400 hover:text-primary"><span
-                                        class="material-symbols-outlined text-lg">receipt_long</span></button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-bold text-gray-900">January 2024</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-                                Jan 05, 2024
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700 uppercase">Paid</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-right">
-                                <button class="text-gray-400 hover:text-primary"><span
-                                        class="material-symbols-outlined text-lg">receipt_long</span></button>
-                            </td>
-                        </tr>
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-bold text-gray-900">December 2023</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
-                                —
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 uppercase">Overdue</span>
+                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase"
+                                    [ngClass]="{
+                                        'bg-green-100 text-green-700': payment.status === 'Paid',
+                                        'bg-yellow-100 text-yellow-700': payment.status === 'Pending',
+                                        'bg-red-100 text-red-700': payment.status === 'Overdue'
+                                    }">
+                                    {{payment.status}}
+                                </span>
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
-                                <button class="text-primary font-bold text-xs hover:underline">Remind</button>
+                                <button *ngIf="payment.status === 'Paid'" class="text-gray-400 hover:text-primary">
+                                    <span class="material-symbols-outlined text-lg">receipt_long</span>
+                                </button>
+                                <button *ngIf="payment.status === 'Overdue'"
+                                    class="text-primary font-bold text-xs hover:underline">
+                                    Remind
+                                </button>
+                                <button *ngIf="payment.status === 'Pending'"
+                                    class="text-primary font-bold text-xs hover:underline">
+                                    Update
+                                </button>
                             </td>
                         </tr>
-                        <tr class="hover:bg-gray-50/50 transition-colors">
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-bold text-gray-900">November 2023</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span class="text-sm font-semibold text-gray-700">$150.00</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-400">
-                                —
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap">
-                                <span
-                                    class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-100 text-yellow-700 uppercase">Pending</span>
-                            </td>
-                            <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
-                                <button class="text-primary font-bold text-xs hover:underline">Update</button>
+                        <tr *ngIf="payments().length === 0">
+                            <td colspan="5" class="px-5 py-8 text-center text-gray-500 text-sm">
+                                No payment history found for this house.
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="p-4 border-t border-gray-100 bg-gray-50/30 flex justify-center">
-                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
-                    View Full History
-                    <span class="material-symbols-outlined text-sm">expand_more</span>
+            <div *ngIf="payments().length > 4" class="p-4 border-t border-gray-100 bg-gray-50/30 flex justify-center">
+                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                    (click)="togglePaymentHistory()">
+                    {{showAllPayments() ? 'Show Less' : 'View Full History'}}
+                    <span class="material-symbols-outlined text-sm">{{showAllPayments() ? 'expand_less' :
+                        'expand_more'}}</span>
                 </button>
             </div>
         </section>
