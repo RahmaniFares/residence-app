@@ -38,8 +38,12 @@ export const routes: Routes = [
         loadComponent: () => import('./dashboard/settings/settings').then((m) => m.Settings),
       },
       {
-        path: 'incident-details',
+        path: 'incident-details/:id',
         loadComponent: () => import('./dashboard/incident-details/incident-details').then((m) => m.IncidentDetails),
+      },
+      {
+        path: 'add-incident',
+        loadComponent: () => import('./add-incident/add-incident').then((m) => m.AddIncident),
       },
       {
         path: 'add-payment',

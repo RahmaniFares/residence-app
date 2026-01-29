@@ -1,0 +1,106 @@
+<header class="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-20">
+    <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
+        <span>Incidents</span>
+        <span class="material-symbols-outlined text-sm">chevron_right</span>
+        <span class="font-bold text-primary">Nouvelle demande</span>
+    </div>
+    <div class="flex items-center justify-between">
+        <h1 class="text-xl font-extrabold text-gray-900">Nouvel incident</h1>
+        <button class="text-gray-400">
+            <span class="material-symbols-outlined">help_outline</span>
+        </button>
+    </div>
+</header>
+<main class="flex-1 overflow-y-auto pb-32">
+    <div class="max-w-xl mx-auto p-4 space-y-6">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-700" for="type">Type d'incident</label>
+                <div class="relative">
+                    <select
+                        class="w-full pl-4 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none transition-all text-sm font-medium"
+                        id="type" [ngModel]="type()" (ngModelChange)="type.set($event)">
+                        <option value="">Sélectionnez un type</option>
+                        <option *ngFor="let cat of categories()" [value]="cat">{{cat}}</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-700" for="title">Titre de l'incident</label>
+                <input
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                    id="title" placeholder="Bref résumé du problème" type="text" [ngModel]="title()"
+                    (ngModelChange)="title.set($event)" />
+            </div>
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-gray-700" for="description">Description détaillée</label>
+                <textarea
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none resize-none"
+                    id="description" placeholder="Décrivez l'incident de manière précise..." rows="5"
+                    [ngModel]="description()" (ngModelChange)="description.set($event)"></textarea>
+            </div>
+            <div class="space-y-4">
+                <label class="block text-sm font-bold text-gray-700">Galerie d'images</label>
+                <div
+                    class="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center bg-gray-50 group hover:border-primary/50 hover:bg-primary/5 transition-all">
+                    <div
+                        class="size-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3 text-primary">
+                        <span class="material-symbols-outlined text-2xl">cloud_upload</span>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900 text-center">Cliquez ou déposez vos photos</p>
+                    <p class="text-xs text-gray-500 mt-1">PNG, JPG jusqu'à 10MB</p>
+                </div>
+                <div class="grid grid-cols-3 gap-3 pt-2">
+                    <div
+                        class="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center relative overflow-hidden group">
+                        <span class="material-symbols-outlined text-gray-300">image</span>
+                    </div>
+                    <div
+                        class="aspect-square bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center relative overflow-hidden">
+                        <span class="material-symbols-outlined text-gray-300">image</span>
+                    </div>
+                    <div
+                        class="aspect-square bg-gray-100 rounded-lg border border-dashed border-gray-200 flex flex-col items-center justify-center">
+                        <span class="material-symbols-outlined text-gray-400 text-lg">add</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-8 z-30">
+    <div class="max-w-xl mx-auto flex gap-3">
+        <button
+            class="flex-1 py-3.5 px-4 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-colors text-sm"
+            (click)="cancel()">
+            Annuler
+        </button>
+        <button
+            class="flex-[2] py-3.5 px-4 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 text-sm"
+            (click)="submit()">
+            Soumettre la demande
+        </button>
+    </div>
+</div>
+<nav
+    class="lg:hidden hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex justify-around p-2 pb-6">
+    <button class="flex flex-col items-center gap-1 p-2 text-gray-400">
+        <span class="material-symbols-outlined text-[22px]">dashboard</span>
+        <span class="text-[10px] font-bold">Accueil</span>
+    </button>
+    <button class="flex flex-col items-center gap-1 p-2 text-gray-400">
+        <span class="material-symbols-outlined text-[22px]">group</span>
+        <span class="text-[10px] font-bold">Résidents</span>
+    </button>
+    <button class="flex flex-col items-center gap-1 p-2 text-primary">
+        <span class="material-symbols-outlined text-[22px]"
+            style="font-variation-settings: 'FILL' 1;">report_problem</span>
+        <span class="text-[10px] font-bold">Incidents</span>
+    </button>
+    <button class="flex flex-col items-center gap-1 p-2 text-gray-400">
+        <span class="material-symbols-outlined text-[22px]">more_horiz</span>
+        <span class="text-[10px] font-bold">Plus</span>
+    </button>
+</nav>

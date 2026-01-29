@@ -84,7 +84,7 @@
                         <span
                             class="text-[10px] font-extrabold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">GOOD</span>
                     </div>
-                    <p class="text-2xl font-extrabold text-gray-900">8</p>
+                    <p class="text-2xl font-extrabold text-gray-900">{{paidMonthsCount()}}</p>
                     <p class="text-xs font-bold text-gray-500">Paid Months</p>
                 </div>
                 <div class="p-4 bg-red-50 rounded-xl border border-red-100">
@@ -93,7 +93,7 @@
                         <span
                             class="text-[10px] font-extrabold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">PENDING</span>
                     </div>
-                    <p class="text-2xl font-extrabold text-red-700">2</p>
+                    <p class="text-2xl font-extrabold text-red-700">{{unpaidMonthsCount()}}</p>
                     <p class="text-xs font-bold text-red-500">Unpaid Months</p>
                 </div>
                 <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
@@ -102,27 +102,119 @@
                         <span
                             class="text-[10px] font-extrabold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">ACTIVE</span>
                     </div>
-                    <p class="text-2xl font-extrabold text-orange-700">1</p>
+                    <p class="text-2xl font-extrabold text-orange-700">{{activeIncidentsCount()}}</p>
                     <p class="text-xs font-bold text-orange-500">Active Incidents</p>
                 </div>
             </div>
         </div>
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden min-h-[400px]">
             <div class="flex border-b border-gray-100">
-                <button class="flex-1 py-4 text-sm font-bold text-primary border-b-2 border-primary">Payment
-                    History</button>
-                <button
-                    class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Incident
-                    Logs</button>
-                <button
-                    class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">Documents</button>
+                <button class="flex-1 py-4 text-sm font-bold border-b-2 transition-colors"
+                    [ngClass]="{'border-primary text-primary': activeTab() === 'payments', 'border-transparent text-gray-400 hover:text-gray-600': activeTab() !== 'payments'}"
+                    (click)="setActiveTab('payments')">Payment History</button>
+                <button class="flex-1 py-4 text-sm font-bold border-b-2 transition-colors"
+                    [ngClass]="{'border-primary text-primary': activeTab() === 'incidents', 'border-transparent text-gray-400 hover:text-gray-600': activeTab() !== 'incidents'}"
+                    (click)="setActiveTab('incidents')">Incident Logs</button>
+                <button class="flex-1 py-4 text-sm font-bold border-b-2 transition-colors"
+                    [ngClass]="{'border-primary text-primary': activeTab() === 'documents', 'border-transparent text-gray-400 hover:text-gray-600': activeTab() !== 'documents'}"
+                    (click)="setActiveTab('documents')">Documents</button>
             </div>
-            <div class="p-8 text-center">
-                <div class="size-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="material-symbols-outlined text-gray-300 text-3xl">receipt_long</span>
+
+            <!-- PAYMENTS TAB -->
+            <div *ngIf="activeTab() === 'payments'" class="p-0">
+                <div class="overflow-x-auto" *ngIf="payments().length > 0; else noPayments">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50/50">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Period
+                                </th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount
+                                </th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr *ngFor="let payment of payments()" class="hover:bg-gray-50/50">
+                                <td class="px-6 py-4 text-sm text-gray-700">{{payment.paymentDate | date:'mediumDate'}}
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-700 text-xs">{{payment.periodStart | date:'MMM
+                                    y'}} - {{payment.periodEnd | date:'MMM y'}}</td>
+                                <td class="px-6 py-4 text-sm font-bold text-gray-900">{{payment.amount | currency}}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                                        [ngClass]="{
+                                        'bg-green-100 text-green-700': payment.status === 'Paid',
+                                        'bg-yellow-100 text-yellow-700': payment.status === 'Pending',
+                                        'bg-red-100 text-red-700': payment.status === 'Overdue'
+                                    }">
+                                        {{payment.status}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <p class="text-sm font-bold text-gray-800">Viewing payment history...</p>
-                <p class="text-xs text-gray-400 mt-1">Detailed transaction lists will appear here.</p>
+                <ng-template #noPayments>
+                    <div class="p-12 text-center text-gray-500">
+                        <span class="material-symbols-outlined text-4xl mb-2 text-gray-300">receipt_long</span>
+                        <p class="text-sm font-bold">No payment history available.</p>
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- INCIDENTS TAB -->
+            <div *ngIf="activeTab() === 'incidents'" class="p-0">
+                <div class="overflow-x-auto" *ngIf="incidents().length > 0; else noIncidents">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-gray-50/50">
+                            <tr>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date
+                                    Reported</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    Description</th>
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr *ngFor="let incident of incidents()" class="hover:bg-gray-50/50">
+                                <td class="px-6 py-4 text-sm text-gray-700">{{incident.dateReported |
+                                    date:'mediumDate'}}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate"
+                                    title="{{incident.description}}">{{incident.description}}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                                        [ngClass]="{
+                                        'bg-blue-100 text-primary': incident.status === 'Open',
+                                        'bg-orange-100 text-warning': incident.status === 'In Progress',
+                                        'bg-green-100 text-success': incident.status === 'Resolved'
+                                    }">
+                                        {{incident.status}}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ng-template #noIncidents>
+                    <div class="p-12 text-center text-gray-500">
+                        <span class="material-symbols-outlined text-4xl mb-2 text-gray-300">report_problem</span>
+                        <p class="text-sm font-bold">No incidents reported.</p>
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- DOCUMENTS TAB -->
+            <div *ngIf="activeTab() === 'documents'" class="p-12 text-center">
+                <div class="size-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-gray-300 text-3xl">folder_off</span>
+                </div>
+                <p class="text-sm font-bold text-gray-800">No documents found</p>
+                <p class="text-xs text-gray-400 mt-1">Uploaded documents will appear here.</p>
             </div>
         </div>
     </div>
