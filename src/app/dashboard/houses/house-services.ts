@@ -103,4 +103,12 @@ export class HouseServices {
     getHouseById(id: string): HouseModel | undefined {
         return this.housesSubject.value.find(h => h.id === id);
     }
+
+    addHouse(house: Omit<HouseModel, 'id'>) {
+        const newHouse: HouseModel = {
+            ...house,
+            id: (this.housesSubject.value.length + 1).toString()
+        };
+        this.housesSubject.next([...this.housesSubject.value, newHouse]);
+    }
 }

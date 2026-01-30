@@ -1,14 +1,19 @@
-<header class="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-20">
-    <div class="flex items-center gap-2 text-xs text-gray-500 mb-1">
-        <span>Incidents</span>
-        <span class="material-symbols-outlined text-sm">chevron_right</span>
-        <span class="font-bold text-primary">Nouvelle demande</span>
-    </div>
-    <div class="flex items-center justify-between">
-        <h1 class="text-xl font-extrabold text-gray-900">Nouvel incident</h1>
-        <button class="text-gray-400">
-            <span class="material-symbols-outlined">help_outline</span>
+<header class="sticky top-0 z-20 bg-white border-b border-gray-200">
+    <div class="flex items-center p-4">
+        <button (click)="cancel()" class="text-gray-900 p-1 -ml-1 rounded-full hover:bg-gray-100 transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span>
         </button>
+        <div class="ml-3">
+            <h1 class="text-gray-900 text-lg font-bold leading-tight tracking-[-0.015em]">Nouvel incident</h1>
+        </div>
+    </div>
+    <div class="px-4 pb-3">
+        <nav class="flex text-xs font-medium text-gray-500 gap-1 items-center">
+            <a [routerLink]="['/dashboard/incidents']"
+                class="hover:text-primary transition-colors cursor-pointer">Incidents</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-primary">Nouvelle demande</span>
+        </nav>
     </div>
 </header>
 <main class="flex-1 overflow-y-auto pb-32">
@@ -23,8 +28,6 @@
                         <option value="">Sélectionnez un type</option>
                         <option *ngFor="let cat of categories()" [value]="cat">{{cat}}</option>
                     </select>
-                    <span
-                        class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
                 </div>
             </div>
             <div class="space-y-2">

@@ -1,41 +1,63 @@
-<div class="p-6 flex items-center gap-3">
-<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
-<span class="material-symbols-outlined text-xl">home_work</span>
-</div>
-<span class="font-extrabold text-xl tracking-tight">Residom</span>
-</div>
-<nav class="flex-1 mt-4 px-3 space-y-1">
-<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" href="#">
-<span class="material-symbols-outlined">dashboard</span>
-<span class="font-semibold text-sm">Dashboard</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 active-nav-item rounded-r-none rounded-lg transition-colors" href="#">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
-<span class="font-semibold text-sm">Residents</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" href="#">
-<span class="material-symbols-outlined">apartment</span>
-<span class="font-semibold text-sm">Houses</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" href="#">
-<span class="material-symbols-outlined">payments</span>
-<span class="font-semibold text-sm">Payments</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" href="#">
-<span class="material-symbols-outlined">report_problem</span>
-<span class="font-semibold text-sm">Incidents</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" href="#">
-<span class="material-symbols-outlined">settings</span>
-<span class="font-semibold text-sm">Settings</span>
-</a>
-</nav>
-<div class="p-4 border-t border-gray-100">
-<div class="flex items-center gap-3 p-2">
-<div class="size-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB7f1Lmut26mdhV8JQA1E84RO8uhquZzS2herE7-C__sDUDs6sGEObbprf1kmDZX9wwuqwK_FBXJjfwPXRikvrlzQgGxgSltVgn7c_GN6m3eXMKcnWL2cSuLvHA4qiiJICadZtUv5vHqXv9Z6W2vPPLJzeXE5czJht8ef1n62o0J3uDDdvfI0sG_mhNIWfQyNL6zw-ksxBBMkbjG-VWm98kqC3IA8zNczapj6sAJuAN9U2AktcW1EeUyD5kT48-UKhAxV-UdRgvqtkf");'></div>
-<div class="flex-1 min-w-0">
-<p class="text-sm font-bold truncate">Alex Morgan</p>
-<p class="text-xs text-gray-500 truncate">Admin Manager</p>
-</div>
-</div>
-</div>
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
+    <div class="p-6 flex items-center gap-3">
+        <div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+            <span class="material-symbols-outlined text-xl">home_work</span>
+        </div>
+        <span class="font-extrabold text-xl tracking-tight">{{residence().residenceName}}</span>
+    </div>
+    <nav class="flex-1 mt-4 px-3 space-y-1">
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/home']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings: 'FILL' 1;">dashboard</span>
+            <span class="font-semibold text-sm">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/residents']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings: 'FILL' 1;">group</span>
+            <span class="font-semibold text-sm">Residents</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/houses']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">apartment</span>
+            <span class="font-semibold text-sm">Houses</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/payments']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">payments</span>
+            <span class="font-semibold text-sm">Payments</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/incidents']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">report_problem</span>
+            <span class="font-semibold text-sm">Incidents</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/settings']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">settings</span>
+            <span class="font-semibold text-sm">Settings</span>
+        </a>
+    </nav>
+    <div class="p-4 border-t border-gray-100">
+        <div class="flex items-center gap-3 p-2">
+            <div
+                class="size-10 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-lg">
+                {{user().firstName.charAt(0)}}{{user().lastName.charAt(0)}}
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold truncate text-gray-900">{{user().firstName}} {{user().lastName}}</p>
+                <p class="text-xs text-gray-500 truncate">Admin Manager</p>
+            </div>
+            <button (click)="logout()"
+                class="size-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                title="Logout">
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+            </button>
+        </div>
+    </div>
+</aside>

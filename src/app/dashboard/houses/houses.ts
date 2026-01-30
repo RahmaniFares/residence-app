@@ -78,4 +78,8 @@ export class Houses {
   showHouseDetails(id: string) {
     this.router.navigate(['dashboard/house-details', id]);
   }
+
+  addHouse() {
+    this.router.navigate(['dashboard/add-house']);
+  }
 }

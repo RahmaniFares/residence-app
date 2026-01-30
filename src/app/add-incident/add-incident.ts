@@ -1,12 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { IncidentServices } from '../dashboard/incidents/incident-services';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-incident',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './add-incident.html',
   styleUrl: './add-incident.css',
 })

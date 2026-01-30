@@ -1,0 +1,133 @@
+<header class="sticky top-0 z-20 bg-white border-b border-gray-200">
+    <div class="flex items-center p-4">
+        <button (click)="back()" class="text-gray-900 p-1 -ml-1 rounded-full hover:bg-gray-100 transition-colors">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <div class="ml-3">
+            <h1 class="text-gray-900 text-lg font-bold leading-tight tracking-[-0.015em]">Nouvelle Maison</h1>
+        </div>
+    </div>
+    <div class="px-4 pb-3">
+        <nav class="flex text-xs font-medium text-gray-500 gap-1 items-center">
+            <span class="cursor-pointer hover:text-primary transition-colors" (click)="back()">Houses</span>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-primary">Ajouter une maison</span>
+        </nav>
+    </div>
+</header>
+
+<main class="flex-1 px-4 py-6 overflow-y-auto pb-32">
+    <div class="space-y-6 max-w-lg mx-auto">
+        <!-- Section: Informations de la Maison -->
+        <div class="space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Informations de la Maison</h2>
+            <div class="flex flex-col gap-4">
+                <!-- Block -->
+                <label class="flex flex-col group">
+                    <span class="text-gray-900 text-sm font-semibold mb-1.5 ml-1">Bloc</span>
+                    <div class="relative">
+                        <select
+                            class="form-select w-full rounded-xl text-gray-900 border border-gray-200 bg-white h-14 pl-4 pr-10 focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none transition-all text-base font-normal"
+                            [ngModel]="selectedBlock()" (ngModelChange)="selectedBlock.set($event)">
+                            <option value="" disabled>Sélectionnez un bloc</option>
+                            <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
+                        </select>
+                    </div>
+                </label>
+
+                <!-- Floor -->
+                <label class="flex flex-col group">
+                    <span class="text-gray-900 text-sm font-semibold mb-1.5 ml-1">Étage</span>
+                    <div class="relative">
+                        <select
+                            class="form-select w-full rounded-xl text-gray-900 border border-gray-200 bg-white h-14 pl-4 pr-10 focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none transition-all text-base font-normal"
+                            [ngModel]="selectedFloor()" (ngModelChange)="selectedFloor.set($event)">
+                            <option value="" disabled>Sélectionnez un étage</option>
+                            <option *ngFor="let floor of floors()" [value]="floor">Étage {{floor}}</option>
+                        </select>
+                    </div>
+                </label>
+
+                <!-- Unit -->
+                <label class="flex flex-col group">
+                    <span class="text-gray-900 text-sm font-semibold mb-1.5 ml-1">Numéro d'unité</span>
+                    <input
+                        class="form-input flex w-full rounded-xl text-gray-900 border border-gray-200 bg-white h-14 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 text-base font-normal leading-normal"
+                        placeholder="Ex: 101" type="text" [ngModel]="unit()" (ngModelChange)="unit.set($event)" />
+                </label>
+            </div>
+        </div>
+
+        <!-- Section: Résident Associé -->
+        <div class="space-y-4">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Résident Associé (Optionnel)</h2>
+            <div class="flex flex-col gap-4">
+                <div class="flex flex-col group relative">
+                    <span class="text-gray-900 text-sm font-semibold mb-1.5 ml-1">Rechercher un résident</span>
+
+                    <!-- Selected Resident Display -->
+                    <div *ngIf="selectedResidentId()"
+                        class="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                                {{selectedResidentName().substring(0,2).toUpperCase()}}
+                            </div>
+                            <span class="font-semibold text-gray-900">{{selectedResidentName()}}</span>
+                        </div>
+                        <button (click)="clearResident()" class="text-gray-400 hover:text-red-500 transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div *ngIf="!selectedResidentId()" class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <span class="material-symbols-outlined text-xl">search</span>
+                        </div>
+                        <input
+                            class="form-input flex w-full rounded-xl text-gray-900 border border-gray-200 bg-white h-14 pl-12 pr-4 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-base font-normal"
+                            placeholder="Rechercher par nom ou email..." type="text" [ngModel]="residentSearchQuery()"
+                            (ngModelChange)="residentSearchQuery.set($event)"
+                            (focus)="showResidentDropdown.set(true)" />
+
+                        <!-- Dropdown Results -->
+                        <div *ngIf="showResidentDropdown() && filteredResidents().length > 0"
+                            class="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                            <div *ngFor="let resident of filteredResidents()" (click)="selectResident(resident.id)"
+                                class="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0">
+                                <div
+                                    class="size-10 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-sm">
+                                    {{resident.firstName.charAt(0)}}{{resident.lastName.charAt(0)}}
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-900 text-sm">{{resident.firstName}}
+                                        {{resident.lastName}}</p>
+                                    <p class="text-xs text-gray-500">{{resident.email}}</p>
+                                </div>
+                                <span class="material-symbols-outlined text-gray-400">chevron_right</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-500 mt-2 ml-1">Laissez vide pour créer une maison vacante</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Sticky Bottom Actions -->
+<footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-8 safe-area-inset-bottom">
+    <div class="max-w-lg mx-auto flex gap-3">
+        <button (click)="back()"
+            class="flex-1 h-14 rounded-xl border border-gray-200 bg-gray-50 text-gray-600 font-bold text-base hover:bg-gray-100 transition-colors">
+            Annuler
+        </button>
+        <button (click)="submit()"
+            class="flex-[2] h-14 rounded-xl bg-primary text-white font-bold text-base shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined">save</span>
+            Enregistrer
+        </button>
+    </div>
+</footer>

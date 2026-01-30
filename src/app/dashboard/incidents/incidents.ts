@@ -99,4 +99,9 @@ export class Incidents {
       this.currentPage.update(p => p - 1);
     }
   }
+
+  setPageSize(size: string) {
+    this.pageSize.set(parseInt(size, 10));
+    this.currentPage.set(1);
+  }
 }

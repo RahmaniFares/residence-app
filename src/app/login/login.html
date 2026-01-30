@@ -1,72 +1,80 @@
 <!-- Hero Image Section (Top half for Mobile/iOS feel) -->
 <div class="relative h-[40vh] w-full overflow-hidden">
-<div class="absolute inset-0 bg-cover bg-center" data-alt="Exterior of a modern luxury residential apartment building" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDpyMfKZ8woPyeDic95hqKs2dLLWBaw7d6-ih-Ddg9Z9KJtaN5qNGWXbcTya9Fq10BaVTuLnNsjXL-F-9Qi1t5u97hXT87IrFcPy0fjskFaW2PeBDSebmje7j7XOStZxkMAhY1r9qcw1H_DMfLwGV9EBZtNblBKFiwMRy_28vYT1SowDtRq3YV8tifKXK9Iel3VVSJeq_mT7Oi_oQeEDm5Nj-LAhfPGSH32Aaf09EBvFJjbaUN-ZihrgTCFtgCwYPByte-oHB1hPzDz');">
-</div>
-<!-- Gradient Overlay for smooth transition -->
-<div class="absolute inset-0  from-background-light dark:from-background-dark via-transparent to-transparent"></div>
+       <div class="absolute inset-0 bg-cover bg-center"
+              data-alt="Exterior of a modern luxury residential apartment building"
+              style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDpyMfKZ8woPyeDic95hqKs2dLLWBaw7d6-ih-Ddg9Z9KJtaN5qNGWXbcTya9Fq10BaVTuLnNsjXL-F-9Qi1t5u97hXT87IrFcPy0fjskFaW2PeBDSebmje7j7XOStZxkMAhY1r9qcw1H_DMfLwGV9EBZtNblBKFiwMRy_28vYT1SowDtRq3YV8tifKXK9Iel3VVSJeq_mT7Oi_oQeEDm5Nj-LAhfPGSH32Aaf09EBvFJjbaUN-ZihrgTCFtgCwYPByte-oHB1hPzDz');">
+       </div>
+       <!-- Gradient Overlay for smooth transition -->
+       <div class="absolute inset-0  from-background-light dark:from-background-dark via-transparent to-transparent">
+       </div>
 </div>
 <!-- Login Container -->
-<div class="flex-1 -mt-12 relative z-10 bg-background-light dark:bg-background-dark rounded-t-lg px-6 pt-8 pb-10 shadow-2xl">
-<!-- Header / Logo -->
-<div class="flex flex-col items-center mb-8">
-<div class="bg-primary/10 p-3 rounded-full mb-3">
-<span class="material-symbols-outlined text-primary text-4xl">apartment</span>
-</div>
-<h1 class="text-[#0e111b] dark:text-white text-3xl font-extrabold tracking-tight">Residence Meriem</h1>
-<p class="text-[#4e6097] dark:text-gray-400 text-sm mt-1">Gestion des Résidents</p>
-</div>
-<!-- Form Fields -->
-<div class="space-y-4 max-w-md mx-auto">
-<!-- Email/Unit Field -->
-<div class="flex flex-col gap-2">
-<p class="text-[#0e111b] dark:text-white text-sm font-semibold leading-normal px-1">Email ou numéro de l'appartement</p>
-<div class="relative">
-<input class="form-input flex w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-[#4e6097] px-4 text-base font-normal"
-       placeholder="e.g. 402 or name@email.com"
-       type="text"
-       [(ngModel)]="emailOrApartment"/>
-</div>
-</div>
-<!-- Password Field -->
-<div class="flex flex-col gap-2">
-<p class="text-[#0e111b] dark:text-white text-sm font-semibold leading-normal px-1">Mot de passe</p>
-<div class="flex w-full items-stretch rounded-xl border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50 overflow-hidden">
-<input class="form-input flex-1 border-0 bg-transparent h-14 text-[#0e111b] dark:text-white placeholder:text-[#4e6097] px-4 text-base font-normal focus:ring-0"
-       placeholder="Enter your password"
-       [type]="showPassword ? 'text' : 'password'"
-       [(ngModel)]="password"/>
-<button class="text-[#4e6097] px-4 flex items-center justify-center hover:text-primary transition-colors">
-<span class="material-symbols-outlined" (click)="togglePassword()">visibility</span>
-</button>
-</div>
-</div>
-<!-- Options: Remember & Forgot -->
-<div class="flex items-center justify-between py-2 px-1">
-<div class="custom-checkbox-tick">
-</div>
-</div>
-<!-- Primary Sign In Button -->
-<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-4"
-        (click)="signIn()">
-                Sign In
-</button>
-<!-- Secondary Action / Signup -->
-<div class="pt-8 text-center">
-<p class="text-[#4e6097] dark:text-gray-400 text-sm">
-                    première fois ici?
-                    <a class="text-primary font-bold hover:underline" href="#">Créer votre compte</a>
-</p>
-</div>
-</div>
-<!-- Footer / Support -->
-<div class="mt-12 text-center border-t border-[#d0d6e7] dark:border-gray-800 pt-6">
-<p class="text-xs text-[#4e6097] dark:text-gray-500 uppercase tracking-widest font-semibold">Concierge Support Disponnible Dimanche</p>
-<div class="flex justify-center gap-4 mt-3">
-<span class="material-symbols-outlined text-[#4e6097] text-xl">call</span>
-<span class="material-symbols-outlined text-[#4e6097] text-xl">mail</span>
-<span class="material-symbols-outlined text-[#4e6097] text-xl">help_center</span>
-</div>
-</div>
+<div
+       class="flex-1 -mt-12 relative z-10 bg-background-light dark:bg-background-dark rounded-t-lg px-6 pt-8 pb-10 shadow-2xl">
+       <!-- Header / Logo -->
+       <div class="flex flex-col items-center mb-8">
+              <div class="bg-primary/10 p-3 rounded-full mb-3">
+                     <span class="material-symbols-outlined text-primary text-4xl">apartment</span>
+              </div>
+              <h1 class="text-[#0e111b] dark:text-white text-3xl font-extrabold tracking-tight">Residence Meriem</h1>
+              <p class="text-[#4e6097] dark:text-gray-400 text-sm mt-1">Gestion des Résidents</p>
+       </div>
+       <!-- Form Fields -->
+       <div class="space-y-4 max-w-md mx-auto">
+              <!-- Email/Unit Field -->
+              <div class="flex flex-col gap-2">
+                     <p class="text-[#0e111b] dark:text-white text-sm font-semibold leading-normal px-1">Email ou numéro
+                            de l'appartement</p>
+                     <div class="relative">
+                            <input class="form-input flex w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-[#4e6097] px-4 text-base font-normal"
+                                   placeholder="e.g. 402 or name@email.com" type="text"
+                                   [(ngModel)]="emailOrApartment" />
+                     </div>
+              </div>
+              <!-- Password Field -->
+              <div class="flex flex-col gap-2">
+                     <p class="text-[#0e111b] dark:text-white text-sm font-semibold leading-normal px-1">Mot de passe
+                     </p>
+                     <div
+                            class="flex w-full items-stretch rounded-xl border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50 overflow-hidden">
+                            <input class="form-input flex-1 border-0 bg-transparent h-14 text-[#0e111b] dark:text-white placeholder:text-[#4e6097] px-4 text-base font-normal focus:ring-0"
+                                   placeholder="Enter your password" [type]="showPassword ? 'text' : 'password'"
+                                   [(ngModel)]="password" />
+                            <button
+                                   class="text-[#4e6097] px-4 flex items-center justify-center hover:text-primary transition-colors">
+                                   <span class="material-symbols-outlined" (click)="togglePassword()">visibility</span>
+                            </button>
+                     </div>
+              </div>
+              <!-- Options: Remember & Forgot -->
+              <div class="flex items-center justify-between py-2 px-1">
+                     <div class="custom-checkbox-tick">
+                     </div>
+              </div>
+              <!-- Primary Sign In Button -->
+              <button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-4"
+                     (click)="signIn()">
+                     Sign In
+              </button>
+              <!-- Secondary Action / Signup -->
+              <div class="pt-8 text-center">
+                     <p class="text-[#4e6097] dark:text-gray-400 text-sm">
+                            Première fois ici?
+                            <a class="text-primary font-bold hover:underline cursor-pointer"
+                                   [routerLink]="['/register']">Créer votre compte</a>
+                     </p>
+              </div>
+       </div>
+       <!-- Footer / Support -->
+       <div class="mt-12 text-center border-t border-[#d0d6e7] dark:border-gray-800 pt-6">
+              <p class="text-xs text-[#4e6097] dark:text-gray-500 uppercase tracking-widest font-semibold">Concierge
+                     Support Disponnible Dimanche</p>
+              <div class="flex justify-center gap-4 mt-3">
+                     <span class="material-symbols-outlined text-[#4e6097] text-xl">call</span>
+                     <span class="material-symbols-outlined text-[#4e6097] text-xl">mail</span>
+                     <span class="material-symbols-outlined text-[#4e6097] text-xl">help_center</span>
+              </div>
+       </div>
 </div>
 <!-- Background Decorative Element for Dark Mode -->
 <div class="fixed bottom-0 left-0 w-full h-1 bg-primary opacity-20"></div>

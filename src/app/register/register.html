@@ -1,0 +1,135 @@
+<!-- Hero Image Section -->
+<div class="relative h-[30vh] w-full overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center"
+        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDpyMfKZ8woPyeDic95hqKs2dLLWBaw7d6-ih-Ddg9Z9KJtaN5qNGWXbcTya9Fq10BaVTuLnNsjXL-F-9Qi1t5u97hXT87IrFcPy0fjskFaW2PeBDSebmje7j7XOStZxkMAhY1r9qcw1H_DMfLwGV9EBZtNblBKFiwMRy_28vYT1SowDtRq3YV8tifKXK9Iel3VVSJeq_mT7Oi_oQeEDm5Nj-LAhfPGSH32Aaf09EBvFJjbaUN-ZihrgTCFtgCwYPByte-oHB1hPzDz');">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-background-light dark:to-background-dark"></div>
+</div>
+
+<!-- Register Container -->
+<div
+    class="flex-1 -mt-12 relative z-10 bg-background-light dark:bg-background-dark rounded-t-3xl px-6 pt-8 pb-10 shadow-2xl">
+    <!-- Header / Logo -->
+    <div class="flex flex-col items-center mb-6">
+        <div class="bg-primary/10 p-3 rounded-full mb-3">
+            <span class="material-symbols-outlined text-primary text-4xl">person_add</span>
+        </div>
+        <h1 class="text-[#0e111b] dark:text-white text-2xl font-extrabold tracking-tight">Créer un compte</h1>
+        <p class="text-[#4e6097] dark:text-gray-400 text-sm mt-1">Rejoignez Residence Meriem</p>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="space-y-4 max-w-md mx-auto">
+        <!-- Name Fields Row -->
+        <div class="grid grid-cols-2 gap-3">
+            <!-- First Name -->
+            <div class="flex flex-col gap-1.5">
+                <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">Prénom *</p>
+                <input
+                    class="form-input w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-12 placeholder:text-[#4e6097] px-4 text-base font-normal"
+                    placeholder="Jean" type="text" [(ngModel)]="firstName" />
+            </div>
+            <!-- Last Name -->
+            <div class="flex flex-col gap-1.5">
+                <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">Nom *</p>
+                <input
+                    class="form-input w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-12 placeholder:text-[#4e6097] px-4 text-base font-normal"
+                    placeholder="Dupont" type="text" [(ngModel)]="lastName" />
+            </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="flex flex-col gap-1.5">
+            <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">Email *</p>
+            <div class="relative">
+                <span
+                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#4e6097]">mail</span>
+                <input
+                    class="form-input w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-12 placeholder:text-[#4e6097] pl-12 pr-4 text-base font-normal"
+                    placeholder="jean.dupont@email.com" type="email" [(ngModel)]="email" />
+            </div>
+        </div>
+
+        <!-- Apartment & Phone Row -->
+        <div class="grid grid-cols-2 gap-3">
+            <!-- Apartment Number -->
+            <div class="flex flex-col gap-1.5">
+                <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">N° Appartement</p>
+                <input
+                    class="form-input w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-12 placeholder:text-[#4e6097] px-4 text-base font-normal"
+                    placeholder="402" type="text" [(ngModel)]="apartment" />
+            </div>
+            <!-- Phone -->
+            <div class="flex flex-col gap-1.5">
+                <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">Téléphone</p>
+                <input
+                    class="form-input w-full rounded-xl text-[#0e111b] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-12 placeholder:text-[#4e6097] px-4 text-base font-normal"
+                    placeholder="06 12 34 56 78" type="tel" [(ngModel)]="phone" />
+            </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="flex flex-col gap-1.5">
+            <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">Mot de passe *</p>
+            <div
+                class="flex w-full items-stretch rounded-xl border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50 overflow-hidden">
+                <input
+                    class="form-input flex-1 border-0 bg-transparent h-12 text-[#0e111b] dark:text-white placeholder:text-[#4e6097] px-4 text-base font-normal focus:ring-0"
+                    placeholder="Minimum 8 caractères" [type]="showPassword ? 'text' : 'password'"
+                    [(ngModel)]="password" />
+                <button
+                    class="text-[#4e6097] px-4 flex items-center justify-center hover:text-primary transition-colors"
+                    (click)="togglePassword()">
+                    <span class="material-symbols-outlined">{{showPassword ? 'visibility_off' : 'visibility'}}</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="flex flex-col gap-1.5">
+            <p class="text-[#0e111b] dark:text-white text-sm font-semibold px-1">Confirmer le mot de passe *</p>
+            <div
+                class="flex w-full items-stretch rounded-xl border border-[#d0d6e7] dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:ring-2 focus-within:ring-primary/50 overflow-hidden">
+                <input
+                    class="form-input flex-1 border-0 bg-transparent h-12 text-[#0e111b] dark:text-white placeholder:text-[#4e6097] px-4 text-base font-normal focus:ring-0"
+                    placeholder="Répétez votre mot de passe" [type]="showConfirmPassword ? 'text' : 'password'"
+                    [(ngModel)]="confirmPassword" />
+                <button
+                    class="text-[#4e6097] px-4 flex items-center justify-center hover:text-primary transition-colors"
+                    (click)="toggleConfirmPassword()">
+                    <span class="material-symbols-outlined">{{showConfirmPassword ? 'visibility_off' :
+                        'visibility'}}</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Terms Checkbox -->
+        <div class="flex items-start gap-3 py-2">
+            <input type="checkbox" id="terms"
+                class="mt-1 w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                [(ngModel)]="acceptTerms" />
+            <label for="terms" class="text-[#4e6097] dark:text-gray-400 text-sm cursor-pointer">
+                J'accepte les <a class="text-primary font-semibold hover:underline">conditions d'utilisation</a> et la
+                <a class="text-primary font-semibold hover:underline">politique de confidentialité</a>
+            </label>
+        </div>
+
+        <!-- Register Button -->
+        <button
+            class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-2"
+            (click)="register()">
+            Créer mon compte
+        </button>
+
+        <!-- Login Link -->
+        <div class="pt-4 text-center">
+            <p class="text-[#4e6097] dark:text-gray-400 text-sm">
+                Déjà un compte?
+                <a class="text-primary font-bold hover:underline cursor-pointer" [routerLink]="['/']">Se connecter</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Background Decorative Element -->
+<div class="fixed bottom-0 left-0 w-full h-1 bg-primary opacity-20"></div>

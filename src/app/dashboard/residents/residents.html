@@ -1,11 +1,12 @@
-<header class="bg-white border-b border-gray-200 px-8 py-6 sticky top-0 z-10">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+    <div class="flex justify-between items-center gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-gray-900">Resident Directory</h1>
-            <p class="text-sm text-gray-500 mt-1">Manage and view all registered residents in the estate.</p>
+            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Resident Directory</h1>
+            <p class="text-sm text-gray-500 font-medium mt-1">Manage and view all registered residents in the estate.
+            </p>
         </div>
         <button
-            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm"
+            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
             (click)="addResident()">
             <span class="material-symbols-outlined text-[20px]">add</span>
             Add New Resident

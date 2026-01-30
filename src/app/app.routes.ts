@@ -56,6 +56,10 @@ export const routes: Routes = [
       {
         path: 'resident-details/:id',
         loadComponent: () => import('./dashboard/resident-details/resident-details').then((m) => m.ResidentDetails),
+      },
+      {
+        path: 'add-house',
+        loadComponent: () => import('./dashboard/add-house/add-house').then((m) => m.AddHouse),
       }
     ]
   }
@@ -66,6 +70,14 @@ export const routes: Routes = [
   {
     path: 'residents/add/:id',
     loadComponent: () => import('./add-resident/add-resident').then((m) => m.AddResident),
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./register/register').then((m) => m.Register),
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./login/login').then((m) => m.Login),
   },
 
 ];
