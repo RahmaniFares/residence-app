@@ -43,7 +43,7 @@ export const routes: Routes = [
       },
       {
         path: 'add-incident',
-        loadComponent: () => import('./add-incident/add-incident').then((m) => m.AddIncident),
+        loadComponent: () => import('./dashboard/add-incident/add-incident').then((m) => m.AddIncident),
       },
       {
         path: 'add-payment',

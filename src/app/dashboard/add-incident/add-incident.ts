@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { IncidentServices } from '../dashboard/incidents/incident-services';
+import { IncidentServices } from '../incidents/incident-services';
 import { CommonModule } from '@angular/common';
 
 @Component({
