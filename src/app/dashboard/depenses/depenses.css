@@ -1,0 +1,48 @@
+/* Modal animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fixed {
+    animation: fadeIn 0.2s ease-out;
+}
+
+.fixed>div:not(.absolute) {
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Custom scrollbar for modal */
+.max-h-\[90vh\]::-webkit-scrollbar {
+    width: 6px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 3px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
+}

@@ -37,6 +37,18 @@
             <span class="font-semibold text-sm">Incidents</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/posts']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">forum</span>
+            <span class="font-semibold text-sm">Posts</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/depenses']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">receipt_long</span>
+            <span class="font-semibold text-sm">Dépenses</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/settings']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">settings</span>

@@ -20,7 +20,7 @@ export class Incidents {
   searchQuery = signal('');
   statusFilter = signal('All Status');
   currentPage = signal(1);
-  pageSize = signal(10);
+  pageSize = signal(5);
 
   constructor() {
     this.incidentService.incidents$.subscribe(data => {

@@ -1,0 +1,311 @@
+<header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+    <div class="flex justify-between items-center gap-4">
+        <div>
+            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Dépenses</h1>
+            <p class="text-sm text-gray-500 font-medium mt-1">Suivez et gérez les dépenses de la résidence.</p>
+        </div>
+        <button
+            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+            (click)="openAddForm()">
+            <span class="material-symbols-outlined text-[20px]">add</span>
+            Nouvelle Dépense
+        </button>
+    </div>
+</header>
+
+<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-5 rounded-2xl shadow-lg text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-500 text-xs font-bold uppercase tracking-wider">Total Dépenses</p>
+                    <p class="text-2xl text-black  font-extrabold mt-1">{{formatCurrency(totalDepenses())}}</p>
+                </div>
+                <div class="size-12 bg-black20 rounded-xl flex items-center justify-center">
+                    <span class="text-blue-500 material-symbols-outlined text-2xl">account_balance_wallet</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-lg text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-emerald-500 text-xs font-bold uppercase tracking-wider">Ce Mois</p>
+                    <p class="text-2xl text-black font-extrabold mt-1">{{formatCurrency(depensesThisMonth())}}</p>
+                </div>
+                <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <span class="text-emerald-500 material-symbols-outlined text-2xl">calendar_month</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gradient-to-br from-violet-500 to-purple-600 p-5 rounded-2xl shadow-lg text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-violet-500 text-xs font-bold uppercase tracking-wider">Nombre</p>
+                    <p class="text-2xl text-black font-extrabold mt-1">{{depenses().length}} entrées</p>
+                </div>
+                <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
+                    <span class="text-violet-500 material-symbols-outlined  text-2xl">receipt_long</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+        <div class="relative w-full lg:flex-1">
+            <span class="material-symbols-outlined absolute left-3 bottom-2 text-gray-400">search</span>
+            <input
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                placeholder="Rechercher par titre ou description..." type="text" [value]="searchQuery()"
+                (input)="updateSearch($event)" />
+        </div>
+        <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar">
+            <select
+                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px] flex-1"
+                [value]="typeFilter()" (change)="updateTypeFilter($event)">
+                <option>Tous les types</option>
+                <option *ngFor="let type of depenseTypes">{{type}}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Depenses Table -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 border-b border-gray-200 hidden md:table-header-group">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Dépense</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Montant</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Images</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngFor="let depense of paginatedDepenses()"
+                        class="hover:bg-gray-50/50 flex flex-col md:table-row">
+                        <td class="px-6 py-4 md:table-cell">
+                            <div class="flex items-start gap-3">
+                                <div class="size-10 rounded-xl flex items-center justify-center shrink-0"
+                                    [ngClass]="getTypeColor(depense.type)">
+                                    <span class="material-symbols-outlined text-lg">{{getTypeIcon(depense.type)}}</span>
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="font-bold text-gray-900 text-sm truncate">{{depense.titre}}</span>
+                                    <span
+                                        class="text-xs text-gray-500 truncate max-w-[250px]">{{depense.description}}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-2 md:py-4 md:table-cell">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
+                                [ngClass]="getTypeColor(depense.type)">
+                                <span class="material-symbols-outlined text-sm">{{getTypeIcon(depense.type)}}</span>
+                                {{depense.type}}
+                            </span>
+                        </td>
+                        <td class="px-6 py-2 md:py-4 md:table-cell">
+                            <span class="text-sm text-gray-600">{{depense.date | date:'dd MMM yyyy'}}</span>
+                        </td>
+                        <td class="px-6 py-2 md:py-4 md:table-cell">
+                            <span class="text-sm font-bold text-gray-900">{{formatCurrency(depense.montant)}}</span>
+                        </td>
+                        <td class="px-6 py-2 md:py-4 md:table-cell">
+                            <div class="flex items-center gap-1" *ngIf="depense.images.length > 0">
+                                <div *ngFor="let img of depense.images.slice(0, 3); let i = index"
+                                    class="size-8 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                                    (click)="viewImage(img)">
+                                    <img [src]="img" class="w-full h-full object-cover" alt="Expense image" />
+                                </div>
+                                <span *ngIf="depense.images.length > 3"
+                                    class="size-8 rounded-lg bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                                    +{{depense.images.length - 3}}
+                                </span>
+                            </div>
+                            <span *ngIf="depense.images.length === 0" class="text-xs text-gray-400">Aucune</span>
+                        </td>
+                        <td class="px-6 py-4 md:table-cell text-right">
+                            <div class="flex gap-2 justify-end">
+                                <button
+                                    class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                    (click)="editDepense(depense)" title="Modifier">
+                                    <span class="material-symbols-outlined text-lg">edit</span>
+                                </button>
+                                <button
+                                    class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                    (click)="deleteDepense(depense.id)" title="Supprimer">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="paginatedDepenses().length === 0">
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="size-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-3xl text-gray-400">receipt_long</span>
+                                </div>
+                                <p class="text-gray-500 font-medium">Aucune dépense trouvée</p>
+                                <button class="text-primary font-bold text-sm hover:underline" (click)="openAddForm()">
+                                    Ajouter une dépense
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="px-6 py-4 bg-gray-50/50 border border-gray-200 rounded-xl flex items-center justify-between">
+        <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span>
+            -
+            <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
+                class="font-bold text-gray-700">{{totalItems()}}</span> dépenses
+        </p>
+        <div class="flex gap-2 items-center">
+            <p class="text-sm text-gray-500">Par page:</p>
+            <select
+                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary cursor-pointer min-w-[80px]"
+                [value]="pageSize()" (change)="setPageSize($any($event).target.value)">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+            <button
+                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                [disabled]="currentPage() === 1" (click)="prevPage()">
+                <span class="material-symbols-outlined text-lg">chevron_left</span>
+            </button>
+            <button
+                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
+                <span class="material-symbols-outlined text-lg">chevron_right</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div *ngIf="showAddForm()" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div>
+                <h2 class="text-xl font-extrabold text-gray-900">
+                    {{editingId() ? 'Modifier la Dépense' : 'Nouvelle Dépense'}}
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">Remplissez les informations de la dépense</p>
+            </div>
+            <button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                (click)="closeForm()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-5">
+            <!-- Titre -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Titre de la dépense *</label>
+                <input type="text"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                    placeholder="Ex: Réparation ascenseur" [value]="formTitre()"
+                    (input)="formTitre.set($any($event.target).value)" />
+            </div>
+
+            <!-- Type & Montant -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Type de dépense *</label>
+                    <select
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none cursor-pointer"
+                        [value]="formType()" (change)="formType.set($any($event.target).value)">
+                        <option *ngFor="let type of depenseTypes" [value]="type">{{type}}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Montant (DZD) *</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">DZD</span>
+                        <input type="number"
+                            class="w-full border border-gray-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                            placeholder="0.00" [value]="formMontant()"
+                            (input)="formMontant.set(+$any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Date *</label>
+                <input type="date"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                    [value]="formDate()" (input)="formDate.set($any($event.target).value)" />
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Description</label>
+                <textarea
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none min-h-[100px]"
+                    placeholder="Décrivez la dépense en détail..." [value]="formDescription()"
+                    (input)="formDescription.set($any($event.target).value)"></textarea>
+            </div>
+
+            <!-- Images -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Images (URLs)</label>
+                <div class="flex gap-2">
+                    <input type="text"
+                        class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                        placeholder="Coller l'URL de l'image..." [value]="newImageUrl()"
+                        (input)="newImageUrl.set($any($event.target).value)" (keyup.enter)="addImageUrl()" />
+                    <button
+                        class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium text-sm transition-colors"
+                        (click)="addImageUrl()">
+                        <span class="material-symbols-outlined">add_photo_alternate</span>
+                    </button>
+                </div>
+                <div *ngIf="formImages().length > 0" class="flex flex-wrap gap-3 mt-3">
+                    <div *ngFor="let img of formImages(); let i = index"
+                        class="relative group size-20 rounded-xl overflow-hidden border border-gray-200">
+                        <img [src]="img" class="w-full h-full object-cover" alt="Preview" />
+                        <button
+                            class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            (click)="removeImage(i)">
+                            <span class="material-symbols-outlined text-white">delete</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-100 flex justify-end gap-3">
+            <button class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
+                (click)="closeForm()">
+                Annuler
+            </button>
+            <button
+                class="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-colors disabled:opacity-50"
+                [disabled]="!formTitre().trim() || !formDate() || formMontant() <= 0" (click)="saveDepense()">
+                {{editingId() ? 'Enregistrer' : 'Ajouter'}}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Image Viewer Modal -->
+<div *ngIf="viewingImage()" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+    (click)="closeImageViewer()">
+    <button
+        class="absolute top-4 right-4 size-12 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+        <span class="material-symbols-outlined text-2xl">close</span>
+    </button>
+    <img [src]="viewingImage()" class="max-w-full max-h-full rounded-xl shadow-2xl" alt="Full image"
+        (click)="$event.stopPropagation()" />
+</div>
