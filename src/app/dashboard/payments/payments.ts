@@ -1,10 +1,11 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PaymentServices } from './payment-services';
 import { HouseServices } from '../houses/house-services';
 import { ResidentServices } from '../residents/resident-services';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { PaymentStatus } from './payment-model';
 
 @Component({
   selector: 'app-payments',
@@ -12,15 +13,22 @@ import { CommonModule } from '@angular/common';
   templateUrl: './payments.html',
   styleUrl: './payments.css',
 })
-export class Payments {
+export class Payments implements OnInit {
 
   router = inject(Router);
   paymentService = inject(PaymentServices);
   houseService = inject(HouseServices);
   residentService = inject(ResidentServices);
+  PaymentStatus = PaymentStatus;
 
   payments = toSignal(this.paymentService.payments$, { initialValue: [] });
   budgetStats = computed(() => this.paymentService.getBudgetOverview());
+
+  ngOnInit() {
+    this.paymentService.loadPayments(1, 50).subscribe();
+    this.houseService.loadHouses(1, 100).subscribe();
+    this.residentService.loadResidents(1, 100).subscribe();
+  }
 
   addPayment() {
     this.router.navigate(['/dashboard/add-payment']);
@@ -41,5 +49,14 @@ export class Payments {
     const endDate = new Date(end);
     // Rough calculation
     return Math.max(1, Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30)));
+  }
+
+  getPaymentStatusLabel(status: PaymentStatus): string {
+    switch (status) {
+      case PaymentStatus.Paid: return 'Paid';
+      case PaymentStatus.Pending: return 'Pending';
+      case PaymentStatus.Overdue: return 'Overdue';
+      default: return 'Unknown';
+    }
   }
 }

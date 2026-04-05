@@ -6,6 +6,9 @@ import { IncidentServices } from '../incidents/incident-services';
 import { PaymentServices } from '../payments/payment-services';
 import { SettingsService } from '../settings/settings-service';
 import { HouseServices } from '../houses/house-services';
+import { HouseStatus } from '../houses/house-model';
+import { PaymentStatus } from '../payments/payment-model';
+import { IncidentStatus } from '../incidents/incident-model';
 
 @Component({
   selector: 'app-home',
@@ -37,15 +40,15 @@ export class Home {
   budgetTotal = computed(() => this.settings().residence.initialBudget);
 
   overduePaymentsCount = computed(() => {
-    return this.payments().filter(p => p.status === 'Overdue').length;
+    return this.payments().filter(p => p.status === PaymentStatus.Overdue).length;
   });
 
   // Computed - Incidents
   incidentStats = computed(() => {
     const all = this.incidents();
-    const open = all.filter(i => i.status === 'Open').length;
-    const inProgress = all.filter(i => i.status === 'In Progress').length;
-    const resolved = all.filter(i => i.status === 'Resolved').length;
+    const open = all.filter(i => i.status === IncidentStatus.Open).length;
+    const inProgress = all.filter(i => i.status === IncidentStatus.InProgress).length;
+    const resolved = all.filter(i => i.status === IncidentStatus.Resolved).length;
     const total = all.length;
 
     return { total, open, inProgress, resolved };
@@ -55,8 +58,8 @@ export class Home {
   houseStats = computed(() => {
     const all = this.houses();
     const total = all.length;
-    const occupied = all.filter(h => h.status === 'Occupied').length;
-    const vacant = all.filter(h => h.status === 'Vacant').length;
+    const occupied = all.filter(h => h.status === HouseStatus.Occupied).length;
+    const vacant = all.filter(h => h.status === HouseStatus.Vacant).length;
 
     // Avoid division by zero
     const occupiedPct = total > 0 ? Math.round((occupied / total) * 100) : 0;

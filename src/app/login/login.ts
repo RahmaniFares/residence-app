@@ -20,6 +20,7 @@ export class Login {
   password: string = '';
   rememberMe: boolean = false;
   showPassword: boolean = false;
+  loading: boolean = false;
   LoginService = inject(LoginService);
   router = inject(Router);
   constructor(private toastr: ToastrService) { }
@@ -28,19 +29,30 @@ export class Login {
     this.showPassword = !this.showPassword;
   }
   signIn(): void {
+    if (this.loading) return;
+    this.loading = true;
+
     var loginRequest = {
       emailOrApartment: this.emailOrApartment,
       password: this.password,
       rememberMe: this.rememberMe
     };
-    const success = this.LoginService.Login(loginRequest);
-    if (success) {
-      console.log("Login successful!");
-      this.router.navigate(['/dashboard']);
-      this.toastr.success("Connexion réussie! Bienvenue.", "Succès de la connexion");
-    } else {
-      console.log("Login failed.");
-      this.toastr.error("Échec de la connexion. Veuillez vérifier vos informations d'identification et réessayer.", "Erreur de connexion");
-    }
+
+    this.LoginService.Login(loginRequest).subscribe({
+      next: (response) => {
+        console.log("Login successful!", response);
+        this.router.navigate(['/dashboard']);
+        this.toastr.success("Connexion réussie! Bienvenue.", "Succès de la connexion");
+      },
+      error: (error) => {
+        console.log("Login failed.", error);
+        const message = error.error?.message || "Échec de la connexion. Veuillez vérifier vos informations d'identification et réessayer.";
+        this.toastr.error(message, "Erreur de connexion");
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 }

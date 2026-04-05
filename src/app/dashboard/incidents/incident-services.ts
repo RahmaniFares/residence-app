@@ -1,220 +1,187 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { IncidentModel, CommentModel } from './incident-model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, BehaviorSubject, tap, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import {
+    IncidentModel,
+    IncidentStatus,
+    IncidentPriority,
+    IncidentCategory,
+    CommentModel,
+    CreateIncidentDto,
+    UpdateIncidentDto,
+    IncidentDto,
+    CreateIncidentCommentDto,
+    IncidentCommentDto,
+    PaginatedResult
+} from './incident-model';
 
 @Injectable({
     providedIn: 'root',
 })
 export class IncidentServices {
+    private apiUrl = `${environment.apiUrl}/residences`;
+    private residenceId = environment.residenceId;
 
-    private incidentsSubject = new BehaviorSubject<IncidentModel[]>([
-        {
-            id: 'INC-2001',
-            residentId: 'RES-1001',
-            residentName: 'Johnathan Doe',
-            block: 'Block A',
-            unit: 'Unit 102',
-            dateReported: '2023-10-24',
-            description: 'Water leakage in the master bathroom ceiling',
-            status: 'Open',
-            category: 'Plumbing'
-        },
-        {
-            id: 'INC-2002',
-            residentId: 'RES-1002',
-            residentName: 'Sarah Jenkins',
-            block: 'Block B',
-            unit: 'Unit 405',
-            dateReported: '2023-10-23',
-            description: 'Kitchen sink disposal not working properly',
-            status: 'In Progress',
-            category: 'Plumbing'
-        },
-        {
-            id: 'INC-2003',
-            residentId: 'RES-1003',
-            residentName: 'Michael Wong',
-            block: 'Block C',
-            unit: 'Unit 201',
-            dateReported: '2023-10-20',
-            description: 'Balcony light bulb replacement needed',
-            status: 'Resolved',
-            category: 'Electrical'
-        },
-        {
-            id: 'INC-2004',
-            residentId: 'RES-1004',
-            residentName: 'Emma Davis',
-            block: 'Block A',
-            unit: 'Unit 305',
-            dateReported: '2023-10-18',
-            description: 'Lobby door lock jamming occasionally',
-            status: 'Resolved',
-            category: 'Security'
-        },
-        {
-            id: 'INC-2005',
-            residentId: 'RES-1005',
-            residentName: 'David Miller',
-            block: 'Block B',
-            unit: 'Unit 110',
-            dateReported: '2023-10-25',
-            description: 'Noisy air conditioning unit',
-            status: 'Open',
-            category: 'HVAC'
-        },
-        {
-            id: 'INC-2006',
-            residentId: 'RES-1006',
-            residentName: 'Lisa Anderson',
-            block: 'Block C',
-            unit: 'Unit 504',
-            dateReported: '2023-10-22',
-            description: 'Gym treadmill display malfunction',
-            status: 'In Progress',
-            category: 'Amenities'
-        },
-        {
-            id: 'INC-2007',
-            residentId: 'RES-1007',
-            residentName: 'James Wilson',
-            block: 'Block A',
-            unit: 'Unit 202',
-            dateReported: '2023-10-26',
-            description: 'Corridor light flickering on 2nd floor',
-            status: 'Open',
-            category: 'Electrical'
-        },
-        {
-            id: 'INC-2008',
-            residentId: 'RES-1008',
-            residentName: 'Patricia Taylor',
-            block: 'Block B',
-            unit: 'Unit 303',
-            dateReported: '2023-10-15',
-            description: 'Pest control request',
-            status: 'Resolved',
-            category: 'Other'
-        },
-        {
-            id: 'INC-2009',
-            residentId: 'RES-1009',
-            residentName: 'Robert Martinez',
-            block: 'Block C',
-            unit: 'Unit 105',
-            dateReported: '2023-10-27',
-            description: 'Intercom system silent',
-            status: 'Open',
-            category: 'Security'
-        },
-        {
-            id: 'INC-2010',
-            residentId: 'RES-1010',
-            residentName: 'Jennifer White',
-            block: 'Block A',
-            unit: 'Unit 401',
-            dateReported: '2023-10-21',
-            description: 'Parking spot blockage',
-            status: 'Resolved',
-            category: 'Other'
-        },
-        {
-            id: 'INC-2011',
-            residentId: 'RES-1011',
-            residentName: 'William Brown',
-            block: 'Block B',
-            unit: 'Unit 205',
-            dateReported: '2023-10-24',
-            description: 'Elevator B button sluggish',
-            status: 'In Progress',
-            category: 'Elevator'
-        },
-        {
-            id: 'INC-2012',
-            residentId: 'RES-1012',
-            residentName: 'Elizabeth Jones',
-            block: 'Block C',
-            unit: 'Unit 302',
-            dateReported: '2023-10-19',
-            description: 'Garden sprinkler leaking',
-            status: 'Resolved',
-            category: 'Plumbing'
-        }
-    ]);
-
+    private incidentsSubject = new BehaviorSubject<IncidentModel[]>([]);
     incidents$ = this.incidentsSubject.asObservable();
 
-    addIncident(incident: Omit<IncidentModel, 'id' | 'dateReported' | 'status'>) {
-        const currentIncidents = this.incidentsSubject.value;
-        const lastId = currentIncidents.length > 0
-            ? parseInt(currentIncidents[currentIncidents.length - 1].id.split('-')[1])
-            : 2000;
-
-        const newIncident: IncidentModel = {
-            ...incident,
-            id: `INC-${lastId + 1}`,
-            status: 'Open',
-            dateReported: new Date().toISOString().split('T')[0],
-        };
-
-        this.incidentsSubject.next([newIncident, ...currentIncidents]);
-    }
-
-    getIncidentById(id: string): IncidentModel | undefined {
-        return this.incidentsSubject.value.find(i => i.id === id);
-    }
-
-    updateIncident(updatedIncident: IncidentModel) {
-        const currentIncidents = this.incidentsSubject.value;
-        const index = currentIncidents.findIndex(i => i.id === updatedIncident.id);
-        if (index !== -1) {
-            currentIncidents[index] = updatedIncident;
-            this.incidentsSubject.next([...currentIncidents]);
-        }
-    }
-
-    private commentsSubject = new BehaviorSubject<CommentModel[]>([
-        {
-            id: 'CMT-1',
-            incidentId: 'INC-2001',
-            author: 'Johnathan Doe',
-            text: 'Hi, just wanted to add that the leak seems to happen mostly when we run the hot water.',
-            timestamp: new Date(new Date().getTime() - 86400000), // Yesterday
-            isCurrentUser: false
-        },
-        {
-            id: 'CMT-2',
-            incidentId: 'INC-2001',
-            author: 'Admin',
-            text: 'Thanks for the update, Johnathan. I\'ve assigned a plumber. They should contact you shortly to schedule a visit.',
-            timestamp: new Date(new Date().getTime() - 84000000), // Yesterday later
-            isCurrentUser: true
-        },
-        {
-            id: 'CMT-3',
-            incidentId: 'INC-2001',
-            author: 'Johnathan Doe',
-            text: 'Great, thank you! I\'ll be home all day tomorrow if that works for them.',
-            timestamp: new Date(),
-            isCurrentUser: false
-        }
-    ]);
-
+    private commentsSubject = new BehaviorSubject<CommentModel[]>([]);
     comments$ = this.commentsSubject.asObservable();
 
+    constructor(private http: HttpClient) { }
 
-    getCommentsByIncidentId(incidentId: string): CommentModel[] {
-        return this.commentsSubject.value.filter(c => c.incidentId === incidentId).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+    /**
+     * Load all incidents for the current residence (paginated).
+     */
+    loadIncidents(pageNumber: number = 1, pageSize: number = 10): Observable<PaginatedResult<IncidentDto>> {
+        const params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        return this.http.get<PaginatedResult<IncidentDto>>(
+            `${this.apiUrl}/${this.residenceId}/incidents`,
+            { params }
+        ).pipe(
+            tap(result => {
+                const mapped = result.items.map(i => this.mapDtoToModel(i));
+                this.incidentsSubject.next(mapped);
+            })
+        );
     }
 
-    addComment(comment: Omit<CommentModel, 'id' | 'timestamp' | 'isCurrentUser'>) {
-        const currentComments = this.commentsSubject.value;
-        const newComment: CommentModel = {
-            ...comment,
-            id: `CMT-${Date.now()}`,
-            timestamp: new Date(),
-            isCurrentUser: true // Assuming adding via UI is always current user (Admin)
+    /**
+     * Get incident by ID.
+     */
+    getIncidentById(id: string): Observable<IncidentDto> {
+        return this.http.get<IncidentDto>(`${this.apiUrl}/${this.residenceId}/incidents/${id}`);
+    }
+
+    /**
+     * Update incident.
+     */
+    updateIncident(id: string, incident: UpdateIncidentDto): Observable<IncidentDto> {
+        return this.http.put<IncidentDto>(
+            `${this.apiUrl}/${this.residenceId}/incidents/${id}`,
+            incident
+        ).pipe(
+            tap(updated => {
+                const current = this.incidentsSubject.value;
+                const index = current.findIndex(i => i.id === id);
+                if (index !== -1) {
+                    current[index] = this.mapDtoToModel(updated);
+                    this.incidentsSubject.next([...current]);
+                }
+            })
+        );
+    }
+
+    /**
+     * Report a new incident.
+     */
+    addIncident(incident: CreateIncidentDto): Observable<IncidentDto> {
+        return this.http.post<IncidentDto>(
+            `${this.apiUrl}/${this.residenceId}/incidents`,
+            incident
+        ).pipe(
+            tap(newIncident => {
+                const current = this.incidentsSubject.value;
+                this.incidentsSubject.next([this.mapDtoToModel(newIncident), ...current]);
+            })
+        );
+    }
+
+    /**
+     * Delete incident.
+     */
+    deleteIncident(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${this.residenceId}/incidents/${id}`).pipe(
+            tap(() => {
+                const current = this.incidentsSubject.value;
+                this.incidentsSubject.next(current.filter(i => i.id !== id));
+            })
+        );
+    }
+
+    /**
+     * Get incidents by resident (paginated).
+     */
+    loadIncidentsByResident(residentId: string, pageNumber: number = 1, pageSize: number = 8): Observable<PaginatedResult<IncidentDto>> {
+        const params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        return this.http.get<PaginatedResult<IncidentDto>>(
+            `${this.apiUrl}/${this.residenceId}/incidents/resident/${residentId}`,
+            { params }
+        ).pipe(
+            tap(result => {
+                const mapped = result.items.map(i => this.mapDtoToModel(i));
+                this.incidentsSubject.next(mapped);
+            })
+        );
+    }
+
+    /**
+     * Load incident comments (paginated).
+     */
+    loadComments(incidentId: string, pageNumber: number = 1, pageSize: number = 20): Observable<PaginatedResult<IncidentCommentDto>> {
+        const params = new HttpParams()
+            .set('pageNumber', pageNumber.toString())
+            .set('pageSize', pageSize.toString());
+
+        return this.http.get<PaginatedResult<IncidentCommentDto>>(
+            `${this.apiUrl}/${this.residenceId}/incidents/${incidentId}/comments`,
+            { params }
+        ).pipe(
+            tap(result => {
+                const mapped = result.items.map(c => this.mapCommentDtoToModel(c));
+                this.commentsSubject.next(mapped);
+            })
+        );
+    }
+
+    /**
+     * Add comment to incident.
+     */
+    addComment(incidentId: string, comment: CreateIncidentCommentDto): Observable<IncidentCommentDto> {
+        return this.http.post<IncidentCommentDto>(
+            `${this.apiUrl}/${this.residenceId}/incidents/${incidentId}/comments`,
+            comment
+        ).pipe(
+            tap(newComment => {
+                const current = this.commentsSubject.value;
+                this.commentsSubject.next([...current, this.mapCommentDtoToModel(newComment)]);
+            })
+        );
+    }
+
+    /**
+     * Mapping helpers
+     */
+    private mapDtoToModel(dto: IncidentDto): IncidentModel {
+        return {
+            id: dto.id,
+            title: dto.title,
+            description: dto.description,
+            category: dto.category,
+            priority: dto.priority,
+            status: dto.status,
+            location: dto.location,
+            residentId: dto.residentId,
+            residentName: dto.reporter,
+            dateReported: dto.createdAt.split('T')[0]
         };
-        this.commentsSubject.next([...currentComments, newComment]);
+    }
+
+    private mapCommentDtoToModel(dto: IncidentCommentDto): CommentModel {
+        return {
+            id: dto.id,
+            incidentId: dto.incidentId,
+            author: dto.authorName || 'Anonymous',
+            text: dto.text,
+            timestamp: new Date(dto.createdAt),
+            isCurrentUser: false // This will be handled in UI or based on user identity logic
+        };
     }
 }

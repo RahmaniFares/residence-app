@@ -94,8 +94,8 @@
                                 class="text-sm font-medium text-gray-700">{{getResidentName(payment.residentId)}}</span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-semibold text-gray-600">{{payment.paymentDate ?
-                                (payment.paymentDate | date) : '-'}}</span>
+                            <span class="text-sm font-semibold text-gray-600">{{payment.createdAt ?
+                                (payment.createdAt | date) : '-'}}</span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
                             <div class="flex flex-col">
@@ -113,11 +113,11 @@
                         <td class="px-5 py-4 whitespace-nowrap">
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase"
                                 [ngClass]="{
-                                    'bg-green-100 text-green-700': payment.status === 'Paid',
-                                    'bg-yellow-100 text-yellow-700': payment.status === 'Pending',
-                                    'bg-red-100 text-red-700': payment.status === 'Overdue'
+                                    'bg-green-100 text-green-700': payment.status === PaymentStatus.Paid,
+                                    'bg-yellow-100 text-yellow-700': payment.status === PaymentStatus.Pending,
+                                    'bg-red-100 text-red-700': payment.status === PaymentStatus.Overdue
                                 }">
-                                {{payment.status}}
+                                {{getPaymentStatusLabel(payment.status)}}
                             </span>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">

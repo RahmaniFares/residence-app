@@ -19,13 +19,13 @@
             <div class="space-y-2">
                 <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="unit">House / Unit</label>
                 <div class="relative">
-                    <span
-                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                    <span class="material-symbols-outlined absolute left-3  bottom-3 text-gray-400">search</span>
                     <select
                         class="w-full pl-10 pr-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-primary focus:border-primary text-sm font-semibold appearance-none"
                         id="unit" formControlName="houseId">
                         <option value="">Select a unit...</option>
-                        <option *ngFor="let house of houses()" [value]="house.id">{{house.block}}, Unit {{house.unit}}
+                        <option *ngFor="let house of houses()" [value]="house.id">{{house.block}}
+                            {{house.floor}}-{{house.unit}}
                         </option>
                     </select>
                     <span
@@ -68,7 +68,7 @@
                 </div>
             </div>
         </div>
-        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+        <div *ngIf="!hideUpload()" class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
             <label class="text-xs font-bold text-gray-500 uppercase tracking-tight">Receipt Upload (Optional)</label>
             <div class="relative group">
                 <input class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="receipt" type="file" />

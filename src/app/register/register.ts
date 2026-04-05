@@ -28,6 +28,7 @@ export class Register {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
   acceptTerms: boolean = false;
+  loading: boolean = false;
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -54,21 +55,29 @@ export class Register {
       return;
     }
 
-    // Register user
-    const success = this.loginService.Register({
+    if (this.loading) return;
+    this.loading = true;
+
+    // Register user via backend API
+    this.loginService.Register({
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
-      apartment: this.apartment,
       phone: this.phone,
       password: this.password
+    }).subscribe({
+      next: (response) => {
+        this.toastr.success('Compte créé avec succès! Vous pouvez maintenant vous connecter.', 'Succès');
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        const message = error.error?.message || 'Une erreur est survenue lors de la création du compte.';
+        this.toastr.error(message, 'Erreur');
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
-
-    if (success) {
-      this.toastr.success('Compte créé avec succès! Vous pouvez maintenant vous connecter.', 'Succès');
-      this.router.navigate(['/']);
-    } else {
-      this.toastr.error('Une erreur est survenue lors de la création du compte.', 'Erreur');
-    }
   }
 }

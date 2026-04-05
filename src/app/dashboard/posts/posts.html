@@ -20,8 +20,8 @@
         <div class="p-5">
             <div class="flex gap-4">
                 <div
-                    class="size-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md shrink-0">
-                    AU
+                    class="size-10 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-lg">
+                    {{user().firstName.charAt(0)}}{{user().lastName.charAt(0)}}
                 </div>
                 <div class="flex-1">
                     <textarea
@@ -86,8 +86,8 @@
             <div class="p-5 pb-3">
                 <div class="flex items-start justify-between">
                     <div class="flex gap-3">
-                        <div class="size-11 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0"
-                            [ngClass]="post.authorRole === 'admin' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' : 'bg-gradient-to-br from-emerald-500 to-teal-600'">
+                        <div class="size-10 rounded-full  flex items-center justify-center  font-bold text-lg"
+                            [ngClass]="post.authorRole === 'admin' ? 'bg-gradient-to-br from-blue-500 bg-blue-100 to-indigo-600 text-primary' : 'bg-gradient-to-br from-yellow-500 bg-yellow-100 to-yellow-600 text-yellow-600'">
                             {{getInitials(post.authorName)}}
                         </div>
                         <div>

@@ -28,12 +28,6 @@
                 <option value="">All Statuses</option>
                 <option *ngFor="let status of statuses()" [value]="status">{{status}}</option>
             </select>
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px]"
-                (change)="onBlockChange(selectedBlock())" [(ngModel)]="selectedBlock">
-                <option value="">All Blocks</option>
-                <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
-            </select>
             <button
                 class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
                 (click)="resetFilters()">
@@ -48,7 +42,6 @@
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100">
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Resident</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Unit / House</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Contact Info</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Birth Date</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
@@ -69,7 +62,6 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-sm font-medium text-gray-700">{{resident.House}}</td>
                         <td class="px-6 py-4">
                             <p class="text-sm font-medium">{{resident.phone}}</p>
                             <p class="text-xs text-gray-500">{{resident.email}}</p>

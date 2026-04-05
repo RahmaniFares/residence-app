@@ -28,7 +28,7 @@
                         <span class="material-symbols-outlined text-gray-400">home</span>
                         <div>
                             <p class="text-xs text-gray-500 font-medium">Residence</p>
-                            <p class="text-sm font-bold text-gray-800">{{r.House || 'N/A'}}</p>
+                            <!-- <p class="text-sm font-bold text-gray-800">{{r.House || 'N/A'}}</p> -->
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -146,11 +146,11 @@
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
                                         [ngClass]="{
-                                        'bg-green-100 text-green-700': payment.status === 'Paid',
-                                        'bg-yellow-100 text-yellow-700': payment.status === 'Pending',
-                                        'bg-red-100 text-red-700': payment.status === 'Overdue'
+                                        'bg-green-100 text-green-700': payment.status === PaymentStatus.Paid,
+                                        'bg-yellow-100 text-yellow-700': payment.status === PaymentStatus.Pending,
+                                        'bg-red-100 text-red-700': payment.status === PaymentStatus.Overdue
                                     }">
-                                        {{payment.status}}
+                                        {{getPaymentStatusLabel(payment.status)}}
                                     </span>
                                 </td>
                             </tr>
@@ -189,9 +189,9 @@
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
                                         [ngClass]="{
-                                        'bg-blue-100 text-primary': incident.status === 'Open',
-                                        'bg-orange-100 text-warning': incident.status === 'In Progress',
-                                        'bg-green-100 text-success': incident.status === 'Resolved'
+                                        'bg-red-100 text-red-700': incident.status === IncidentStatus.Open,
+                                        'bg-orange-100 text-orange-700': incident.status === IncidentStatus.InProgress,
+                                        'bg-green-100 text-green-700': incident.status === IncidentStatus.Resolved || incident.status === IncidentStatus.Closed
                                     }">
                                         {{incident.status}}
                                     </span>

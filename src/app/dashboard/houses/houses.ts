@@ -1,10 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HouseServices } from './house-services';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ResidentServices } from '../residents/resident-services';
+import { HouseStatus } from './house-model';
 
 @Component({
   selector: 'app-houses',
@@ -12,16 +12,16 @@ import { ResidentServices } from '../residents/resident-services';
   templateUrl: './houses.html',
   styleUrl: './houses.css',
 })
-export class Houses {
+export class Houses implements OnInit {
 
   router = inject(Router);
   houseService = inject(HouseServices);
-  residentService = inject(ResidentServices); // To look up resident names if needed
 
   houses = toSignal(this.houseService.houses$, { initialValue: [] });
+  HouseStatus = HouseStatus; // Make enum accessible in template
 
   searchQuery = signal('');
-  selectedStatus = signal('');
+  selectedStatus = signal<string>(''); // Kept as string for the <select> binding
   selectedBlock = signal('');
 
   blocks = computed(() => [...new Set(this.houses().map(h => h.block))].sort());
@@ -38,7 +38,8 @@ export class Houses {
     }
 
     if (this.selectedStatus() && this.selectedStatus() !== 'All Status') {
-      result = result.filter(h => h.status === this.selectedStatus());
+      const statusValue = Number(this.selectedStatus());
+      result = result.filter(h => h.status === statusValue);
     }
 
     if (this.selectedBlock() && this.selectedBlock() !== 'All Blocks') {
@@ -56,6 +57,13 @@ export class Houses {
     return this.filteredHouses().slice(startIndex, startIndex + this.pageSize());
   });
 
+  ngOnInit() {
+    // Load houses from backend API
+    this.houseService.loadHouses(1, 100).subscribe({
+      error: (err) => console.error('Failed to load houses:', err)
+    });
+  }
+
   goNextPage() {
     if ((this.page() * this.pageSize()) < this.filteredHouses().length) {
       this.page.update(p => p + 1);
@@ -69,17 +77,15 @@ export class Houses {
   }
 
 
-  getResidentName(residentId?: string): string {
-    if (!residentId) return 'No resident assigned';
-    const resident = this.residentService.getResidentById(residentId);
-    return resident ? `${resident.firstName} ${resident.lastName}` : 'Unknown Resident';
-  }
-
   showHouseDetails(id: string) {
     this.router.navigate(['dashboard/house-details', id]);
   }
 
   addHouse() {
     this.router.navigate(['dashboard/add-house']);
+  }
+
+  getStatusLabel(status: HouseStatus): string {
+    return status === HouseStatus.Occupied ? 'Occupied' : 'Vacant';
   }
 }

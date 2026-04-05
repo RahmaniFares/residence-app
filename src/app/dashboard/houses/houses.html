@@ -25,8 +25,8 @@
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1 lg:flex-none"
                 [(ngModel)]="selectedStatus">
                 <option value="">All Status</option>
-                <option value="Occupied">Occupied</option>
-                <option value="Vacant">Vacant</option>
+                <option [value]="HouseStatus.Occupied">Occupied</option>
+                <option [value]="HouseStatus.Vacant">Vacant</option>
             </select>
             <select
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px] flex-1 lg:flex-none"
@@ -41,22 +41,23 @@
             class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
             <div class="flex justify-between items-start mb-4">
                 <div class="size-10 bg-gray-50 rounded-lg flex items-center justify-center"
-                    [ngClass]="{'bg-blue-50 text-primary': house.status === 'Occupied', 'bg-gray-50 text-gray-400': house.status === 'Vacant'}">
-                    <span class="material-symbols-outlined">{{house.status === 'Occupied' ? 'apartment' :
+                    [ngClass]="{'bg-blue-50 text-primary': house.status === HouseStatus.Occupied, 'bg-gray-50 text-gray-400': house.status === HouseStatus.Vacant}">
+                    <span class="material-symbols-outlined">{{house.status === HouseStatus.Occupied ? 'apartment' :
                         'home_work'}}</span>
                 </div>
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
-                    [ngClass]="{'bg-green-100 text-green-700': house.status === 'Occupied', 'bg-gray-100 text-gray-600': house.status === 'Vacant'}">
-                    {{house.status}}
+                    [ngClass]="{'bg-green-100 text-green-700': house.status === HouseStatus.Occupied, 'bg-gray-100 text-gray-600': house.status === HouseStatus.Vacant}">
+                    {{getStatusLabel(house.status)}}
                 </span>
             </div>
             <div>
-                <h3 class="font-extrabold text-gray-900 text-base">{{house.block}}, Unit {{house.unit}}</h3>
+                <h3 class="font-extrabold text-gray-900 text-base">Maison {{house.block}} {{house.floor}}-{{house.unit}}
+                </h3>
                 <div class="mt-2 space-y-1">
                     <p class="text-xs text-gray-500">Primary Resident</p>
                     <p class="text-sm font-semibold"
-                        [ngClass]="{'text-gray-700': house.residentId, 'text-gray-400': !house.residentId}">
-                        {{getResidentName(house.residentId)}}
+                        [ngClass]="{'text-gray-700': house.residentName, 'text-gray-400': !house.residentName}">
+                        {{house.residentName || 'No resident assigned'}}
                     </p>
                 </div>
             </div>

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HouseServices } from '../houses/house-services';
 import { ResidentServices } from '../residents/resident-services';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { HouseStatus } from '../houses/house-model';
 
 @Component({
   selector: 'app-add-house',
@@ -16,6 +17,10 @@ export class AddHouse {
   router = inject(Router);
   houseService = inject(HouseServices);
   residentService = inject(ResidentServices);
+
+  // Status signals
+  loading = signal(false);
+  errorMessage = signal('');
 
   // Form fields
   selectedBlock = signal('');
@@ -72,14 +77,25 @@ export class AddHouse {
       return;
     }
 
+    this.loading.set(true);
+    this.errorMessage.set('');
+
     this.houseService.addHouse({
       block: this.selectedBlock(),
       floor: this.selectedFloor(),
       unit: this.unit(),
-      status: this.selectedResidentId() ? 'Occupied' : 'Vacant',
+      status: this.selectedResidentId() ? HouseStatus.Occupied : HouseStatus.Vacant,
       residentId: this.selectedResidentId() || undefined
+    }).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.router.navigate(['/dashboard/houses']);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.errorMessage.set('Échec de l\'ajout de la maison. Veuillez réessayer.');
+        console.error('Add house error:', err);
+      }
     });
-
-    this.router.navigate(['/dashboard/houses']);
   }
 }

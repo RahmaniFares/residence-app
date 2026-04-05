@@ -1,12 +1,15 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ResidentServices } from '../dashboard/residents/resident-services';
+import { HouseServices } from '../dashboard/houses/house-services';
 import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ResidentModel } from '../dashboard/residents/resident-model';
 
 @Component({
   selector: 'app-add-resident',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './add-resident.html',
   styleUrl: './add-resident.css',
 })
@@ -15,22 +18,44 @@ export class AddResident implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   residentService = inject(ResidentServices);
+  houseService = inject(HouseServices);
 
-  selectedHouse = signal('');
+  // Autocomplete state
+  houseSearchQuery = signal('');
+  showHouseDropdown = signal(false);
+  selectedHouseId = signal('');
+
   residentId: string | null = null;
   isEditMode = false;
 
-  houses = [
-    { id: '1', name: 'Block A,Unit 101' },
-    { id: '2', name: 'Block B,Unit 202' },
-    { id: '3', name: 'Block C,Unit 303' },
-    { id: '4', name: 'Block D,Unit 404' },
-  ];
+  // Use HouseServices to get real houses
+  houses = toSignal(this.houseService.houses$, { initialValue: [] });
+
+  // Filtered houses based on search query
+  filteredHouses = computed(() => {
+    const query = this.houseSearchQuery().toLowerCase();
+    const allHouses = this.houses();
+
+    if (!query) return allHouses.slice(0, 3); // Show first 10 if no query
+
+    return allHouses.filter(h =>
+      h.block.toLowerCase().includes(query) ||
+      h.unit.toLowerCase().includes(query) ||
+      `Maison${h.block} ${h.floor}-${h.unit}`.toLowerCase().includes(query)
+    ).slice(0, 3);
+  });
+
+  // Get selected house name for display
+  selectedHouseName = computed(() => {
+    const id = this.selectedHouseId();
+    if (!id) return '';
+    const house = this.houses().find(h => h.id === id);
+    return house ? `Maison${house.block} ${house.floor}-${house.unit}` : '';
+  });
+
   residentForm: FormGroup = this.fb.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
-    House: ['', Validators.required],
-    address: ['', Validators.required],
     birthDate: ['', Validators.required],
     phone: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
@@ -41,27 +66,31 @@ export class AddResident implements OnInit {
     this.residentId = this.route.snapshot.paramMap.get('id');
     if (this.residentId) {
       this.isEditMode = true;
-      const resident = this.residentService.getResidentById(this.residentId);
-      if (resident) {
-        this.residentForm.patchValue({
-          firstName: resident.firstName,
-          lastName: resident.lastName,
-          House: resident.House, // Note: This might need adjustment if House ID needs matching
-          address: resident.address,
-          birthDate: resident.birthDate,
-          phone: resident.phone,
-          email: resident.email,
-          status: resident.status
-        });
+      this.residentService.getResidentByIdFromApi(this.residentId).subscribe({
+        next: (resident) => {
+          this.residentForm.patchValue({
+            firstName: resident.firstName,
+            lastName: resident.lastName,
+            birthDate: resident.birthDate ? resident.birthDate.split('T')[0] : '',
+            phone: resident.phoneNumber,
+            email: resident.email,
+            status: 'Active'
+          });
 
-        // Find matching house ID if possible, otherwise keep string (select might not show correctly if IDs don't match)
-        const houseOption = this.houses.find(h => h.name === resident.House);
-        if (houseOption) {
-          this.residentForm.patchValue({ House: houseOption.id });
-        }
-      }
+        },
+        error: (err) => console.error('Failed to load resident:', err)
+      });
     }
   }
+
+
+
+  hideDropdown() {
+    // Delay to allow click on dropdown to trigger first
+    setTimeout(() => this.showHouseDropdown.set(false), 200);
+  }
+
+
 
   back() {
     this.router.navigate(['dashboard/residents']);
@@ -69,24 +98,31 @@ export class AddResident implements OnInit {
 
   save() {
     if (this.residentForm.valid) {
-      if (this.isEditMode && this.residentId) {
-        const currentResident = this.residentService.getResidentById(this.residentId);
-        if (currentResident) {
-          const selectedHouseName = this.houses.find(h => h.id === this.residentForm.value.House)?.name || this.residentForm.value.House;
+      const formValue = this.residentForm.value;
 
-          this.residentService.updateResident({
-            ...currentResident,
-            ...this.residentForm.value,
-            House: selectedHouseName,
-            block: selectedHouseName.split(',')[0]
-          });
-        }
+      if (this.isEditMode && this.residentId) {
+        // Construct the model directly from form values for update
+        const updatedResident: ResidentModel = {
+          id: this.residentId,
+          firstName: formValue.firstName,
+          lastName: formValue.lastName,
+          email: formValue.email,
+          phone: formValue.phone,
+          status: formValue.status,
+          birthDate: formValue.birthDate,
+          createdAt: new Date().toISOString() // Placeholder
+        };
+
+        this.residentService.updateResident(updatedResident).subscribe({
+          next: () => this.router.navigate(['dashboard/residents']),
+          error: (err) => console.error('Failed to update resident:', err)
+        });
       } else {
-        const selectedHouseName = this.houses.find(h => h.id === this.residentForm.value.House)?.name || this.residentForm.value.House;
-        const formValue = { ...this.residentForm.value, House: selectedHouseName };
-        this.residentService.addResident(formValue);
+        this.residentService.addResident(formValue).subscribe({
+          next: () => this.router.navigate(['dashboard/residents']),
+          error: (err) => console.error('Failed to add resident:', err)
+        });
       }
-      this.router.navigate(['dashboard/residents']);
     } else {
       this.residentForm.markAllAsTouched();
     }

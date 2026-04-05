@@ -4,10 +4,7 @@ export interface ResidentModel {
     lastName: string;
     email: string;
     phone: string;
-    address: string;
     status: string;
     createdAt: string;
-    House: string;
-    block: string;
     birthDate?: string;
 }

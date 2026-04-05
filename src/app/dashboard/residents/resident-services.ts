@@ -1,371 +1,226 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ResidentModel } from './resident-model';
-import { BehaviorSubject } from 'rxjs';
+
+// --- DTOs matching backend API ---
+
+export interface CreateResidentDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  houseId?: string;
+  birthDate?: string;
+}
+
+export interface UpdateResidentDto {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phoneNumber?: string;
+  houseId?: string;
+  birthDate?: string;
+}
+
+export interface ResidentDto {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  houseId?: string;
+  birthDate?: string;
+  residenceId: string;
+}
+
+export interface PaginatedResult<T> {
+  items: T[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ResidentServices {
+  private apiUrl = `${environment.apiUrl}/residences`;
+  private residenceId = environment.residenceId;
 
-  private residentsSubject = new BehaviorSubject<ResidentModel[]>([
-    {
-      id: 'RES-1001',
-      firstName: 'Fares',
-      lastName: 'Rahmani',
-      email: 'fares.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A,Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1002',
-      firstName: 'Hassan',
-      lastName: 'Rahmani',
-      email: 'hassan.rahmani@example.com',
-      phone: '098-765-4321',
-      address: '456 Elm St',
-      status: 'Inactive',
-      House: 'Block B, Unit 202',
-      block: 'Block B',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1003',
-      firstName: 'Omar',
-      lastName: 'Rahmani',
-      email: 'omar.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1004',
-      firstName: 'Omar',
-      lastName: 'Rahmani',
-      email: 'omar.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1005',
-      firstName: 'Ahmed',
-      lastName: 'Rahmani',
-      email: 'ahmed.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1006',
-      firstName: 'sabeh',
-      lastName: 'Rahmani',
-      email: 'sabeh.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1007',
-      firstName: 'sara',
-      lastName: 'Rahmani',
-      email: 'sara.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1008',
-      firstName: 'sara',
-      lastName: 'Rahmani',
-      email: 'sara.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1009',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1010',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1011',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1012',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1013',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1014',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1015',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1016',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1017',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1018',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1019',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1020',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1021',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1022',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1023',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1024',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    },
-    {
-      id: 'RES-1025',
-      firstName: 'ter',
-      lastName: 'Rahmani',
-      email: 'ter.rahmani@example.com',
-      phone: '123-456-7890',
-      address: '123 Main St',
-      status: 'Active',
-      House: 'Block A, Unit 101',
-      block: 'Block A',
-      birthDate: '2023-01-01',
-      createdAt: '2023-01-01',
-    }
-  ]);
-
+  private residentsSubject = new BehaviorSubject<ResidentModel[]>([]);
   residents$ = this.residentsSubject.asObservable();
 
-  addResident(resident: Omit<ResidentModel, 'id' | 'createdAt' | 'status' | 'block'>) {
-    const currentResidents = this.residentsSubject.value;
-    const lastId = currentResidents.length > 0
-      ? parseInt(currentResidents[currentResidents.length - 1].id.split('-')[1])
-      : 1000;
+  // Pagination state
+  private paginationSubject = new BehaviorSubject<Omit<PaginatedResult<any>, 'items'>>({
+    totalCount: 0,
+    pageNumber: 1,
+    pageSize: 10,
+    totalPages: 0,
+    hasPreviousPage: false,
+    hasNextPage: false,
+  });
+  pagination$ = this.paginationSubject.asObservable();
 
-    const newResident: ResidentModel = {
-      ...resident,
-      id: `RES-${lastId + 1}`,
-      status: 'Active',
-      createdAt: new Date().toISOString().split('T')[0],
-      block: resident.House ? resident.House.split(',')[0] : '', // Extract block from House if possible
-      address: resident.address,
-      birthDate: resident.birthDate
-    };
+  constructor(private http: HttpClient) { }
 
-    this.residentsSubject.next([...currentResidents, newResident]);
+  /**
+   * Fetch all residents from the backend with pagination.
+   * Updates the internal BehaviorSubject so existing template subscriptions keep working.
+   */
+  loadResidents(pageNumber: number = 1, pageSize: number = 10): Observable<PaginatedResult<ResidentDto>> {
+    let params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PaginatedResult<ResidentDto>>(
+      `${this.apiUrl}/${this.residenceId}/residents`,
+      { params }
+    ).pipe(
+      tap(result => {
+        // Map backend DTOs to local ResidentModel for backward compatibility
+        const mapped: ResidentModel[] = result.items.map(r => this.mapDtoToModel(r));
+        this.residentsSubject.next(mapped);
+        this.paginationSubject.next({
+          totalCount: result.totalCount,
+          pageNumber: result.pageNumber,
+          pageSize: result.pageSize,
+          totalPages: result.totalPages,
+          hasPreviousPage: result.hasPreviousPage,
+          hasNextPage: result.hasNextPage,
+        });
+      })
+    );
   }
 
+  /**
+   * Fetch residents by house ID with pagination.
+   */
+  loadResidentsByHouse(houseId: string, pageNumber: number = 1, pageSize: number = 10): Observable<PaginatedResult<ResidentDto>> {
+    let params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PaginatedResult<ResidentDto>>(
+      `${this.apiUrl}/${this.residenceId}/residents/house/${houseId}`,
+      { params }
+    ).pipe(
+      tap(result => {
+        const mapped: ResidentModel[] = result.items.map(r => this.mapDtoToModel(r));
+        this.residentsSubject.next(mapped);
+        this.paginationSubject.next({
+          totalCount: result.totalCount,
+          pageNumber: result.pageNumber,
+          pageSize: result.pageSize,
+          totalPages: result.totalPages,
+          hasPreviousPage: result.hasPreviousPage,
+          hasNextPage: result.hasNextPage,
+        });
+      })
+    );
+  }
+
+  /**
+   * Create a new resident via backend API.
+   */
+  addResident(resident: Omit<ResidentModel, 'id' | 'createdAt' | 'status' | 'block'>): Observable<ResidentDto> {
+    const createDto: CreateResidentDto = {
+      firstName: resident.firstName,
+      lastName: resident.lastName,
+      email: resident.email,
+      phoneNumber: resident.phone,
+      birthDate: resident.birthDate,
+    };
+
+    return this.http.post<ResidentDto>(
+      `${this.apiUrl}/${this.residenceId}/residents`,
+      createDto
+    ).pipe(
+      tap(newResident => {
+        // Add to local state for immediate UI update
+        const currentResidents = this.residentsSubject.value;
+        this.residentsSubject.next([...currentResidents, this.mapDtoToModel(newResident)]);
+      })
+    );
+  }
+
+  /**
+   * Get a single resident by ID from the backend (async).
+   */
+  getResidentByIdFromApi(id: string): Observable<ResidentDto> {
+    return this.http.get<ResidentDto>(
+      `${this.apiUrl}/${this.residenceId}/residents/${id}`
+    );
+  }
+
+  /**
+   * Get a resident by ID from local cache (synchronous).
+   * Backward-compatible method used by components that need synchronous lookups.
+   */
   getResidentById(id: string): ResidentModel | undefined {
     return this.residentsSubject.value.find(r => r.id === id);
   }
 
-  updateResident(updatedResident: ResidentModel) {
-    const currentResidents = this.residentsSubject.value;
-    const index = currentResidents.findIndex(r => r.id === updatedResident.id);
-    if (index !== -1) {
-      currentResidents[index] = updatedResident;
-      this.residentsSubject.next([...currentResidents]);
-    }
+  /**
+   * Update a resident via backend API.
+   */
+  updateResident(updatedResident: ResidentModel): Observable<ResidentDto> {
+    const updateDto: UpdateResidentDto = {
+      firstName: updatedResident.firstName,
+      lastName: updatedResident.lastName,
+      email: updatedResident.email,
+      phoneNumber: updatedResident.phone,
+      birthDate: updatedResident.birthDate,
+    };
+
+    return this.http.put<ResidentDto>(
+      `${this.apiUrl}/${this.residenceId}/residents/${updatedResident.id}`,
+      updateDto
+    ).pipe(
+      tap(updated => {
+        // Update local state
+        const currentResidents = this.residentsSubject.value;
+        const index = currentResidents.findIndex(r => r.id === updatedResident.id);
+        if (index !== -1) {
+          currentResidents[index] = this.mapDtoToModel(updated);
+          this.residentsSubject.next([...currentResidents]);
+        }
+      })
+    );
+  }
+
+  /**
+   * Delete a resident via backend API.
+   */
+  deleteResident(id: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/${this.residenceId}/residents/${id}`
+    ).pipe(
+      tap(() => {
+        // Remove from local state
+        const currentResidents = this.residentsSubject.value;
+        this.residentsSubject.next(currentResidents.filter(r => r.id !== id));
+      })
+    );
+  }
+
+  /**
+   * Map a backend ResidentDto to the local ResidentModel.
+   */
+  private mapDtoToModel(dto: ResidentDto): ResidentModel {
+    return {
+      id: dto.id,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      email: dto.email,
+      birthDate: dto.birthDate,
+      phone: dto.phoneNumber || '',
+      status: 'Active',
+      createdAt: new Date().toISOString().split('T')[0],
+    };
   }
 }

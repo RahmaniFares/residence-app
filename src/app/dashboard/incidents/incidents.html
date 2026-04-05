@@ -15,15 +15,15 @@
 <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
     <div class="grid grid-cols-3 gap-3">
         <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Open</span>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ouvert</span>
             <span class="text-2xl font-extrabold text-danger mt-1">{{openCount()}}</span>
         </div>
         <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">In Progress</span>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">En Cours</span>
             <span class="text-2xl font-extrabold text-warning mt-1">{{inProgressCount()}}</span>
         </div>
         <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Resolved</span>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Résolu</span>
             <span class="text-2xl font-extrabold text-success mt-1">{{resolvedCount()}}</span>
         </div>
     </div>
@@ -39,10 +39,11 @@
             <select
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1"
                 [value]="statusFilter()" (change)="updateStatus($event)">
-                <option>All Status</option>
-                <option>Open</option>
-                <option>In Progress</option>
-                <option>Resolved</option>
+                <option value="All Status">Tous les statuts</option>
+                <option [value]="0">Ouvert</option>
+                <option [value]="1">En cours</option>
+                <option [value]="2">Résolu</option>
+                <option [value]="3">Fermé</option>
             </select>
             <button
                 class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center">
@@ -71,14 +72,14 @@
                             <div class="flex items-center gap-3">
                                 <div class="size-8 rounded-full flex items-center justify-center text-xs font-bold"
                                     [ngClass]="{
-                                        'bg-blue-100 text-primary': incident.status === 'Open',
-                                        'bg-orange-100 text-warning': incident.status === 'In Progress',
-                                        'bg-green-100 text-success': incident.status === 'Resolved'
+                                        'bg-red-100 text-red-700': incident.status === 0,
+                                        'bg-orange-100 text-orange-700': incident.status === 1,
+                                        'bg-green-100 text-green-700': incident.status === 2 || incident.status === 3
                                     }">
-                                    {{incident.residentName.substring(0,2).toUpperCase()}}</div>
+                                    {{(incident.residentName || 'AN').substring(0,2).toUpperCase()}}</div>
                                 <div class="flex flex-col">
-                                    <span class="font-bold text-gray-900 text-sm">{{incident.residentName}}</span>
-                                    <span class="text-xs text-gray-500">{{incident.block}}, {{incident.unit}}</span>
+                                    <span class="font-bold text-gray-900 text-sm">{{incident.title}}</span>
+                                    <span class="text-xs text-gray-500">{{getCategoryLabel(incident.category)}}</span>
                                 </div>
                             </div>
                         </td>
@@ -92,10 +93,10 @@
                             <span
                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
                                 [ngClass]="{
-                                    'bg-red-100 text-danger': incident.status === 'Open',
-                                    'bg-orange-100 text-warning': incident.status === 'In Progress',
-                                    'bg-green-100 text-success': incident.status === 'Resolved'
-                                }">{{incident.status}}</span>
+                                    'bg-red-100 text-red-700': incident.status === 0,
+                                    'bg-orange-100 text-orange-700': incident.status === 1,
+                                    'bg-green-100 text-green-700': incident.status === 2 || incident.status === 3
+                                }">{{getStatusLabel(incident.status)}}</span>
                         </td>
                         <td class="px-6 py-4 md:table-cell text-right">
                             <div class="flex gap-2 justify-end">

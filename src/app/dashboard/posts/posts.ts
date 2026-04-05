@@ -1,8 +1,9 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostServices } from './post-services';
 import { PostModel } from './post-model';
+import { SettingsService } from '../settings/settings-service';
 
 @Component({
   selector: 'app-posts',
@@ -10,7 +11,7 @@ import { PostModel } from './post-model';
   templateUrl: './posts.html',
   styleUrl: './posts.css',
 })
-export class Posts {
+export class Posts implements OnInit {
   postService = inject(PostServices);
 
   // Signals
@@ -26,7 +27,9 @@ export class Posts {
   editContent = signal('');
   editImageUrl = signal('');
   editGifUrl = signal('');
-
+  settingsService = inject(SettingsService);
+  settings = this.settingsService.getSettings();
+  user = computed(() => this.settings().user);
   // Comment input per post
   commentInputs = signal<{ [postId: string]: string }>({});
   expandedComments = signal<{ [postId: string]: boolean }>({});
@@ -34,6 +37,13 @@ export class Posts {
   constructor() {
     this.postService.posts$.subscribe(data => {
       this.posts.set(data);
+    });
+  }
+
+  ngOnInit() {
+    // Load posts from backend API
+    this.postService.loadPosts(1, 50).subscribe({
+      error: (err) => console.error('Failed to load posts:', err)
     });
   }
 
@@ -76,6 +86,8 @@ export class Posts {
       content,
       imageUrl: this.newPostImageUrl() || undefined,
       gifUrl: this.newPostGifUrl() || undefined
+    }).subscribe({
+      error: (err) => console.error('Failed to create post:', err)
     });
 
     // Reset form
@@ -104,7 +116,9 @@ export class Posts {
   }
 
   toggleLike(postId: string) {
-    this.postService.toggleLike(postId);
+    this.postService.toggleLike(postId).subscribe({
+      error: (err) => console.error('Failed to toggle like:', err)
+    });
   }
 
   // Edit functionality
@@ -131,13 +145,17 @@ export class Posts {
       content,
       this.editImageUrl() || undefined,
       this.editGifUrl() || undefined
-    );
+    ).subscribe({
+      error: (err) => console.error('Failed to update post:', err)
+    });
     this.cancelEdit();
   }
 
   deletePost(postId: string) {
     if (confirm('Are you sure you want to delete this post?')) {
-      this.postService.deletePost(postId);
+      this.postService.deletePost(postId).subscribe({
+        error: (err) => console.error('Failed to delete post:', err)
+      });
     }
   }
 
@@ -161,7 +179,9 @@ export class Posts {
     const content = this.commentInputs()[postId]?.trim();
     if (!content) return;
 
-    this.postService.addComment({ postId, content });
+    this.postService.addComment({ postId, content }).subscribe({
+      error: (err) => console.error('Failed to add comment:', err)
+    });
 
     // Clear input
     this.commentInputs.set({

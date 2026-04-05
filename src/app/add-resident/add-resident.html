@@ -59,38 +59,6 @@
                 </label>
             </div>
         </div>
-        <!-- Section: Logement -->
-        <div class="space-y-4">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Logement</h2>
-            <label class="flex flex-col">
-                <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Maison</span>
-                <div class="relative">
-                    <select formControlName="House"
-                        class="form-select w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 pl-4 pr-10 focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none transition-all text-base font-normal">
-                        <option value="" disabled selected>Sélectionnez une maison</option>
-                        @for (house of houses; track house.id) {
-                        <option [value]="house.id">{{house.name}}</option>
-                        }
-                    </select>
-                    <!-- <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                        <span class="material-symbols-outlined">expand_more</span>
-                    </div> -->
-                </div>
-                @if (residentForm.get('House')?.invalid && residentForm.get('House')?.touched) {
-                <span class="text-red-500 text-xs mt-1 ml-1">Veuillez sélectionner une maison</span>
-                }
-            </label>
-            <!-- Adresse -->
-            <label class="flex flex-col group">
-                <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Adresse</span>
-                <input formControlName="address"
-                    class="form-input flex w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 text-base font-normal leading-normal"
-                    placeholder="Ex: 12 Rue des Fleurs" type="text" />
-                @if (residentForm.get('address')?.invalid && residentForm.get('address')?.touched) {
-                <span class="text-red-500 text-xs mt-1 ml-1">Ce champ est requis</span>
-                }
-            </label>
-        </div>
         <!-- Section: Contact -->
         <div class="space-y-4">
             <h2 class="text-xs font-bold uppercase tracking-wider text-gray-400 px-1">Coordonnées</h2>
@@ -128,17 +96,6 @@
                     <span class="text-red-500 text-xs mt-1 ml-1">Format d'email invalide</span>
                     }
                     }
-                </label>
-                <!-- Status -->
-                <label class="flex flex-col group">
-                    <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Statut</span>
-                    <div class="relative">
-                        <select formControlName="status"
-                            class="form-select w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 pl-4 pr-10 focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none transition-all text-base font-normal">
-                            <option value="Active">Actif</option>
-                            <option value="Inactive">Inactif</option>
-                        </select>
-                    </div>
                 </label>
             </div>
         </div>

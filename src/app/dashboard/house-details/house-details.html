@@ -7,7 +7,13 @@
                 </button>
                 <div>
                     <h1 class="text-lg lg:text-xl font-extrabold text-gray-900">{{h.block}}, Unit {{h.unit}}</h1>
-                    <p class="text-[10px] lg:text-xs text-gray-500 font-bold uppercase tracking-wider">House Details</p>
+                    <div class="flex items-center gap-2">
+                        <p class="text-[10px] lg:text-xs text-gray-500 font-bold uppercase tracking-wider">House Details
+                        </p>
+                        <span
+                            class="text-[10px] text-gray-300 font-mono bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">ID:
+                            {{h.id}}</span>
+                    </div>
                 </div>
             </div>
             <button
@@ -26,8 +32,15 @@
                     <span class="material-symbols-outlined text-primary text-xl">person</span>
                     Resident Information
                 </h2>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
-                    [ngClass]="{'bg-green-100 text-green-700': h.status === 'Occupied', 'bg-gray-100 text-gray-600': h.status === 'Vacant'}">{{h.status}}</span>
+                <div class="flex items-center gap-3">
+                    <button (click)="openResidentModal()"
+                        class="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-primary transition-colors tooltip flex items-center"
+                        title="Edit Resident">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                    </button>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                        [ngClass]="{'bg-green-100 text-green-700': h.status === HouseStatus.Occupied, 'bg-gray-100 text-gray-600': h.status === HouseStatus.Vacant}">{{getStatusLabel(h.status)}}</span>
+                </div>
             </div>
 
             <div *ngIf="resident() as r; else noResident" class="p-5">
@@ -37,7 +50,12 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-extrabold text-gray-900">{{r.firstName}} {{r.lastName}}</h3>
-                        <p class="text-sm text-gray-500">Primary Resident</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm text-gray-500 leading-none">Primary Resident</p>
+                            <span
+                                class="text-[10px] text-gray-400 font-mono bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100 uppercase tracking-tighter">ID:
+                                {{r.id}}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -104,7 +122,7 @@
                     <tbody class="divide-y divide-gray-50">
                         <tr *ngFor="let payment of visiblePayments()" class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{payment.paymentDate ? (payment.paymentDate | date:'MMM dd, yyyy') : '—'}}
+                                {{payment.createdAt ? (payment.createdAt | date:'MMM dd, yyyy') : '—'}}
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap">
                                 <div class="flex flex-col">
@@ -122,22 +140,23 @@
                                 <span
                                     class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase"
                                     [ngClass]="{
-                                        'bg-green-100 text-green-700': payment.status === 'Paid',
-                                        'bg-yellow-100 text-yellow-700': payment.status === 'Pending',
-                                        'bg-red-100 text-red-700': payment.status === 'Overdue'
+                                        'bg-green-100 text-green-700': payment.status === PaymentStatus.Paid,
+                                        'bg-yellow-100 text-yellow-700': payment.status === PaymentStatus.Pending,
+                                        'bg-red-100 text-red-700': payment.status === PaymentStatus.Overdue
                                     }">
-                                    {{payment.status}}
+                                    {{getPaymentStatusLabel(payment.status)}}
                                 </span>
                             </td>
                             <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
-                                <button *ngIf="payment.status === 'Paid'" class="text-gray-400 hover:text-primary">
+                                <button *ngIf="payment.status === PaymentStatus.Paid"
+                                    class="text-gray-400 hover:text-primary">
                                     <span class="material-symbols-outlined text-lg">receipt_long</span>
                                 </button>
-                                <button *ngIf="payment.status === 'Overdue'"
+                                <button *ngIf="payment.status === PaymentStatus.Overdue"
                                     class="text-primary font-bold text-xs hover:underline">
                                     Remind
                                 </button>
-                                <button *ngIf="payment.status === 'Pending'"
+                                <button *ngIf="payment.status === PaymentStatus.Pending"
                                     class="text-primary font-bold text-xs hover:underline">
                                     Update
                                 </button>
@@ -162,6 +181,67 @@
         </section>
     </div>
 </div>
+
+<!-- Resident Selection Dialog -->
+<div *ngIf="showResidentModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" (click)="closeResidentModal()"></div>
+
+    <!-- Dialog Content -->
+    <div
+        class="bg-white rounded-3xl shadow-2xl w-full max-w-md relative overflow-hidden animate-in fade-in zoom-in duration-200">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <div>
+                <h3 class="text-lg font-extrabold text-gray-900">Assigned Resident</h3>
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-0.5">Select a resident for this
+                    unit</p>
+            </div>
+            <button (click)="closeResidentModal()"
+                class="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-400">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <div class="p-6 space-y-4">
+            <div class="relative">
+                <label
+                    class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1.5 block px-1">Choose
+                    Resident</label>
+                <div class="relative group">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">person_search</span>
+                    <select [(ngModel)]="selectedResidentId"
+                        class="w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-bold text-gray-700 outline-none transition-all appearance-none cursor-pointer">
+                        <option [ngValue]="undefined">No resident (Vacant)</option>
+                        <option *ngFor="let r of residents()" [value]="r.id">{{r.firstName}} {{r.lastName}}</option>
+                    </select>
+                    <span
+                        class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">expand_more</span>
+                </div>
+            </div>
+
+            <div *ngIf="residents().length === 0" class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex gap-3">
+                <span class="material-symbols-outlined text-blue-500">info</span>
+                <p class="text-xs text-blue-700 font-medium leading-relaxed">No existing residents found in the records.
+                    You may need to add them first.</p>
+            </div>
+        </div>
+
+        <div class="p-6 border-t border-gray-100 bg-gray-50/50 flex gap-3">
+            <button (click)="closeResidentModal()"
+                class="flex-1 py-3.5 px-4 rounded-2xl text-sm font-extrabold text-gray-500 hover:bg-gray-200 transition-all">
+                Cancel
+            </button>
+            <button (click)="saveResidentSelection()" [disabled]="isUpdating()"
+                class="flex-1 py-3.5 px-4 rounded-2xl text-sm font-extrabold text-white bg-primary hover:bg-blue-700 shadow-md shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                <span *ngIf="isUpdating()"
+                    class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                {{isUpdating() ? 'Saving...' : 'Save Changes'}}
+            </button>
+        </div>
+    </div>
+</div>
+
 <div *ngIf="!house()" class="flex items-center justify-center h-full p-12">
     <div class="text-center">
         <span class="material-symbols-outlined text-gray-300 text-5xl mb-4">apartment</span>
