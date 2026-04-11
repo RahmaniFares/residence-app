@@ -1,20 +1,20 @@
 <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Financial Management</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Budget &amp; Payment Reminders</p>
+            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion Financière</h1>
+            <p class="text-sm text-gray-500 font-medium mt-1">Budget et Rappels de Paiement</p>
         </div>
-        <button
+        <!-- <button
             class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
             (click)="addPayment()">
             <span class="material-symbols-outlined text-[20px]">add_chart</span>
-            <span class="hidden sm:inline">Add Transaction</span>
-        </button>
+            <span class="hidden sm:inline">Ajouter une transaction</span>
+        </button> -->
     </div>
 </header>
 <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
     <section>
-        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Budget Overview</h2>
+        <h2 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Aperçu du Budget</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
@@ -23,22 +23,26 @@
                     <span
                         class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+{{budgetStats().budgetChangePercentage}}%</span>
                 </div>
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Total Budget</p>
-                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().totalBudget | currency}}</p>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Budget Total</p>
+                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().totalBudget | currency : 'TND'}}
+                </p>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <span class="material-symbols-outlined text-green-600 bg-green-50 p-2 rounded-lg">payments</span>
                 </div>
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Collected (Month)</p>
-                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().collectedAmount | currency}}</p>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Collecté (Mois)</p>
+                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().collectedAmount | currency :
+                    'TND'}}
+                </p>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <span class="material-symbols-outlined text-red-500 bg-red-50 p-2 rounded-lg">priority_high</span>
                 </div>
-                <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">Outstanding</p>
-                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().outstandingAmount | currency}}</p>
+                <p class="text-xs font-bold text-gray-500 uppercase tracking-tight">En attente</p>
+                <p class="text-2xl font-extrabold text-gray-900 mt-1">{{budgetStats().outstandingAmount | currency :
+                    'TND'}}</p>
             </div>
         </div>
     </section>
@@ -47,14 +51,15 @@
             <div>
                 <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary text-xl">list_alt</span>
-                    Syndicate Payments
+                    Paiements Syndic
                 </h2>
-                <p class="text-xs text-gray-500 mt-0.5 font-medium">Manage pending and upcoming resident fees</p>
+                <p class="text-xs text-gray-500 mt-0.5 font-medium">Gérez les frais de résident en attente et à venir
+                </p>
             </div>
             <button
                 class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-sm text-xs">
                 <span class="material-symbols-outlined text-[18px]">campaign</span>
-                Send Group Reminder
+                Envoyer un rappel groupé
             </button>
         </div>
         <div class="overflow-x-auto no-scrollbar">
@@ -63,22 +68,22 @@
                     <tr class="bg-gray-50/50">
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            House/Unit</th>
+                            Maison/Unité</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Resident Name</th>
+                            Nom du résident</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Payment Date</th>
+                            Date de paiement</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Period (Months)</th>
+                            Période (Mois)</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Amount</th>
+                            Montant</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                            Status</th>
+                            Statut</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
                             Action</th>
@@ -103,12 +108,21 @@
                                     date:'mediumDate'}} - {{payment.periodEnd | date:'mediumDate'}}</span>
                                 <span
                                     class="text-[10px] font-bold text-primary uppercase tracking-wider">{{getMonthsCount(payment.periodStart,
-                                    payment.periodEnd)}} Months</span>
+                                    payment.periodEnd)}} Mois</span>
                             </div>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="text-sm font-extrabold text-gray-900">${{payment.amount |
-                                number:'1.2-2'}}</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-extrabold"
+                                    [ngClass]="{'text-red-500': payment.amount < getExpectedAmount(payment.periodStart, payment.periodEnd), 'text-gray-900': payment.amount >= getExpectedAmount(payment.periodStart, payment.periodEnd)}">
+                                    {{payment.amount | currency:'TND':'symbol'}}
+                                </span>
+                                <span class="text-xs text-gray-500"
+                                    *ngIf="getExpectedAmount(payment.periodStart, payment.periodEnd) > 0">
+                                    Attendu : {{getExpectedAmount(payment.periodStart, payment.periodEnd) |
+                                    currency:'TND':'symbol'}}
+                                </span>
+                            </div>
                         </td>
                         <td class="px-5 py-4 whitespace-nowrap">
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase"
@@ -131,11 +145,32 @@
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-gray-100 bg-gray-50/30 flex justify-center">
-            <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
-                Load More Records
-                <span class="material-symbols-outlined text-sm">expand_more</span>
-            </button>
+        <div class="p-5 border-t border-gray-100 bg-gray-50/30 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    Affichage de {{(pagination().pageNumber - 1) * pagination().pageSize + 1}} à
+                    {{Math.min(pagination().pageNumber * pagination().pageSize, pagination().totalCount)}} sur
+                    {{pagination().totalCount}} enregistrements
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button
+                    class="size-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    [disabled]="!pagination().hasPreviousPage" (click)="onPageChange(pagination().pageNumber - 1)">
+                    <span class="material-symbols-outlined text-xl">chevron_left</span>
+                </button>
+
+                <div class="flex items-center">
+                    <span class="px-4 text-xs font-extrabold text-gray-900">Page {{pagination().pageNumber}} <span
+                            class="text-gray-400 font-medium">/ {{pagination().totalPages}}</span></span>
+                </div>
+
+                <button
+                    class="size-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    [disabled]="!pagination().hasNextPage" (click)="onPageChange(pagination().pageNumber + 1)">
+                    <span class="material-symbols-outlined text-xl">chevron_right</span>
+                </button>
+            </div>
         </div>
     </section>
 </div>

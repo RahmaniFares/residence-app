@@ -85,14 +85,14 @@ export class Residents implements OnInit {
 
   getAvatarColor(resident: ResidentModel): string {
     const colors = [
-      'bg-green-100 text-green-700',
-      'bg-orange-100 text-orange-700',
-      'bg-purple-100 text-purple-700',
-      'bg-pink-100 text-pink-700',
-      'bg-yellow-100 text-yellow-700',
-      'bg-red-100 text-red-700',
-      'bg-teal-100 text-teal-700',
-      'bg-indigo-100 text-indigo-700'
+      'bg-indigo-500',
+      'bg-emerald-500',
+      'bg-amber-500',
+      'bg-rose-500',
+      'bg-violet-500',
+      'bg-cyan-500',
+      'bg-orange-500',
+      'bg-blue-500'
     ];
     // Simple hash function to get consistent index from ID
     let hash = 0;

@@ -1,15 +1,16 @@
 <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
     <div class="flex justify-between items-center gap-4">
         <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">House Directory</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Monitor occupancy and manage individual house units.</p>
+            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Répertoire des Maisons</h1>
+            <p class="text-sm text-gray-500 font-medium mt-1">Surveillez l'occupation et gérez les unités de logement.
+            </p>
         </div>
-        <button
+        <!-- <button
             class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
             (click)="addHouse()">
             <span class="material-symbols-outlined text-[20px]">add</span>
-            Add New House
-        </button>
+            Ajouter une nouvelle maison
+        </button> -->
     </div>
 </header>
 <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
@@ -18,20 +19,20 @@
             <span class="material-symbols-outlined absolute left-3 bottom-2.5 text-gray-400">search</span>
             <input
                 class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
-                placeholder="Search by number or block..." type="text" [(ngModel)]="searchQuery" />
+                placeholder="Rechercher par numéro ou bloc..." type="text" [(ngModel)]="searchQuery" />
         </div>
         <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar pb-1 lg:pb-0">
             <select
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1 lg:flex-none"
                 [(ngModel)]="selectedStatus">
-                <option value="">All Status</option>
-                <option [value]="HouseStatus.Occupied">Occupied</option>
-                <option [value]="HouseStatus.Vacant">Vacant</option>
+                <option value="">Tous les statuts</option>
+                <option [value]="HouseStatus.Occupied">Occupée</option>
+                <option [value]="HouseStatus.Vacant">Vacante</option>
             </select>
             <select
                 class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px] flex-1 lg:flex-none"
                 [(ngModel)]="selectedBlock">
-                <option value="">All Blocks</option>
+                <option value="">Tous les blocs</option>
                 <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
             </select>
         </div>
@@ -54,28 +55,28 @@
                 <h3 class="font-extrabold text-gray-900 text-base">Maison {{house.block}} {{house.floor}}-{{house.unit}}
                 </h3>
                 <div class="mt-2 space-y-1">
-                    <p class="text-xs text-gray-500">Primary Resident</p>
+                    <p class="text-xs text-gray-500">Résident principal</p>
                     <p class="text-sm font-semibold"
                         [ngClass]="{'text-gray-700': house.residentName, 'text-gray-400': !house.residentName}">
-                        {{house.residentName || 'No resident assigned'}}
+                        {{house.residentName || 'Aucun résident assigné'}}
                     </p>
                 </div>
             </div>
             <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
                 <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
                     (click)="showHouseDetails(house.id)">
-                    Manage House
+                    Gérer la maison
                     <span class="material-symbols-outlined text-sm">chevron_right</span>
                 </button>
             </div>
         </div>
     </div>
     <div class="flex items-center justify-between py-4" *ngIf="filteredHouses().length > 0">
-        <p class="text-xs lg:text-sm text-gray-500">Showing <span class="font-bold text-gray-700">{{(page() - 1) *
+        <p class="text-xs lg:text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{(page() - 1) *
                 pageSize() + 1}}</span>
             - <span class="font-bold text-gray-700">{{ page() * pageSize() > filteredHouses().length ?
                 filteredHouses().length : page() * pageSize() }}</span>
-            of <span class="font-bold text-gray-700">{{filteredHouses().length}}</span> houses</p>
+            sur <span class="font-bold text-gray-700">{{filteredHouses().length}}</span> maisons</p>
         <div class="flex gap-2">
             <button
                 class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"

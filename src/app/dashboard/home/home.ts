@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -9,6 +9,10 @@ import { HouseServices } from '../houses/house-services';
 import { HouseStatus } from '../houses/house-model';
 import { PaymentStatus } from '../payments/payment-model';
 import { IncidentStatus } from '../incidents/incident-model';
+import { DepenseServices } from '../depenses/depense-services';
+import { environment } from '../../../environments/environment';
+import { DepenseModel } from '../depenses/depense-model';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -22,13 +26,24 @@ export class Home {
   private paymentService = inject(PaymentServices);
   private settingsService = inject(SettingsService);
   private houseService = inject(HouseServices);
+  private depenseService = inject(DepenseServices);
+
+  private residenceId = environment.residenceId;
 
   // Signals
   settings = this.settingsService.getSettings();
-  incidents = toSignal(this.incidentService.incidents$, { initialValue: [] });
   payments = toSignal(this.paymentService.payments$, { initialValue: [] });
   houses = toSignal(this.houseService.houses$, { initialValue: [] });
   paymentOverview = this.paymentService.getBudgetOverview();
+
+  // Period filter
+  filterPeriod = signal<'day' | 'month' | 'year'>('day');
+
+  // Load expenses
+  private expenses$ = this.depenseService.getExpensesByResidence(this.residenceId, { pageSize: 1000 }).pipe(
+    map(res => res.items)
+  );
+  expenses = toSignal(this.expenses$, { initialValue: [] });
 
   // Computed - User
   userName = computed(() => {
@@ -41,17 +56,6 @@ export class Home {
 
   overduePaymentsCount = computed(() => {
     return this.payments().filter(p => p.status === PaymentStatus.Overdue).length;
-  });
-
-  // Computed - Incidents
-  incidentStats = computed(() => {
-    const all = this.incidents();
-    const open = all.filter(i => i.status === IncidentStatus.Open).length;
-    const inProgress = all.filter(i => i.status === IncidentStatus.InProgress).length;
-    const resolved = all.filter(i => i.status === IncidentStatus.Resolved).length;
-    const total = all.length;
-
-    return { total, open, inProgress, resolved };
   });
 
   // Computed - Houses
@@ -68,32 +72,104 @@ export class Home {
     return { total, occupied, vacant, occupiedPct, vacantPct };
   });
 
-  // Chart Dash Arrays (Simple calculation for the donut chart)
-  incidentChartConfig = computed(() => {
-    const { total, open, inProgress, resolved } = this.incidentStats();
-    if (total === 0) return { open: '0 100', inProgress: '0 100', resolved: '0 100' };
+  // ---- Budget Evolution Logic ----
+  budgetHistory = computed(() => {
+    const initial = this.settings().residence.initialBudget || 0;
+    const payments = this.payments();
+    const expenses = this.expenses();
+    const period = this.filterPeriod();
 
-    // Circumference is approx 100 for easy calc (actually 2*pi*14 ≈ 88, but let's assume the SVG coordinate space uses 100 for dasharray relative logic or adjust)
-    // The current SVG uses `stroke-dasharray="60 100"`.
-    // Let's stick to simple percentages for now and map to the 100ish scale if the CSS/SVG expects that.
+    // Map events to a common structure
+    const allEvents = [
+      ...payments.map(p => ({
+        date: new Date(p.paymentDate || p.createdAt || new Date()),
+        amount: p.amount,
+        type: 'income' as const
+      })),
+      ...expenses.map(e => ({
+        date: new Date(e.expenseDate || e.createdAt || new Date()),
+        amount: e.amount,
+        type: 'expense' as const
+      }))
+    ];
 
-    const openPct = (open / total) * 100;
-    const inProgressPct = (inProgress / total) * 100;
-    const resolvedPct = (resolved / total) * 100;
+    allEvents.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    // Accumulate offsets
-    // Resolved starts at 0
-    // InProgress starts after resolved
-    // Open starts after resolved + inProgress
+    // Aggregate by period if needed
+    let processedEvents = allEvents;
+    if (period !== 'day') {
+      const groups = new Map<string, { date: Date, amount: number }>();
+      allEvents.forEach(e => {
+        let key = '';
+        if (period === 'month') key = `${e.date.getFullYear()}-${e.date.getMonth()}`;
+        else key = `${e.date.getFullYear()}`;
 
-    return {
-      resolved: `${resolvedPct} 100`,
-      inProgress: `${inProgressPct} 100`,
-      open: `${openPct} 100`,
+        const existing = groups.get(key) || { date: e.date, amount: 0 };
+        existing.amount += (e.type === 'income' ? e.amount : -e.amount);
+        groups.set(key, existing);
+      });
+      processedEvents = Array.from(groups.values())
+        .map(g => ({ date: g.date, amount: g.amount, type: g.amount >= 0 ? 'income' as const : 'expense' as const }));
+    }
 
-      // Offsets
-      inProgressOffset: -(resolvedPct),
-      openOffset: -(resolvedPct + inProgressPct)
-    };
+    // Calculate cumulative balance
+    let currentBalance = initial;
+    const history: { date: string, balance: number, rawDate: Date }[] = [{ date: 'Initial', balance: initial, rawDate: new Date(0) }];
+
+    processedEvents.forEach(e => {
+      if (period === 'day') {
+        currentBalance += (e.type === 'income' ? e.amount : -e.amount);
+      } else {
+        currentBalance += e.amount; // already signed in aggregation
+      }
+      
+      let dateStr = '';
+      if (period === 'day') dateStr = e.date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+      else if (period === 'month') dateStr = e.date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+      else dateStr = e.date.toLocaleDateString('fr-FR', { year: 'numeric' });
+
+      history.push({ date: dateStr, balance: currentBalance, rawDate: e.date });
+    });
+
+    return history.slice(-12); // Last 12 points
+  });
+
+  // SVG Line Chart Data
+  budgetChartPoints = computed(() => {
+    const history = this.budgetHistory();
+    if (history.length < 2) return [];
+
+    const balances = history.map(h => h.balance);
+    const maxBalance = Math.max(...balances);
+    const minBalance = Math.min(...balances);
+    const range = (maxBalance - minBalance) || 1;
+    
+    // Add 10% padding top and bottom
+    const pad = range * 0.1;
+    const chartMin = minBalance - pad;
+    const chartMax = maxBalance + pad;
+    const chartRange = chartMax - chartMin;
+
+    const width = 300;
+    const height = 100;
+
+    return history.map((h, i) => ({
+      x: (i / (history.length - 1)) * width,
+      y: height - ((h.balance - chartMin) / chartRange) * height,
+      date: h.date,
+      balance: h.balance
+    }));
+  });
+
+  budgetChartPath = computed(() => {
+    const points = this.budgetChartPoints();
+    if (points.length < 2) return '';
+    return `M ${points.map(p => `${p.x},${p.y}`).join(' L ')}`;
+  });
+
+  budgetChartArea = computed(() => {
+    const path = this.budgetChartPath();
+    if (!path) return '';
+    return `${path} L 300,100 L 0,100 Z`;
   });
 }

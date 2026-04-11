@@ -7,8 +7,8 @@
                 <span class="material-symbols-outlined text-2xl">arrow_back</span>
             </button>
             <div>
-                <h1 class="text-lg font-extrabold text-gray-900 leading-tight">Record Payment</h1>
-                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Syndicate Fees</p>
+                <h1 class="text-lg font-extrabold text-gray-900 leading-tight">Enregistrer un paiement</h1>
+                <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Frais de syndic</p>
             </div>
         </div>
     </div>
@@ -17,13 +17,13 @@
     <form class="space-y-6" [formGroup]="paymentForm" (ngSubmit)="confirmPayment()">
         <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
             <div class="space-y-2">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="unit">House / Unit</label>
+                <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="unit">Maison / Unité</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3  bottom-3 text-gray-400">search</span>
                     <select
                         class="w-full pl-10 pr-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-primary focus:border-primary text-sm font-semibold appearance-none"
                         id="unit" formControlName="houseId">
-                        <option value="">Select a unit...</option>
+                        <option value="">Sélectionnez une unité...</option>
                         <option *ngFor="let house of houses()" [value]="house.id">{{house.block}}
                             {{house.floor}}-{{house.unit}}
                         </option>
@@ -37,39 +37,69 @@
                 <input
                     class="w-full px-4 py-3 bg-gray-100 border-transparent rounded-xl text-sm font-bold text-gray-500 cursor-not-allowed focus:ring-0 focus:border-transparent"
                     id="occupant" readonly="" type="text"
-                    [value]="resident() ? (resident()!.firstName + ' ' + resident()!.lastName) : 'No resident selected'" />
+                    [value]="resident() ? (resident()!.firstName + ' ' + resident()!.lastName) : 'Aucun résident sélectionné'" />
             </div>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-6">
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="start_date">From
-                        (Month)</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="start_date">De
+                        (Mois)</label>
                     <input
-                        class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-primary focus:border-primary text-sm font-semibold"
+                        class="w-full px-4 py-3 border-gray-200 rounded-xl focus:ring-primary focus:border-primary text-sm font-semibold transition-all"
+                        [class.bg-gray-100]="paymentForm.get('startDate')?.disabled"
+                        [class.text-gray-400]="paymentForm.get('startDate')?.disabled"
+                        [class.cursor-not-allowed]="paymentForm.get('startDate')?.disabled"
+                        [class.bg-gray-50]="!paymentForm.get('startDate')?.disabled"
                         id="start_date" type="month" formControlName="startDate" />
                 </div>
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="end_date">To
-                        (Month)</label>
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-tight" for="end_date">À
+                        (Mois)</label>
                     <input
                         class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-primary focus:border-primary text-sm font-semibold"
                         id="end_date" type="month" formControlName="endDate" />
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
-                <div>
-                    <p class="text-[10px] font-bold text-primary uppercase">Number of Months</p>
-                    <p class="text-xl font-extrabold text-gray-900">{{monthsCount()}} Months</p>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
+                    <div>
+                        <p class="text-[10px] font-bold text-primary uppercase">Nombre de mois</p>
+                        <p class="text-xl font-extrabold text-gray-900">{{monthsCount()}} Mois</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-primary uppercase">Montant total</p>
+                        <p class="text-xl font-extrabold text-primary">{{totalAmount() | currency}}</p>
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-bold text-primary uppercase">Total Amount</p>
-                    <p class="text-xl font-extrabold text-primary">{{totalAmount() | currency}}</p>
+
+                <!-- Duplicate Payment Warning -->
+                <div *ngIf="overlappingMonths().length > 0" class="p-4 bg-red-50 rounded-xl border border-red-100 flex items-start gap-3 animate-pulse">
+                    <span class="material-symbols-outlined text-red-500 mt-0.5">error</span>
+                    <div>
+                        <p class="text-[10px] font-bold text-red-600 uppercase tracking-wider mb-1">Paiement déjà effectué</p>
+                        <p class="text-xs font-medium text-red-700 leading-relaxed">
+                            Les mois suivants sont déjà payés pour cette unité : 
+                            <span class="font-extrabold">{{overlappingMonths().join(', ')}}</span>. 
+                            Veuillez ajuster la période.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Mathematical Breakdown -->
+                <div *ngIf="paymentBreakdown() && overlappingMonths().length === 0" class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-gray-400 mt-0.5">calculate</span>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Détail du calcul</p>
+                        <p class="text-[11px] font-medium text-gray-600 leading-relaxed italic">
+                            {{paymentBreakdown()}} = {{totalAmount() | currency}}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
         <div *ngIf="!hideUpload()" class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <label class="text-xs font-bold text-gray-500 uppercase tracking-tight">Receipt Upload (Optional)</label>
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-tight">Téléchargement du reçu (Optionnel)</label>
             <div class="relative group">
                 <input class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="receipt" type="file" />
                 <div
@@ -79,8 +109,8 @@
                         <span class="material-symbols-outlined text-2xl">add_a_photo</span>
                     </div>
                     <div class="text-center">
-                        <p class="text-sm font-bold text-gray-700">Upload Receipt</p>
-                        <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 10MB</p>
+                        <p class="text-sm font-bold text-gray-700">Télécharger le reçu</p>
+                        <p class="text-xs text-gray-500 mt-1">PNG, JPG jusqu'à 10 Mo</p>
                     </div>
                 </div>
             </div>
@@ -88,13 +118,13 @@
         <div class="flex flex-col gap-3 pt-4">
             <button
                 class="w-full bg-primary hover:bg-blue-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                type="submit" [disabled]="paymentForm.invalid">
-                Confirm Payment
+                type="submit" [disabled]="paymentForm.invalid || overlappingMonths().length > 0">
+                Confirmer le paiement
             </button>
             <button
                 class="w-full bg-white border border-gray-200 text-gray-500 py-4 rounded-xl font-bold hover:bg-gray-50 transition-all"
                 type="button" (click)="Cancel()">
-                Cancel
+                Annuler
             </button>
         </div>
     </form>

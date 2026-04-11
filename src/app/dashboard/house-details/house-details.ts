@@ -9,6 +9,9 @@ import { PaymentModel, PaymentStatus } from '../payments/payment-model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { TarifService } from '../tarifs/tarif-service';
+import { TarifDto, TarifHistoryDto } from '../tarifs/tarif-model';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-house-details',
@@ -33,6 +36,11 @@ export class HouseDetails implements OnInit {
   isUpdating = signal(false);
   payments = signal<PaymentModel[]>([]);
   showAllPayments = signal(false);
+  
+  tarifService = inject(TarifService);
+  currentYear = signal(new Date().getFullYear());
+  tarifs = signal<TarifDto[]>([]);
+  tarifHistory = signal<TarifHistoryDto[]>([]);
 
   HouseStatus = HouseStatus; // Make enum accessible in template
   PaymentStatus = PaymentStatus;
@@ -41,6 +49,77 @@ export class HouseDetails implements OnInit {
     const all = this.payments();
     return this.showAllPayments() ? all : all.slice(0, 4);
   });
+
+  monthlyStatus = computed(() => {
+    const year = this.currentYear();
+    const payments = this.payments();
+    const history = this.tarifHistory();
+    const tarifs = this.tarifs();
+
+    const months = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ];
+
+    return months.map((name, index) => {
+      const monthDate = new Date(year, index, 1);
+      
+      // Find if this month is covered by any payment
+      const isPaid = payments.some(p => {
+        const start = new Date(p.periodStart);
+        const end = new Date(p.periodEnd);
+        // Normalize to floor of month
+        const pStart = new Date(start.getFullYear(), start.getMonth(), 1);
+        const pEnd = new Date(end.getFullYear(), end.getMonth(), 1);
+        return monthDate >= pStart && monthDate <= pEnd && p.status === PaymentStatus.Paid;
+      });
+
+      // Find rate for this month
+      const rate = this.getRateForDate(monthDate, tarifs, history);
+
+      return {
+        name,
+        isPaid,
+        rate,
+        date: monthDate
+      };
+    });
+  });
+
+  getRateForDate(date: Date, tarifs: TarifDto[], history: TarifHistoryDto[]): number {
+    let rate = 0;
+    
+    // Check baseline tarifs
+    const activeTarif = tarifs.find(t => {
+      const eff = new Date(t.effectiveDate);
+      const end = t.endDate ? new Date(t.endDate) : new Date('2099-12-31');
+      return eff <= date && date <= end;
+    });
+
+    if (activeTarif) {
+      rate = activeTarif.amount;
+    }
+
+    // Overlay history (which often contains the most specific current rates)
+    if (history && history.length > 0) {
+      const sortedHistory = [...history].sort((a, b) => new Date(a.effectiveDate).getTime() - new Date(b.effectiveDate).getTime());
+      for (const h of sortedHistory) {
+         if (new Date(h.effectiveDate) <= date) {
+             rate = h.newAmount;
+         }
+      }
+    }
+
+    return rate;
+  }
+
+  nextYear() {
+    this.currentYear.update(y => y + 1);
+  }
+
+  prevYear() {
+    this.currentYear.update(y => y - 1);
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -55,6 +134,10 @@ export class HouseDetails implements OnInit {
         this.paymentService.payments$.subscribe(housePayments => {
           this.payments.set(housePayments);
         });
+
+        // Load tarifs
+        this.tarifService.getTarifsByResidence(environment.residenceId).subscribe(t => this.tarifs.set(t));
+        this.tarifService.getResidenceTarifHistory(environment.residenceId).subscribe(h => this.tarifHistory.set(h));
       }
     });
   }

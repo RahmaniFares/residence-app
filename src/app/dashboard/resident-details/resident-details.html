@@ -6,7 +6,7 @@
                 <span class="material-symbols-outlined text-gray-600">arrow_back</span>
             </button>
             <div>
-                <h1 class="text-xl font-extrabold text-gray-900">Resident Profile</h1>
+                <h1 class="text-xl font-extrabold text-gray-900">Profil du Résident</h1>
                 <p class="text-sm font-medium text-primary">{{r.firstName}} {{r.lastName}}</p>
             </div>
         </div>
@@ -27,14 +27,14 @@
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-gray-400">home</span>
                         <div>
-                            <p class="text-xs text-gray-500 font-medium">Residence</p>
+                            <p class="text-xs text-gray-500 font-medium">Résidence</p>
                             <!-- <p class="text-sm font-bold text-gray-800">{{r.House || 'N/A'}}</p> -->
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-gray-400">event</span>
                         <div>
-                            <p class="text-xs text-gray-500 font-medium">Joined Date</p>
+                            <p class="text-xs text-gray-500 font-medium">Date d'inscription</p>
                             <p class="text-sm font-bold text-gray-800">{{r.createdAt | date:'mediumDate'}}</p>
                         </div>
                     </div>
@@ -48,62 +48,62 @@
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-gray-400">call</span>
                         <div>
-                            <p class="text-xs text-gray-500 font-medium">Phone</p>
+                            <p class="text-xs text-gray-500 font-medium">Téléphone</p>
                             <p class="text-sm font-bold text-gray-800">{{r.phone}}</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col">
-                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Actions</h3>
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Actions Rapides</h3>
                 <div class="flex-1 space-y-3">
                     <a [href]="'mailto:' + r.email"
                         class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-all shadow-sm">
                         <span class="material-symbols-outlined text-[20px]">mail</span>
-                        Send Email
+                        Envoyer un email
                     </a>
                     <a [href]="'sms:' + r.phone"
                         class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-all">
                         <span class="material-symbols-outlined text-[20px] text-gray-500">sms</span>
-                        Send SMS
+                        Envoyer un SMS
                     </a>
                     <button
                         class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#25D366]/10 text-[#075E54] border border-[#25D366]/20 rounded-xl font-bold text-sm hover:bg-[#25D366]/20 transition-all">
                         <span class="material-symbols-outlined text-[20px]">chat_bubble</span>
-                        Open WhatsApp
+                        Ouvrir WhatsApp
                     </button>
                 </div>
             </div>
         </div>
         <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Engagement Summary</h3>
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Résumé de l'engagement</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
                     <div class="flex items-center justify-between mb-2">
                         <span class="material-symbols-outlined text-green-600">check_circle</span>
                         <span
-                            class="text-[10px] font-extrabold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">GOOD</span>
+                            class="text-[10px] font-extrabold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">BON</span>
                     </div>
                     <p class="text-2xl font-extrabold text-gray-900">{{paidMonthsCount()}}</p>
-                    <p class="text-xs font-bold text-gray-500">Paid Months</p>
+                    <p class="text-xs font-bold text-gray-500">Mois payés</p>
                 </div>
                 <div class="p-4 bg-red-50 rounded-xl border border-red-100">
                     <div class="flex items-center justify-between mb-2">
                         <span class="material-symbols-outlined text-red-600">error</span>
                         <span
-                            class="text-[10px] font-extrabold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">PENDING</span>
+                            class="text-[10px] font-extrabold text-red-600 bg-red-100 px-2 py-0.5 rounded-full">EN ATTENTE</span>
                     </div>
                     <p class="text-2xl font-extrabold text-red-700">{{unpaidMonthsCount()}}</p>
-                    <p class="text-xs font-bold text-red-500">Unpaid Months</p>
+                    <p class="text-xs font-bold text-red-500">Mois non payés</p>
                 </div>
                 <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
                     <div class="flex items-center justify-between mb-2">
                         <span class="material-symbols-outlined text-orange-600">report_problem</span>
                         <span
-                            class="text-[10px] font-extrabold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">ACTIVE</span>
+                            class="text-[10px] font-extrabold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full">ACTIF</span>
                     </div>
                     <p class="text-2xl font-extrabold text-orange-700">{{activeIncidentsCount()}}</p>
-                    <p class="text-xs font-bold text-orange-500">Active Incidents</p>
+                    <p class="text-xs font-bold text-orange-500">Incidents actifs</p>
                 </div>
             </div>
         </div>
@@ -111,10 +111,10 @@
             <div class="flex border-b border-gray-100">
                 <button class="flex-1 py-4 text-sm font-bold border-b-2 transition-colors"
                     [ngClass]="{'border-primary text-primary': activeTab() === 'payments', 'border-transparent text-gray-400 hover:text-gray-600': activeTab() !== 'payments'}"
-                    (click)="setActiveTab('payments')">Payment History</button>
+                    (click)="setActiveTab('payments')">Historique des paiements</button>
                 <button class="flex-1 py-4 text-sm font-bold border-b-2 transition-colors"
                     [ngClass]="{'border-primary text-primary': activeTab() === 'incidents', 'border-transparent text-gray-400 hover:text-gray-600': activeTab() !== 'incidents'}"
-                    (click)="setActiveTab('incidents')">Incident Logs</button>
+                    (click)="setActiveTab('incidents')">Journal des incidents</button>
                 <button class="flex-1 py-4 text-sm font-bold border-b-2 transition-colors"
                     [ngClass]="{'border-primary text-primary': activeTab() === 'documents', 'border-transparent text-gray-400 hover:text-gray-600': activeTab() !== 'documents'}"
                     (click)="setActiveTab('documents')">Documents</button>
@@ -127,11 +127,11 @@
                         <thead class="bg-gray-50/50">
                             <tr>
                                 <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Period
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Période
                                 </th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Amount
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Montant
                                 </th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut
                                 </th>
                             </tr>
                         </thead>
@@ -160,7 +160,7 @@
                 <ng-template #noPayments>
                     <div class="p-12 text-center text-gray-500">
                         <span class="material-symbols-outlined text-4xl mb-2 text-gray-300">receipt_long</span>
-                        <p class="text-sm font-bold">No payment history available.</p>
+                        <p class="text-sm font-bold">Aucun historique de paiement disponible.</p>
                     </div>
                 </ng-template>
             </div>
@@ -172,10 +172,10 @@
                         <thead class="bg-gray-50/50">
                             <tr>
                                 <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date
-                                    Reported</th>
+                                    de signalement</th>
                                 <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
                                     Description</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status
+                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut
                                 </th>
                             </tr>
                         </thead>
@@ -203,7 +203,7 @@
                 <ng-template #noIncidents>
                     <div class="p-12 text-center text-gray-500">
                         <span class="material-symbols-outlined text-4xl mb-2 text-gray-300">report_problem</span>
-                        <p class="text-sm font-bold">No incidents reported.</p>
+                        <p class="text-sm font-bold">Aucun incident signalé.</p>
                     </div>
                 </ng-template>
             </div>
@@ -213,8 +213,8 @@
                 <div class="size-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-gray-300 text-3xl">folder_off</span>
                 </div>
-                <p class="text-sm font-bold text-gray-800">No documents found</p>
-                <p class="text-xs text-gray-400 mt-1">Uploaded documents will appear here.</p>
+                <p class="text-sm font-bold text-gray-800">Aucun document trouvé</p>
+                <p class="text-xs text-gray-400 mt-1">Les documents téléchargés apparaîtront ici.</p>
             </div>
         </div>
     </div>
@@ -222,7 +222,7 @@
 <div *ngIf="!resident()" class="flex items-center justify-center h-full p-12">
     <div class="text-center">
         <span class="material-symbols-outlined text-gray-300 text-5xl mb-4">person_off</span>
-        <p class="text-gray-500 font-medium">Resident not found</p>
-        <button class="mt-4 text-primary font-bold text-sm hover:underline" (click)="back()">Go Back</button>
+        <p class="text-gray-500 font-medium">Résident non trouvé</p>
+        <button class="mt-4 text-primary font-bold text-sm hover:underline" (click)="back()">Retourner</button>
     </div>
 </div>

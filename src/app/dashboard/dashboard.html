@@ -13,7 +13,7 @@
          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
          <span class="material-symbols-outlined text-xl"
             routerLinkActive="font-variation-settings: 'FILL' 1;">payments</span>
-         <span class="font-medium text-sm">Payments</span>
+         <span class="font-medium text-sm">Paiements</span>
       </a>
       <a [routerLink]="['/dashboard/incidents']" (click)="showMobileMenu = false"
          routerLinkActive="bg-primary/10 text-primary"
@@ -27,7 +27,7 @@
          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
          <span class="material-symbols-outlined text-xl"
             routerLinkActive="font-variation-settings: 'FILL' 1;">settings</span>
-         <span class="font-medium text-sm">Settings</span>
+         <span class="font-medium text-sm">Paramètres</span>
       </a>
    </div>
 
@@ -36,19 +36,19 @@
       <a [routerLink]="['/dashboard/home']" routerLinkActive="text-primary"
          class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
          <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">dashboard</span>
-         <span class="text-[10px] font-bold">Home</span>
+         <span class="text-[10px] font-bold">Accueil</span>
       </a>
 
       <a [routerLink]="['/dashboard/residents']" routerLinkActive="text-primary"
          class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
          <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">group</span>
-         <span class="text-[10px] font-bold">Residents</span>
+         <span class="text-[10px] font-bold">Résidents</span>
       </a>
 
       <a [routerLink]="['/dashboard/houses']" routerLinkActive="text-primary"
          class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
          <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">apartment</span>
-         <span class="text-[10px] font-bold">Houses</span>
+         <span class="text-[10px] font-bold">Maisons</span>
       </a>
 
       <button (click)="toggleMobileMenu()" [class.text-primary]="showMobileMenu"
@@ -56,7 +56,7 @@
          <span class="material-symbols-outlined" [style.font-variation-settings]="showMobileMenu ? '\'FILL\' 1' : ''">
             {{ showMobileMenu ? 'apps' : 'more_horiz' }}
          </span>
-         <span class="text-[10px] font-bold">More</span>
+         <span class="text-[10px] font-bold">Plus</span>
       </button>
    </nav>
 </div>

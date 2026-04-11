@@ -10,32 +10,32 @@
             [routerLink]="['/dashboard/home']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings: 'FILL' 1;">dashboard</span>
-            <span class="font-semibold text-sm">Dashboard</span>
+            <span class="font-semibold text-sm">Tableau de bord</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/residents']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings: 'FILL' 1;">group</span>
-            <span class="font-semibold text-sm">Residents</span>
+            <span class="font-semibold text-sm">Résidents</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/houses']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">apartment</span>
-            <span class="font-semibold text-sm">Houses</span>
+            <span class="font-semibold text-sm">Maisons</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/payments']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">payments</span>
-            <span class="font-semibold text-sm">Payments</span>
+            <span class="font-semibold text-sm">Paiements</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+        <!-- <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/incidents']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">report_problem</span>
             <span class="font-semibold text-sm">Incidents</span>
-        </a>
+        </a> -->
         <!-- <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/posts']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
@@ -49,10 +49,16 @@
             <span class="font-semibold text-sm">Dépenses</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/tarifs']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">sell</span>
+            <span class="font-semibold text-sm">Tarifs</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/settings']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">settings</span>
-            <span class="font-semibold text-sm">Settings</span>
+            <span class="font-semibold text-sm">Paramètres</span>
         </a>
     </nav>
     <div class="p-4 border-t border-gray-100">
@@ -63,11 +69,11 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold truncate text-gray-900">{{user().firstName}} {{user().lastName}}</p>
-                <p class="text-xs text-gray-500 truncate">Admin Manager</p>
+                <p class="text-xs text-gray-500 truncate">Gestionnaire Admin</p>
             </div>
             <button (click)="logout()"
                 class="size-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                title="Logout">
+                title="Déconnexion">
                 <span class="material-symbols-outlined text-[20px]">logout</span>
             </button>
         </div>

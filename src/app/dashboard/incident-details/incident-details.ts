@@ -74,7 +74,7 @@ export class IncidentDetails implements OnInit {
           status: dto.status,
           location: dto.location,
           residentId: dto.residentId,
-          residentName: dto.reporter || 'Anonymous',
+          residentName: dto.reporter || 'Anonyme',
           dateReported: dto.createdAt.split('T')[0]
         };
         this.incident.set(incidentData);
@@ -98,7 +98,7 @@ export class IncidentDetails implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load incident or resident details:', err);
-        this.toastr.error('Failed to load incident details');
+        this.toastr.error('Échec du chargement des détails de l\'incident');
         this.isLoading.set(false);
       }
     });
@@ -153,15 +153,15 @@ export class IncidentDetails implements OnInit {
           this.comments.update(prev => [...prev, {
             id: newComment.id,
             incidentId: newComment.incidentId,
-            author: newComment.authorName || 'You',
+            author: newComment.authorName || 'Vous',
             text: newComment.text,
             timestamp: new Date(newComment.createdAt),
             isCurrentUser: true
           }]);
           this.newCommentText.set('');
-          this.toastr.success('Comment posted');
+          this.toastr.success('Commentaire posté');
         },
-        error: () => this.toastr.error('Failed to post comment')
+        error: () => this.toastr.error('Échec de l\'envoi du commentaire')
       });
     }
   }
@@ -184,9 +184,9 @@ export class IncidentDetails implements OnInit {
       }).subscribe({
         next: () => {
           this.incident.update(prev => prev ? { ...prev, status: newStatus } : undefined);
-          this.toastr.success('Status updated to ' + newStatus);
+          this.toastr.success('Statut mis à jour');
         },
-        error: () => this.toastr.error('Failed to update status')
+        error: () => this.toastr.error('Échec de la mise à jour du statut')
       });
     }
   }

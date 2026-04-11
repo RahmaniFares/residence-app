@@ -1,14 +1,14 @@
 <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
     <div class="flex justify-between items-center gap-4">
         <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Community Posts</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Share updates, announcements, and connect with residents.
+            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Publications de la Communauté</h1>
+            <p class="text-sm text-gray-500 font-medium mt-1">Partagez des mises à jour, des annonces et connectez-vous avec les résidents.
             </p>
         </div>
         <div class="flex items-center gap-3">
             <div class="bg-primary/10 text-primary px-4 py-2 rounded-xl flex items-center gap-2">
                 <span class="material-symbols-outlined text-lg">article</span>
-                <span class="font-bold text-sm">{{totalPosts()}} Posts</span>
+                <span class="font-bold text-sm">{{totalPosts()}} Publications</span>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
                 <div class="flex-1">
                     <textarea
                         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none resize-none min-h-[100px] placeholder:text-gray-400"
-                        placeholder="What's on your mind? Share an update with the community..."
+                        placeholder="Quoi de neuf ? Partagez une mise à jour avec la communauté..."
                         [value]="newPostContent()" (input)="newPostContent.set($any($event.target).value)"></textarea>
 
                     <!-- Media URL Input -->
@@ -36,7 +36,7 @@
                                 'gif_box'}}</span>
                             <input type="text"
                                 class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-                                [placeholder]="mediaType() === 'image' ? 'Enter image URL...' : 'Enter GIF URL...'"
+                                [placeholder]="mediaType() === 'image' ? 'Entrez l\'URL de l\'image...' : 'Entrez l\'URL du GIF...'"
                                 [value]="mediaType() === 'image' ? newPostImageUrl() : newPostGifUrl()"
                                 (input)="mediaType() === 'image' ? newPostImageUrl.set($any($event.target).value) : newPostGifUrl.set($any($event.target).value)" />
                             <button class="p-2 text-gray-400 hover:text-red-500 transition-colors"
@@ -73,7 +73,7 @@
                 class="bg-primary hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 [disabled]="!newPostContent().trim()" (click)="createPost()">
                 <span class="material-symbols-outlined text-lg">send</span>
-                Post
+                Publier
             </button>
         </div>
     </div>
@@ -99,7 +99,7 @@
                                 </span>
                             </div>
                             <span class="text-xs text-gray-400">{{getTimeAgo(post.createdAt)}}</span>
-                            <span *ngIf="post.updatedAt" class="text-xs text-gray-400 italic"> · Edited</span>
+                            <span *ngIf="post.updatedAt" class="text-xs text-gray-400 italic"> · Modifié</span>
                         </div>
                     </div>
                     <!-- Post Actions (only for author) -->
@@ -129,18 +129,18 @@
                         [value]="editContent()" (input)="editContent.set($any($event.target).value)"></textarea>
                     <input type="text"
                         class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-                        placeholder="Image URL (optional)" [value]="editImageUrl()"
+                        placeholder="URL de l'image (optionnel)" [value]="editImageUrl()"
                         (input)="editImageUrl.set($any($event.target).value)" />
                     <div class="flex gap-2 justify-end">
                         <button
                             class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                             (click)="cancelEdit()">
-                            Cancel
+                            Annuler
                         </button>
                         <button
                             class="px-4 py-2 text-sm font-bold bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors"
                             (click)="saveEdit(post.id)">
-                            Save Changes
+                            Enregistrer les modifications
                         </button>
                     </div>
                 </div>
@@ -171,7 +171,7 @@
                 </div>
                 <button class="hover:underline cursor-pointer" (click)="toggleComments(post.id)"
                     *ngIf="post.comments.length > 0">
-                    {{post.comments.length}} {{post.comments.length === 1 ? 'comment' : 'comments'}}
+                    {{post.comments.length}} {{post.comments.length === 1 ? 'commentaire' : 'commentaires'}}
                 </button>
             </div>
 
@@ -183,13 +183,13 @@
                     (click)="toggleLike(post.id)">
                     <span class="material-symbols-outlined text-lg"
                         [class.liked-icon]="isLiked(post.id)">favorite</span>
-                    <span>{{isLiked(post.id) ? 'Liked' : 'Like'}}</span>
+                    <span>{{isLiked(post.id) ? 'Aimé' : 'J\'aime'}}</span>
                 </button>
                 <button
                     class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium text-sm text-gray-500 hover:bg-gray-50 transition-all"
                     (click)="toggleComments(post.id)">
                     <span class="material-symbols-outlined text-lg">chat_bubble_outline</span>
-                    <span>Comment</span>
+                    <span>Commenter</span>
                 </button>
             </div>
 
@@ -225,7 +225,7 @@
                         <div class="flex-1 flex gap-2">
                             <input type="text"
                                 class="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-                                placeholder="Write a comment..." [value]="getCommentInput(post.id)"
+                                placeholder="Écrire un commentaire..." [value]="getCommentInput(post.id)"
                                 (input)="updateCommentInput(post.id, $any($event.target).value)"
                                 (keyup.enter)="addComment(post.id)" />
                             <button
@@ -245,8 +245,8 @@
             <div class="size-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <span class="material-symbols-outlined text-3xl text-gray-400">article</span>
             </div>
-            <h3 class="font-bold text-gray-900 mb-2">No posts yet</h3>
-            <p class="text-sm text-gray-500">Be the first to share something with the community!</p>
+            <h3 class="font-bold text-gray-900 mb-2">Aucune publication pour le moment</h3>
+            <p class="text-sm text-gray-500">Soyez le premier à partager quelque chose avec la communauté !</p>
         </div>
     </div>
 </div>

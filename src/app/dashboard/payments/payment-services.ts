@@ -20,6 +20,17 @@ export class PaymentServices {
     private paymentsSubject = new BehaviorSubject<PaymentModel[]>([]);
     payments$ = this.paymentsSubject.asObservable();
 
+    // Pagination state
+    private paginationSubject = new BehaviorSubject<Omit<PaginatedResult<any>, 'items'>>({
+        totalCount: 0,
+        pageNumber: 1,
+        pageSize: 10,
+        totalPages: 0,
+        hasPreviousPage: false,
+        hasNextPage: false,
+    });
+    pagination$ = this.paginationSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -37,6 +48,14 @@ export class PaymentServices {
             tap(result => {
                 const mapped = result.items.map(p => this.mapDtoToModel(p));
                 this.paymentsSubject.next(mapped);
+                this.paginationSubject.next({
+                    totalCount: result.totalCount,
+                    pageNumber: result.pageNumber,
+                    pageSize: result.pageSize,
+                    totalPages: result.totalPages,
+                    hasPreviousPage: result.hasPreviousPage,
+                    hasNextPage: result.hasNextPage,
+                });
             })
         );
     }
@@ -56,6 +75,14 @@ export class PaymentServices {
             tap(result => {
                 const mapped = result.items.map(p => this.mapDtoToModel(p));
                 this.paymentsSubject.next(mapped);
+                this.paginationSubject.next({
+                    totalCount: result.totalCount,
+                    pageNumber: result.pageNumber,
+                    pageSize: result.pageSize,
+                    totalPages: result.totalPages,
+                    hasPreviousPage: result.hasPreviousPage,
+                    hasNextPage: result.hasNextPage,
+                });
             })
         );
     }
@@ -75,6 +102,14 @@ export class PaymentServices {
             tap(result => {
                 const mapped = result.items.map(p => this.mapDtoToModel(p));
                 this.paymentsSubject.next(mapped);
+                this.paginationSubject.next({
+                    totalCount: result.totalCount,
+                    pageNumber: result.pageNumber,
+                    pageSize: result.pageSize,
+                    totalPages: result.totalPages,
+                    hasPreviousPage: result.hasPreviousPage,
+                    hasNextPage: result.hasNextPage,
+                });
             })
         );
     }
