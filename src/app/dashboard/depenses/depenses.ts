@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
@@ -27,6 +28,7 @@ export class Depenses implements OnInit, OnDestroy {
 
   // Data state
   depenses = signal<DepenseModel[]>([]);
+  loading = toSignal(this.depenseService.loading$, { initialValue: false });
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 

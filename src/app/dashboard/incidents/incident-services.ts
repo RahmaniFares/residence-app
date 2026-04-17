@@ -29,6 +29,9 @@ export class IncidentServices {
     private commentsSubject = new BehaviorSubject<CommentModel[]>([]);
     comments$ = this.commentsSubject.asObservable();
 
+    private loadingSubject = new BehaviorSubject<boolean>(false);
+    loading$ = this.loadingSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -39,13 +42,19 @@ export class IncidentServices {
             .set('pageNumber', pageNumber.toString())
             .set('pageSize', pageSize.toString());
 
+        this.loadingSubject.next(true);
         return this.http.get<PaginatedResult<IncidentDto>>(
             `${this.apiUrl}/${this.residenceId}/incidents`,
             { params }
         ).pipe(
-            tap(result => {
-                const mapped = result.items.map(i => this.mapDtoToModel(i));
-                this.incidentsSubject.next(mapped);
+            tap({
+                next: (result) => {
+                    const mapped = result.items.map(i => this.mapDtoToModel(i));
+                    this.incidentsSubject.next(mapped);
+                    this.loadingSubject.next(false);
+                },
+                error: () => this.loadingSubject.next(false),
+                complete: () => this.loadingSubject.next(false)
             })
         );
     }

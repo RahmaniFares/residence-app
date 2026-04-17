@@ -1,93 +1,111 @@
-<header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
-    <div class="flex justify-between items-center gap-4">
-        <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Répertoire des Maisons</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Surveillez l'occupation et gérez les unités de logement.
-            </p>
-        </div>
-        <!-- <button
-            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
-            (click)="addHouse()">
-            <span class="material-symbols-outlined text-[20px]">add</span>
-            Ajouter une nouvelle maison
-        </button> -->
-    </div>
-</header>
-<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
-    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
-        <div class="relative w-full lg:flex-1">
-            <span class="material-symbols-outlined absolute left-3 bottom-2.5 text-gray-400">search</span>
-            <input
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
-                placeholder="Rechercher par numéro ou bloc..." type="text" [(ngModel)]="searchQuery" />
-        </div>
-        <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar pb-1 lg:pb-0">
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1 lg:flex-none"
-                [(ngModel)]="selectedStatus">
-                <option value="">Tous les statuts</option>
-                <option [value]="HouseStatus.Occupied">Occupée</option>
-                <option [value]="HouseStatus.Vacant">Vacante</option>
-            </select>
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px] flex-1 lg:flex-none"
-                [(ngModel)]="selectedBlock">
-                <option value="">Tous les blocs</option>
-                <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
-            </select>
-        </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <div *ngFor="let house of paginatedHouses()"
-            class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
-            <div class="flex justify-between items-start mb-4">
-                <div class="size-10 bg-gray-50 rounded-lg flex items-center justify-center"
-                    [ngClass]="{'bg-blue-50 text-primary': house.status === HouseStatus.Occupied, 'bg-gray-50 text-gray-400': house.status === HouseStatus.Vacant}">
-                    <span class="material-symbols-outlined">{{house.status === HouseStatus.Occupied ? 'apartment' :
-                        'home_work'}}</span>
-                </div>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
-                    [ngClass]="{'bg-green-100 text-green-700': house.status === HouseStatus.Occupied, 'bg-gray-100 text-gray-600': house.status === HouseStatus.Vacant}">
-                    {{getStatusLabel(house.status)}}
-                </span>
-            </div>
+<div class="animate-in fade-in duration-500">
+    <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+        <div class="flex justify-between items-center gap-4">
             <div>
-                <h3 class="font-extrabold text-gray-900 text-base">Maison {{house.block}} {{house.floor}}-{{house.unit}}
-                </h3>
-                <div class="mt-2 space-y-1">
-                    <p class="text-xs text-gray-500">Résident principal</p>
-                    <p class="text-sm font-semibold"
-                        [ngClass]="{'text-gray-700': house.residentName, 'text-gray-400': !house.residentName}">
-                        {{house.residentName || 'Aucun résident assigné'}}
-                    </p>
+                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Répertoire des Maisons</h1>
+                <p class="text-sm text-gray-500 font-medium mt-1">Surveillez l'occupation et gérez les unités de logement.
+                </p>
+            </div>
+            <!-- <button
+                class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+                (click)="addHouse()">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Ajouter une nouvelle maison
+            </button> -->
+        </div>
+    </header>
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+            <div class="relative w-full lg:flex-1">
+                <span class="material-symbols-outlined absolute left-3 bottom-2.5 text-gray-400">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                    placeholder="Rechercher par numéro ou bloc..." type="text" [(ngModel)]="searchQuery" />
+            </div>
+            <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar pb-1 lg:pb-0">
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1 lg:flex-none"
+                    [(ngModel)]="selectedStatus">
+                    <option value="">Tous les statuts</option>
+                    <option [value]="HouseStatus.Occupied">Occupée</option>
+                    <option [value]="HouseStatus.Vacant">Vacante</option>
+                </select>
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[140px] flex-1 lg:flex-none"
+                    [(ngModel)]="selectedBlock">
+                    <option value="">Tous les blocs</option>
+                    <option *ngFor="let block of blocks()" [value]="block">{{block}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" *ngIf="loading()">
+            <div *ngFor="let i of [1,2,3,4,5,6]" class="bg-white rounded-xl border border-gray-100 p-5 space-y-4 animate-pulse">
+                <div class="flex justify-between items-start">
+                    <div class="size-10 bg-gray-100 rounded-lg"></div>
+                    <div class="h-4 bg-gray-100 rounded w-20"></div>
+                </div>
+                <div class="space-y-2">
+                    <div class="h-5 bg-gray-100 rounded w-3/4"></div>
+                    <div class="h-4 bg-gray-50 rounded w-1/2"></div>
+                </div>
+                <div class="pt-4 border-t border-gray-50 flex justify-between">
+                    <div class="h-4 bg-gray-50 rounded w-24"></div>
                 </div>
             </div>
-            <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
-                <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
-                    (click)="showHouseDetails(house.id)">
-                    Gérer la maison
-                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" *ngIf="!loading()">
+            <div *ngFor="let house of paginatedHouses()"
+                class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 hover:border-primary/30 transition-all flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="size-10 bg-gray-50 rounded-lg flex items-center justify-center"
+                        [ngClass]="{'bg-blue-50 text-primary': house.status === HouseStatus.Occupied, 'bg-gray-50 text-gray-400': house.status === HouseStatus.Vacant}">
+                        <span class="material-symbols-outlined">{{house.status === HouseStatus.Occupied ? 'apartment' :
+                            'home_work'}}</span>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                        [ngClass]="{'bg-green-100 text-green-700': house.status === HouseStatus.Occupied, 'bg-gray-100 text-gray-600': house.status === HouseStatus.Vacant}">
+                        {{getStatusLabel(house.status)}}
+                    </span>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-gray-900 text-base">Maison {{house.block}} {{house.floor}}-{{house.unit}}
+                    </h3>
+                    <div class="mt-2 space-y-1">
+                        <p class="text-xs text-gray-500">Résident principal</p>
+                        <p class="text-sm font-semibold"
+                            [ngClass]="{'text-gray-700': house.residentName, 'text-gray-400': !house.residentName}">
+                            {{house.residentName || 'Aucun résident assigné'}}
+                        </p>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                    <button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline"
+                        (click)="showHouseDetails(house.id)">
+                        Gérer la maison
+                        <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center justify-between py-4" *ngIf="filteredHouses().length > 0">
+            <p class="text-xs lg:text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{(page() - 1) *
+                    pageSize() + 1}}</span>
+                - <span class="font-bold text-gray-700">{{ page() * pageSize() > filteredHouses().length ?
+                    filteredHouses().length : page() * pageSize() }}</span>
+                sur <span class="font-bold text-gray-700">{{filteredHouses().length}}</span> maisons</p>
+            <div class="flex gap-2">
+                <button
+                    class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                    [disabled]="page() === 1" (click)="goPreviousPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                </button>
+                <button
+                    class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                    [disabled]="page() * pageSize() >= filteredHouses().length" (click)="goNextPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
                 </button>
             </div>
-        </div>
-    </div>
-    <div class="flex items-center justify-between py-4" *ngIf="filteredHouses().length > 0">
-        <p class="text-xs lg:text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{(page() - 1) *
-                pageSize() + 1}}</span>
-            - <span class="font-bold text-gray-700">{{ page() * pageSize() > filteredHouses().length ?
-                filteredHouses().length : page() * pageSize() }}</span>
-            sur <span class="font-bold text-gray-700">{{filteredHouses().length}}</span> maisons</p>
-        <div class="flex gap-2">
-            <button
-                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
-                [disabled]="page() === 1" (click)="goPreviousPage()">
-                <span class="material-symbols-outlined text-lg">chevron_left</span>
-            </button>
-            <button
-                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
-                [disabled]="page() * pageSize() >= filteredHouses().length" (click)="goNextPage()">
-                <span class="material-symbols-outlined text-lg">chevron_right</span>
-            </button>
         </div>
     </div>
 </div>

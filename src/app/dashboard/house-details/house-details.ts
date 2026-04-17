@@ -1,7 +1,7 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HouseModel, HouseStatus } from '../houses/house-model';
-import { HouseServices } from '../houses/house-services';
+import { HouseServices, HouseFinancialStatementDto } from '../houses/house-services';
 import { ResidentServices } from '../residents/resident-services';
 import { ResidentModel } from '../residents/resident-model';
 import { PaymentServices } from '../payments/payment-services';
@@ -12,10 +12,13 @@ import { ToastrService } from 'ngx-toastr';
 import { TarifService } from '../tarifs/tarif-service';
 import { TarifDto, TarifHistoryDto } from '../tarifs/tarif-model';
 import { environment } from '../../../environments/environment';
+import { LoginService } from '../../login/login-service';
+import { UserRole } from '../users/user-model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-house-details',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './house-details.html',
   styleUrl: './house-details.css',
 })
@@ -27,6 +30,7 @@ export class HouseDetails implements OnInit {
   residentService = inject(ResidentServices);
   paymentService = inject(PaymentServices);
   toastr = inject(ToastrService);
+  loginService = inject(LoginService);
 
   house = signal<HouseModel | undefined>(undefined);
   resident = signal<ResidentModel | undefined>(undefined);
@@ -36,7 +40,12 @@ export class HouseDetails implements OnInit {
   isUpdating = signal(false);
   payments = signal<PaymentModel[]>([]);
   showAllPayments = signal(false);
-  
+  isResident = signal(false);
+  isNavHidden = signal(false);
+  private lastScrollTop = 0;
+
+  financialStatement = signal<HouseFinancialStatementDto | null>(null);
+
   tarifService = inject(TarifService);
   currentYear = signal(new Date().getFullYear());
   tarifs = signal<TarifDto[]>([]);
@@ -63,24 +72,45 @@ export class HouseDetails implements OnInit {
 
     return months.map((name, index) => {
       const monthDate = new Date(year, index, 1);
-      
+
       // Find if this month is covered by any payment
-      const isPaid = payments.some(p => {
+      let isPaid = false;
+      let paidTarif: number | null = null;
+
+      for (const p of payments) {
         const start = new Date(p.periodStart);
         const end = new Date(p.periodEnd);
         // Normalize to floor of month
         const pStart = new Date(start.getFullYear(), start.getMonth(), 1);
         const pEnd = new Date(end.getFullYear(), end.getMonth(), 1);
-        return monthDate >= pStart && monthDate <= pEnd && p.status === PaymentStatus.Paid;
-      });
 
-      // Find rate for this month
+        if (monthDate >= pStart && monthDate <= pEnd && p.status === PaymentStatus.Paid) {
+          isPaid = true;
+
+          if (p.lines && p.lines.length > 0) {
+            // Find the line that covers this specific month
+            const line = p.lines.find(l => {
+              // monthDate is the first day of the month
+              const lStart = new Date(l.fromYear, l.fromMonth - 1, 1);
+              const lEnd = new Date(l.toYear, l.toMonth - 1, 1);
+              return monthDate >= lStart && monthDate <= lEnd;
+            });
+            if (line) {
+              paidTarif = line.tarif;
+            }
+          }
+          break;
+        }
+      }
+
+      // Find rate for this month (official rate based on history)
       const rate = this.getRateForDate(monthDate, tarifs, history);
 
       return {
         name,
         isPaid,
         rate,
+        paidTarif,
         date: monthDate
       };
     });
@@ -88,7 +118,7 @@ export class HouseDetails implements OnInit {
 
   getRateForDate(date: Date, tarifs: TarifDto[], history: TarifHistoryDto[]): number {
     let rate = 0;
-    
+
     // Check baseline tarifs
     const activeTarif = tarifs.find(t => {
       const eff = new Date(t.effectiveDate);
@@ -104,9 +134,9 @@ export class HouseDetails implements OnInit {
     if (history && history.length > 0) {
       const sortedHistory = [...history].sort((a, b) => new Date(a.effectiveDate).getTime() - new Date(b.effectiveDate).getTime());
       for (const h of sortedHistory) {
-         if (new Date(h.effectiveDate) <= date) {
-             rate = h.newAmount;
-         }
+        if (new Date(h.effectiveDate) <= date) {
+          rate = h.newAmount;
+        }
       }
     }
 
@@ -122,6 +152,9 @@ export class HouseDetails implements OnInit {
   }
 
   ngOnInit() {
+    const userRole = this.loginService.getCurrentUser()?.role;
+    this.isResident.set(Number(userRole) === UserRole.Resident);
+
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -138,6 +171,12 @@ export class HouseDetails implements OnInit {
         // Load tarifs
         this.tarifService.getTarifsByResidence(environment.residenceId).subscribe(t => this.tarifs.set(t));
         this.tarifService.getResidenceTarifHistory(environment.residenceId).subscribe(h => this.tarifHistory.set(h));
+
+        // Load financial statement
+        this.houseService.getHouseFinancialStatement(id).subscribe({
+          next: stmt => this.financialStatement.set(stmt),
+          error: err => console.error('Failed to load financial statement:', err)
+        });
       }
     });
   }
@@ -149,7 +188,7 @@ export class HouseDetails implements OnInit {
           id: dto.id,
           block: dto.block,
           unit: dto.unit,
-          floor: dto.floor,
+          floor: dto.floor || '',
           status: dto.status,
           residentId: dto.currentResidentId
         };
@@ -160,7 +199,7 @@ export class HouseDetails implements OnInit {
             id: dto.currentResident.id,
             firstName: dto.currentResident.firstName,
             lastName: dto.currentResident.lastName,
-            email: dto.currentResident.email,
+            email: dto.currentResident.email || '',
             phone: dto.currentResident.phoneNumber || '',
             status: 'Active',
             createdAt: dto.currentResident.createdAt?.split('T')[0] || ''
@@ -260,6 +299,40 @@ export class HouseDetails implements OnInit {
       case PaymentStatus.Pending: return 'Pending';
       case PaymentStatus.Overdue: return 'Overdue';
       default: return 'Unknown';
+    }
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('fr-TN', {
+      style: 'currency',
+      currency: 'TND'
+    }).format(amount);
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const st = window.pageYOffset || document.documentElement.scrollTop;
+    if (st > this.lastScrollTop && st > 150) {
+      // Scroll Down
+      this.isNavHidden.set(true);
+    } else {
+      // Scroll Up
+      this.isNavHidden.set(false);
+    }
+    this.lastScrollTop = st <= 0 ? 0 : st;
+  }
+
+  scrollTo(sectionId: string) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 130;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   }
 }

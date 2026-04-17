@@ -18,6 +18,7 @@ export class Houses implements OnInit {
   houseService = inject(HouseServices);
 
   houses = toSignal(this.houseService.houses$, { initialValue: [] });
+  loading = toSignal(this.houseService.loading$, { initialValue: false });
   HouseStatus = HouseStatus; // Make enum accessible in template
 
   searchQuery = signal('');

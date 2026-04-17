@@ -1,196 +1,208 @@
-<header class="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-5 sticky top-0 z-10">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h1 class="text-lg md:text-xl font-extrabold text-gray-900 tracking-tight">Annuaire des Résidents</h1>
-            <p class="text-xs md:text-sm text-gray-500 font-medium mt-1">Gérez et visualisez tous les résidents inscrits
-                dans la résidence.
-            </p>
-        </div>
-        <button
-            class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm text-sm"
-            (click)="addResident()">
-            <span class="material-symbols-outlined text-[20px]">add</span>
-            Nouveau résident
-        </button>
-    </div>
-</header>
-
-<div class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6">
-    <!-- Filters -->
-    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
-        <div class="relative w-full lg:flex-1">
-            <span class="material-symbols-outlined absolute left-3 text-gray-400">search</span>
-            <input
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none bg-gray-50/50"
-                placeholder="Rechercher par nom, email ou unité..." type="text" [(ngModel)]="searchQuery" />
-        </div>
-        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <select
-                class="w-full sm:w-auto text-sm border-gray-200 rounded-xl px-4 py-2.5 bg-gray-50/50 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px] outline-none"
-                (change)="onStatusChange(selectedStatus())" [(ngModel)]="selectedStatus">
-                <option value="">Tous les statuts</option>
-                <option *ngFor="let status of statuses()" [value]="status">{{status}}</option>
-            </select>
+<div class="animate-in fade-in duration-500">
+    <header class="bg-white border-b border-gray-200 px-4 md:px-8 py-4 md:py-5 sticky top-0 z-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-lg md:text-xl font-extrabold text-gray-900 tracking-tight">Annuaire des Résidents</h1>
+                <p class="text-xs md:text-sm text-gray-500 font-medium mt-1">Gérez et visualisez tous les résidents inscrits
+                    dans la résidence.
+                </p>
+            </div>
             <button
-                class="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm text-sm"
-                (click)="resetFilters()">
-                <span class="material-symbols-outlined text-[20px]">restart_alt</span>
-                Réinitialiser
+                class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm text-sm"
+                (click)="addResident()">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Nouveau résident
             </button>
         </div>
-    </div>
+    </header>
 
-    <!-- Desktop View: Table -->
-    <div class="hidden md:block bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Résident</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Contact</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
-                            Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr *ngFor="let resident of paginatedResidents()" class="hover:bg-gray-50/50 transition-colors">
-                        <td class="px-6 py-5">
-                            <div class="flex items-center gap-3">
-                                <div [ngClass]="getAvatarColor(resident)"
-                                    class="size-10 rounded-full flex items-center justify-center font-bold text-white shadow-sm">
-                                    {{resident.firstName.charAt(0)}}{{resident.lastName.charAt(0)}}</div>
-                                <div>
-                                    <p class="font-bold text-sm text-gray-900 line-clamp-1"> {{resident.firstName}}
-                                        {{resident.lastName}}</p>
-                                    <p class="text-xs text-gray-400 font-mono">ID: {{resident.id.split('-')[0]}}...</p>
+    <div class="max-w-7xl mx-auto w-full p-4 md:p-8 space-y-6">
+        <!-- Filters -->
+        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+            <div class="relative w-full lg:flex-1">
+                <span class="material-symbols-outlined absolute left-3 text-gray-400">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none bg-gray-50/50"
+                    placeholder="Rechercher par nom, email ou unité..." type="text" [(ngModel)]="searchQuery" />
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                <select
+                    class="w-full sm:w-auto text-sm border-gray-200 rounded-xl px-4 py-2.5 bg-gray-50/50 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px] outline-none"
+                    (change)="onStatusChange(selectedStatus())" [(ngModel)]="selectedStatus">
+                    <option value="">Tous les statuts</option>
+                    <option *ngFor="let status of statuses()" [value]="status">{{status}}</option>
+                </select>
+                <button
+                    class="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-600 px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm text-sm"
+                    (click)="resetFilters()">
+                    <span class="material-symbols-outlined text-[20px]">restart_alt</span>
+                    Réinitialiser
+                </button>
+            </div>
+        </div>
+
+        <!-- Desktop View: Table -->
+        <div class="hidden md:block bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+            <div *ngIf="loading()" class="p-6 space-y-4 animate-pulse">
+                <div *ngFor="let i of [1,2,3,4,5]" class="flex items-center gap-4">
+                    <div class="size-10 bg-gray-100 rounded-full"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="h-4 bg-gray-100 rounded w-1/4"></div>
+                        <div class="h-3 bg-gray-50 rounded w-1/3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto" *ngIf="!loading()">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Résident</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Contact</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr *ngFor="let resident of paginatedResidents()" class="hover:bg-gray-50/50 transition-colors">
+                            <td class="px-6 py-5">
+                                <div class="flex items-center gap-3">
+                                    <div [ngClass]="getAvatarColor(resident)"
+                                        class="size-10 rounded-full flex items-center justify-center font-bold text-white shadow-sm">
+                                        {{resident.firstName.charAt(0)}}{{resident.lastName.charAt(0)}}</div>
+                                    <div>
+                                        <p class="font-bold text-sm text-gray-900 line-clamp-1"> {{resident.firstName}}
+                                            {{resident.lastName}}</p>
+                                        <p class="text-xs text-gray-400 font-mono">ID: {{resident.id.split('-')[0]}}...</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-5">
-                            <div class="flex flex-col gap-0.5">
-                                <span class="text-sm font-semibold text-gray-700">{{resident.phone}}</span>
-                                <span class="text-xs text-gray-400">{{resident.email}}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-5 text-sm text-gray-600 font-medium">{{resident.birthDate}}</td>
-                        <td class="px-6 py-5">
+                            </td>
+                            <td class="px-6 py-5">
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-sm font-semibold text-gray-700">{{resident.phone}}</span>
+                                    <span class="text-xs text-gray-400">{{resident.email}}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 text-sm text-gray-600 font-medium">{{resident.birthDate}}</td>
+                            <td class="px-6 py-5">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider"
+                                    [ngClass]="{'bg-green-100 text-green-700': resident.status === 'Active', 'bg-red-100 text-red-700': resident.status === 'Inactive'}">
+                                    {{resident.status === 'Active' ? 'Actif' : 'Inactif'}}
+                                </span>
+                            </td>
+                            <td class="px-6 py-5 text-right">
+                                <div class="flex justify-end gap-2 text-gray-400">
+                                    <button
+                                        class="px-4 py-2 text-xs font-bold text-primary hover:bg-primary/10 rounded-lg transition-all"
+                                        (click)="goToResidentDetails(resident.id)">Détails</button>
+                                    <button class="p-2 hover:text-primary hover:bg-gray-100 rounded-lg transition-all"
+                                        (click)="editResident(resident.id)">
+                                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Mobile View: Cards -->
+        <div class="md:hidden space-y-4">
+            <div *ngFor="let resident of paginatedResidents()"
+                class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div [ngClass]="getAvatarColor(resident)"
+                            class="size-12 rounded-full flex items-center justify-center font-bold text-white shadow-sm text-lg">
+                            {{resident.firstName.charAt(0)}}{{resident.lastName.charAt(0)}}</div>
+                        <div>
+                            <p class="font-extrabold text-gray-900">{{resident.firstName}} {{resident.lastName}}</p>
                             <span
-                                class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider"
+                                class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider mt-1"
                                 [ngClass]="{'bg-green-100 text-green-700': resident.status === 'Active', 'bg-red-100 text-red-700': resident.status === 'Inactive'}">
                                 {{resident.status === 'Active' ? 'Actif' : 'Inactif'}}
                             </span>
-                        </td>
-                        <td class="px-6 py-5 text-right">
-                            <div class="flex justify-end gap-2 text-gray-400">
-                                <button
-                                    class="px-4 py-2 text-xs font-bold text-primary hover:bg-primary/10 rounded-lg transition-all"
-                                    (click)="goToResidentDetails(resident.id)">Détails</button>
-                                <button class="p-2 hover:text-primary hover:bg-gray-100 rounded-lg transition-all"
-                                    (click)="editResident(resident.id)">
-                                    <span class="material-symbols-outlined text-[20px]">edit</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Mobile View: Cards -->
-    <div class="md:hidden space-y-4">
-        <div *ngFor="let resident of paginatedResidents()"
-            class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div [ngClass]="getAvatarColor(resident)"
-                        class="size-12 rounded-full flex items-center justify-center font-bold text-white shadow-sm text-lg">
-                        {{resident.firstName.charAt(0)}}{{resident.lastName.charAt(0)}}</div>
-                    <div>
-                        <p class="font-extrabold text-gray-900">{{resident.firstName}} {{resident.lastName}}</p>
-                        <span
-                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider mt-1"
-                            [ngClass]="{'bg-green-100 text-green-700': resident.status === 'Active', 'bg-red-100 text-red-700': resident.status === 'Inactive'}">
-                            {{resident.status === 'Active' ? 'Actif' : 'Inactif'}}
-                        </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button class="p-2 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-xl transition-all"
+                            (click)="editResident(resident.id)">
+                            <span class="material-symbols-outlined text-[22px]">edit</span>
+                        </button>
                     </div>
                 </div>
-                <div class="flex gap-1">
-                    <button class="p-2 text-gray-400 hover:text-primary hover:bg-gray-100 rounded-xl transition-all"
-                        (click)="editResident(resident.id)">
-                        <span class="material-symbols-outlined text-[22px]">edit</span>
+
+                <div class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50 text-sm">
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Téléphone</label>
+                        <p class="font-bold text-gray-700">{{resident.phone || '—'}}</p>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Naissance</label>
+                        <p class="font-bold text-gray-700">{{resident.birthDate || '—'}}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <label
+                            class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Email</label>
+                        <p class="font-bold text-gray-700 truncate">{{resident.email || '—'}}</p>
+                    </div>
+                </div>
+
+                <button
+                    class="w-full py-3 bg-gray-50 hover:bg-gray-100 text-primary text-sm font-extrabold rounded-xl transition-all border border-gray-100"
+                    (click)="goToResidentDetails(resident.id)">
+                    Voir les détails complets
+                </button>
+            </div>
+
+            <!-- Empty state for search -->
+            <div *ngIf="paginatedResidents().length === 0"
+                class="flex flex-col items-center justify-center py-12 text-center bg-white rounded-2xl border border-dashed border-gray-200">
+                <span class="material-symbols-outlined text-4xl text-gray-300 mb-2">person_search</span>
+                <p class="text-gray-500 font-medium">Aucun résident trouvé</p>
+                <p class="text-xs text-gray-400 mt-1">Essayez d'ajuster votre recherche ou vos filtres</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div
+            class="bg-gray-50 md:bg-white rounded-2xl border border-gray-200 shadow-sm p-4 md:px-6 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-xs md:text-sm text-gray-500 order-2 md:order-1">
+                Affichage <span class="font-extrabold text-gray-900">{{page() * pageSize() -
+                    pageSize() + 1}} - {{page() * pageSize() > residents().length ? residents().length : page() *
+                    pageSize()}}</span> sur <span class="font-extrabold text-gray-900">{{residents().length}}</span>
+                résidents
+            </p>
+
+            <div class="flex items-center gap-2 w-full md:w-auto order-1 md:order-2">
+                <div class="hidden sm:flex items-center gap-2 mr-4">
+                    <p class="text-sm text-gray-400 font-medium whitespace-nowrap">Lignes :</p>
+                    <select
+                        class="text-sm border-gray-200 rounded-xl px-3 py-1.5 focus:ring-primary focus:border-primary cursor-pointer outline-none bg-white"
+                        [value]="pageSize()" (change)="SetPageSize($any($event).target.value)">
+                        <option *ngFor="let size of pageSizes()" [value]="size">{{size}}</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2 flex-1 sm:flex-initial">
+                    <button
+                        class="flex-1 sm:flex-none p-2 md:p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-40 shadow-sm hover:shadow active:scale-95"
+                        [disabled]="page() === 1" (click)="goPreviousPage()">
+                        <span class="material-symbols-outlined text-xl">keyboard_arrow_left</span>
+                    </button>
+                    <span class="px-4 font-bold text-sm text-gray-700 md:hidden">Page {{page()}}</span>
+                    <button
+                        class="flex-1 sm:flex-none p-2 md:p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-40 shadow-sm hover:shadow active:scale-95"
+                        [disabled]="page() * pageSize() >= residents().length" (click)="goNextPage()">
+                        <span class="material-symbols-outlined text-xl">keyboard_arrow_right</span>
                     </button>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50 text-sm">
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Téléphone</label>
-                    <p class="font-bold text-gray-700">{{resident.phone || '—'}}</p>
-                </div>
-                <div>
-                    <label
-                        class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Naissance</label>
-                    <p class="font-bold text-gray-700">{{resident.birthDate || '—'}}</p>
-                </div>
-                <div class="col-span-2">
-                    <label
-                        class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Email</label>
-                    <p class="font-bold text-gray-700 truncate">{{resident.email || '—'}}</p>
-                </div>
-            </div>
-
-            <button
-                class="w-full py-3 bg-gray-50 hover:bg-gray-100 text-primary text-sm font-extrabold rounded-xl transition-all border border-gray-100"
-                (click)="goToResidentDetails(resident.id)">
-                Voir les détails complets
-            </button>
-        </div>
-
-        <!-- Empty state for search -->
-        <div *ngIf="paginatedResidents().length === 0"
-            class="flex flex-col items-center justify-center py-12 text-center bg-white rounded-2xl border border-dashed border-gray-200">
-            <span class="material-symbols-outlined text-4xl text-gray-300 mb-2">person_search</span>
-            <p class="text-gray-500 font-medium">Aucun résident trouvé</p>
-            <p class="text-xs text-gray-400 mt-1">Essayez d'ajuster votre recherche ou vos filtres</p>
-        </div>
-    </div>
-
-    <!-- Pagination -->
-    <div
-        class="bg-gray-50 md:bg-white rounded-2xl border border-gray-200 shadow-sm p-4 md:px-6 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p class="text-xs md:text-sm text-gray-500 order-2 md:order-1">
-            Affichage <span class="font-extrabold text-gray-900">{{page() * pageSize() -
-                pageSize() + 1}} - {{page() * pageSize() > residents().length ? residents().length : page() *
-                pageSize()}}</span> sur <span class="font-extrabold text-gray-900">{{residents().length}}</span>
-            résidents
-        </p>
-
-        <div class="flex items-center gap-2 w-full md:w-auto order-1 md:order-2">
-            <div class="hidden sm:flex items-center gap-2 mr-4">
-                <p class="text-sm text-gray-400 font-medium whitespace-nowrap">Lignes :</p>
-                <select
-                    class="text-sm border-gray-200 rounded-xl px-3 py-1.5 focus:ring-primary focus:border-primary cursor-pointer outline-none bg-white"
-                    [value]="pageSize()" (change)="SetPageSize($any($event).target.value)">
-                    <option *ngFor="let size of pageSizes()" [value]="size">{{size}}</option>
-                </select>
-            </div>
-
-            <div class="flex items-center gap-2 flex-1 sm:flex-initial">
-                <button
-                    class="flex-1 sm:flex-none p-2 md:p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-40 shadow-sm hover:shadow active:scale-95"
-                    [disabled]="page() === 1" (click)="goPreviousPage()">
-                    <span class="material-symbols-outlined text-xl">keyboard_arrow_left</span>
-                </button>
-                <span class="px-4 font-bold text-sm text-gray-700 md:hidden">Page {{page()}}</span>
-                <button
-                    class="flex-1 sm:flex-none p-2 md:p-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all disabled:opacity-40 shadow-sm hover:shadow active:scale-95"
-                    [disabled]="page() * pageSize() >= residents().length" (click)="goNextPage()">
-                    <span class="material-symbols-outlined text-xl">keyboard_arrow_right</span>
-                </button>
             </div>
         </div>
     </div>

@@ -1,150 +1,178 @@
-<header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
-    <div class="flex justify-between items-center gap-4">
-        <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion du Tarif</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Gérez le tarif actuel de la résidence et consultez son historique.</p>
+<div class="animate-in fade-in duration-500">
+    <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+        <div class="flex justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion du Tarif</h1>
+                <p class="text-sm text-gray-500 font-medium mt-1">Gérez le tarif actuel de la résidence et consultez son
+                    historique.</p>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
 
-    <!-- Loading Skeleton -->
-    <div *ngIf="isLoading()"
-        class="bg-white border border-gray-200 rounded-xl shadow-sm p-10 flex flex-col items-center gap-4">
-        <div class="size-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-        <p class="text-gray-500 text-sm font-medium">Chargement du tarif...</p>
-    </div>
+        <!-- Loading Skeleton -->
+        <div *ngIf="isLoading()"
+            class="bg-white border border-gray-200 rounded-xl shadow-sm p-10 flex flex-col items-center gap-4">
+            <div class="size-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+            <p class="text-gray-500 text-sm font-medium">Chargement du tarif...</p>
+        </div>
 
-    <div *ngIf="!isLoading()" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div *ngIf="!isLoading()" class="max-w-4xl mx-auto space-y-8">
 
-        <!-- Current Tarif Section -->
-        <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-6 opacity-10">
-                    <span class="material-symbols-outlined text-8xl">account_balance_wallet</span>
+            <!-- Current Tarif Hero Section -->
+            <div class="bg-white border border-gray-200 p-8 rounded-3xl shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4 pointer-events-none">
+                    <span class="material-symbols-outlined text-[120px]">account_balance_wallet</span>
                 </div>
-                
-                <h2 class="text-lg font-extrabold text-gray-900 flex items-center gap-2 mb-4">
-                    <span class="material-symbols-outlined text-primary">sell</span>
-                    Tarif Actuel
-                </h2>
+
+                <div class="flex items-center justify-between mb-8 relative z-10">
+                    <h2 class="text-xl font-extrabold text-gray-900 flex items-center gap-3">
+                        <span class="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-xl">sell</span>
+                        </span>
+                        Tarif Actuel
+                    </h2>
+                    <button *ngIf="!isResident() && currentTarif()"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all text-sm"
+                        (click)="openUpdate()">
+                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                        Mettre à jour
+                    </button>
+                    <button *ngIf="!isResident() && !currentTarif()"
+                        class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all text-sm shadow-sm"
+                        (click)="openCreate()">
+                        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+                        Définir le tarif de base
+                    </button>
+                </div>
 
                 <ng-container *ngIf="currentTarif() as tarif; else noTarif">
-                    <div class="space-y-4 relative z-10">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium">Montant</p>
-                            <p class="text-3xl font-black text-gray-900 mt-1">{{formatCurrency(tarif.amount, tarif.currency)}}</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+                        <div class="bg-gray-50 border border-gray-100 p-5 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Montant Actif</p>
+                            <p class="text-3xl font-black text-gray-900">{{formatCurrency(tarif.amount, tarif.currency)}}</p>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium">Description</p>
-                            <p class="text-base text-gray-800 font-semibold">{{tarif.description}}</p>
+                        <div class="bg-gray-50 border border-gray-100 p-5 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Description</p>
+                            <p class="text-base font-semibold text-gray-800 line-clamp-2 mt-2">{{tarif.description}}</p>
                         </div>
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium">Date d'effet</p>
-                            <p class="text-sm text-gray-800">{{tarif.effectiveDate | date:'dd MMM yyyy'}}</p>
-                        </div>
-                        <div class="pt-4 border-t border-gray-100">
-                            <button
-                                class="w-full bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm"
-                                (click)="openUpdate()">
-                                <span class="material-symbols-outlined text-[20px]">edit</span>
-                                Modifier le Tarif
-                            </button>
+                        <div class="bg-gray-50 border border-gray-100 p-5 rounded-2xl">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Date d&apos;effet</p>
+                            <p class="text-base font-semibold text-gray-800 mt-2 flex items-center gap-2 capitalize">
+                                <span class="material-symbols-outlined text-gray-400 text-sm">event</span>
+                                {{tarif.effectiveDate | date:'MMMM yyyy'}}
+                            </p>
                         </div>
                     </div>
                 </ng-container>
 
                 <ng-template #noTarif>
-                    <div class="text-center py-6 flex flex-col items-center gap-4 relative z-10">
-                        <div class="size-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center">
-                            <span class="material-symbols-outlined text-3xl">info</span>
-                        </div>
-                        <div>
-                            <p class="font-bold text-gray-900">Aucun tarif défini</p>
-                            <p class="text-sm text-gray-500 mt-1">Veuillez définir le tarif initial de cette résidence.</p>
-                        </div>
-                        <button
-                            class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm w-full mt-2"
-                            (click)="openCreate()">
-                            <span class="material-symbols-outlined text-[20px]">add_circle</span>
-                            Définir le Tarif
-                        </button>
+                    <div class="p-8 text-center bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                        <span class="material-symbols-outlined text-gray-300 text-4xl mb-3">money_off</span>
+                        <p class="text-gray-900 font-bold">Aucun tarif défini</p>
+                        <p class="text-sm text-gray-500 mt-1">La résidence n'a pas encore défini de tarif de base pour les paiements récurrents.</p>
                     </div>
                 </ng-template>
             </div>
-        </div>
 
-        <!-- History Section -->
-        <div class="lg:col-span-2">
-            <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col h-full">
-                <div class="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                    <h2 class="text-lg font-extrabold text-gray-900 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-gray-500">history</span>
-                        Historique des modifications
-                    </h2>
-                </div>
-                
-                <div class="flex-1 overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50/50 border-b border-gray-100 hidden md:table-header-group">
-                            <tr>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Modification</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Raison</th>
-                                <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Par</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <tr *ngFor="let history of tarifHistory()" class="hover:bg-gray-50/50 flex flex-col md:table-row transition-colors">
-                                <td class="px-6 py-4 md:table-cell">
-                                    <span class="text-sm font-semibold text-gray-900">{{history.changedAt | date:'dd MMM yyyy, HH:mm'}}</span>
-                                </td>
-                                <td class="px-6 py-2 md:py-4 md:table-cell">
-                                    <div class="flex flex-col gap-1">
-                                        <div *ngIf="history.previousAmount !== history.newAmount" class="flex items-center gap-2 text-sm">
-                                            <span class="text-gray-500 line-through">{{history.previousAmount}}</span>
-                                            <span class="material-symbols-outlined text-xs text-gray-400">arrow_forward</span>
-                                            <span class="font-bold text-emerald-600">{{history.newAmount}}</span>
+            <!-- Timeline Section -->
+            <div *ngIf="currentTarif()" class="pt-4 pb-12">
+                <h2 class="text-lg font-extrabold text-gray-900 flex items-center gap-2 mb-8">
+                    <span class="material-symbols-outlined text-gray-400">history</span>
+                    Historique des déclarations
+                </h2>
+
+                <div class="relative pl-6 sm:pl-8 border-l-2 border-indigo-100 space-y-8 ml-2 sm:ml-4">
+                    <div *ngFor="let history of tarifHistory(); let i = index" 
+                         class="relative animate-in slide-in-from-bottom-4 duration-500" 
+                         [ngStyle]="{'animation-delay': (i * 50) + 'ms'}">
+                        
+                        <!-- Timeline Node -->
+                        <div class="absolute -left-[35px] sm:-left-[43px] top-1.5 size-4 sm:size-5 rounded-full border-4 sm:border-[5px] bg-white z-10"
+                             [ngClass]="i === 0 ? 'border-primary w-5 h-5 -left-[37px] sm:-left-[45px] sm:w-6 sm:h-6' : 'border-gray-200'">
+                        </div>
+
+                        <!-- Card -->
+                        <div class="bg-white border p-5 sm:p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow group relative"
+                             [ngClass]="i === 0 ? 'border-primary/20 bg-blue-50/10' : 'border-gray-100'">
+                            
+                            <!-- Quick action to edit -->
+                            <button *ngIf="!isResident()" 
+                                    (click)="openEditHistory(history)"
+                                    class="absolute top-4 right-4 text-gray-400 hover:text-amber-500 hover:bg-amber-50 size-8 flex items-center justify-center rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                                    title="Corriger cet historique">
+                                <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                            </button>
+
+                            <!-- Header -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-2">
+                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold"
+                                     [ngClass]="i === 0 ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-700'">
+                                    <span class="material-symbols-outlined text-[16px]">{{i === 0 ? 'stars' : 'event_note'}}</span>
+                                    <span class="capitalize">{{history.effectiveDate | date:'MMMM yyyy'}}</span>
+                                </div>
+                                <span class="text-[11px] font-medium text-gray-400 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-[12px]">edit_calendar</span>
+                                    Modifié le {{history.changedAt | date:'dd MMM yyyy, HH:mm'}} par <strong class="text-gray-500">{{history.changedBy}}</strong>
+                                </span>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Évolution du Montant</p>
+                                    <div class="flex items-center gap-3">
+                                        <div *ngIf="history.previousAmount !== history.newAmount" class="text-gray-400 font-medium line-through">
+                                            {{formatCurrency(history.previousAmount, currentTarif()?.currency)}}
                                         </div>
-                                        <div *ngIf="history.previousDescription !== history.newDescription" class="flex items-center gap-2 text-xs">
-                                            <span class="text-gray-500 truncate max-w-[100px]">{{history.previousDescription}}</span>
-                                            <span class="material-symbols-outlined text-[10px] text-gray-400">arrow_forward</span>
-                                            <span class="font-medium text-gray-900 truncate max-w-[150px]">{{history.newDescription}}</span>
-                                        </div>
-                                        <div *ngIf="history.previousAmount === history.newAmount && history.previousDescription === history.newDescription" class="text-sm text-gray-500">
-                                            Création initiale
+                                        <span *ngIf="history.previousAmount !== history.newAmount" class="material-symbols-outlined text-gray-300 text-[16px]">arrow_forward</span>
+                                        <div class="text-xl font-black" [ngClass]="i === 0 ? 'text-primary' : 'text-gray-900'">
+                                            {{formatCurrency(history.newAmount, currentTarif()?.currency)}}
                                         </div>
                                     </div>
-                                </td>
-                                <td class="px-6 py-2 md:py-4 md:table-cell">
-                                    <span class="text-sm text-gray-600 italic">
-                                        {{history.changeReason || '-'}}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-2 md:py-4 md:table-cell">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700">
-                                        <span class="material-symbols-outlined text-sm">person</span>
-                                        {{history.changedBy}}
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr *ngIf="tarifHistory().length === 0">
-                                <td colspan="4" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center gap-3">
-                                        <div class="size-12 bg-gray-100 rounded-full flex items-center justify-center">
-                                            <span class="material-symbols-outlined text-gray-400">history_off</span>
-                                        </div>
-                                        <p class="text-gray-500 text-sm font-medium">Aucun historique disponible.</p>
+                                    <div *ngIf="history.previousAmount === history.newAmount && history.previousDescription === history.newDescription" class="text-xs text-blue-600 mt-1 font-semibold flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]">fiber_new</span>
+                                        Création initiale
                                     </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                                </div>
+
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Ajustement du motif</p>
+                                    <div class="text-sm font-medium text-gray-800">
+                                        <div *ngIf="history.previousDescription !== history.newDescription" class="flex flex-col gap-1">
+                                            <span class="text-gray-400 line-through text-xs">{{history.previousDescription}}</span>
+                                            <span>{{history.newDescription}}</span>
+                                        </div>
+                                        <div *ngIf="history.previousDescription === history.newDescription">
+                                            <span>{{history.newDescription || 'Sans description'}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Reason block -->
+                            <div *ngIf="history.changeReason" class="mt-5 pt-4 border-t border-gray-100 flex items-start gap-2">
+                                <span class="material-symbols-outlined text-gray-400 text-[18px] mt-0.5">comment</span>
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Raison déclarée</p>
+                                    <p class="text-sm text-gray-600 italic mt-1">{{history.changeReason}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty state history -->
+                    <div *ngIf="tarifHistory().length === 0" class="pl-2">
+                         <div class="bg-gray-50 border border-dashed border-gray-200 rounded-xl p-5 text-center">
+                            <span class="material-symbols-outlined text-gray-400 text-3xl mb-2">history_off</span>
+                            <p class="text-sm text-gray-500 font-medium">L'historique des modifications est vide.</p>
+                         </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
@@ -157,7 +185,8 @@
                     {{formMode() === 'update' ? 'Modifier le Tarif' : 'Définir le Tarif'}}
                 </h2>
                 <p class="text-sm text-gray-500 mt-1">
-                    {{formMode() === 'update' ? 'Mise à jour du montant et des informations.' : 'Création du premier tarif.'}}
+                    {{formMode() === 'update' ? 'Mise à jour du montant et des informations.' : 'Création du premier
+                    tarif.'}}
                 </p>
             </div>
             <button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
@@ -177,7 +206,7 @@
                         (input)="formAmount.set(+$any($event.target).value)" />
                 </div>
             </div>
-            
+
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2">Description *</label>
                 <input type="text"
@@ -186,11 +215,18 @@
                     (input)="formDescription.set($any($event.target).value)" />
             </div>
 
-            <div *ngIf="formMode() === 'create'">
-                <label class="block text-sm font-bold text-gray-700 mb-2">Date d'effet *</label>
-                <input type="date"
-                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
-                    [value]="formEffectiveDate()" (input)="formEffectiveDate.set($any($event.target).value)" />
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Date d&apos;effet *
+                    <span class="text-xs font-normal text-gray-400 ml-1">(mois &amp; année)</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                    </span>
+                    <input type="month"
+                        class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
+                        [value]="formEffectiveDate()" (input)="formEffectiveDate.set($any($event.target).value)" />
+                </div>
             </div>
 
             <div *ngIf="formMode() === 'update'">
@@ -209,11 +245,129 @@
             </button>
             <button
                 class="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
-                [disabled]="formAmount() <= 0 || !formDescription().trim() || isSaving()"
-                (click)="saveTarif()">
+                [disabled]="formAmount() <= 0 || !formDescription().trim() || isSaving()" (click)="saveTarif()">
                 <span *ngIf="isSaving()"
                     class="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 Enregistrer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- History Edit Modal -->
+<div *ngIf="showHistoryForm()" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="size-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                    </span>
+                    <h2 class="text-xl font-extrabold text-gray-900">Corriger l&apos;historique</h2>
+                </div>
+                <p class="text-sm text-gray-500">Modifiez les valeurs enregistrées pour cet enregistrement.</p>
+            </div>
+            <button class="size-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                (click)="closeHistoryForm()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 space-y-5">
+
+            <!-- Amounts row -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Ancien montant</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">TND</span>
+                        <input type="number" step="0.01"
+                            class="w-full border border-gray-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:ring-2 focus:ring-amber-300/40 focus:border-amber-400 transition-all outline-none"
+                            [value]="histPreviousAmount()"
+                            (input)="histPreviousAmount.set(+$any($event.target).value)" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Nouveau montant</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-semibold">TND</span>
+                        <input type="number" step="0.01"
+                            class="w-full border border-gray-200 rounded-xl pl-14 pr-4 py-3 text-sm focus:ring-2 focus:ring-amber-300/40 focus:border-amber-400 transition-all outline-none"
+                            [value]="histNewAmount()"
+                            (input)="histNewAmount.set(+$any($event.target).value)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descriptions row -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Ancienne description</label>
+                    <input type="text"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-300/40 focus:border-amber-400 transition-all outline-none"
+                        [value]="histPreviousDescription()"
+                        (input)="histPreviousDescription.set($any($event.target).value)" />
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Nouvelle description</label>
+                    <input type="text"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-300/40 focus:border-amber-400 transition-all outline-none"
+                        [value]="histNewDescription()"
+                        (input)="histNewDescription.set($any($event.target).value)" />
+                </div>
+            </div>
+
+            <!-- Effective Date -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Date d&apos;effet
+                    <span class="text-xs font-normal text-gray-400 ml-1">(mois &amp; année)</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+                        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                    </span>
+                    <input type="month"
+                        class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-sm focus:ring-2 focus:ring-amber-300/40 focus:border-amber-400 transition-all outline-none"
+                        [value]="histEffectiveDate()" (input)="histEffectiveDate.set($any($event.target).value)" />
+                </div>
+            </div>
+
+            <!-- Change reason -->
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2">Raison de la correction *</label>
+                <textarea
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-300/40 focus:border-amber-400 transition-all outline-none resize-none min-h-[80px]"
+                    placeholder="Ex: Correction suite à une erreur de saisie..."
+                    [value]="histChangeReason()"
+                    (input)="histChangeReason.set($any($event.target).value)"></textarea>
+            </div>
+
+            <!-- Info banner -->
+            <div class="flex items-start gap-2 p-3 bg-amber-50 rounded-xl border border-amber-100">
+                <span class="material-symbols-outlined text-amber-500 text-[18px] mt-0.5">info</span>
+                <p class="text-xs text-amber-700 font-medium leading-relaxed">
+                    Cette correction ne modifie pas le tarif actuel. Elle met uniquement à jour
+                    l&apos;enregistrement historique sélectionné.
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-6 border-t border-gray-100 flex justify-end gap-3">
+            <button class="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-xl transition-colors"
+                (click)="closeHistoryForm()">
+                Annuler
+            </button>
+            <button
+                class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+                [disabled]="!histChangeReason().trim() || isSavingHistory()"
+                (click)="saveHistoryEdit()">
+                <span *ngIf="isSavingHistory()"
+                    class="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Enregistrer la correction
             </button>
         </div>
     </div>

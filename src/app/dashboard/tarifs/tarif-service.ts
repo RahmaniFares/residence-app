@@ -8,6 +8,7 @@ import {
     TarifDto,
     CreateTarifDto,
     UpdateTarifDto,
+    UpdateTarifHistoryDto,
     TarifHistoryDto,
     ApiError
 } from './tarif-model';
@@ -165,6 +166,26 @@ export class TarifService {
             ).pipe(
                 map(history => history.map(h => this.normalizeHistoryDates(h))),
                 shareReplay(1)
+            )
+        );
+    }
+
+    /**
+     * Update a specific tariff history record (correction).
+     * PUT /residences/{residenceId}/tarifs/{tarifId}/history/{historyId}
+     */
+    updateTarifHistory(
+        residenceId: string,
+        tarifId: string,
+        historyId: string,
+        dto: UpdateTarifHistoryDto
+    ): Observable<TarifHistoryDto> {
+        return this.executeRequest(() =>
+            this.http.put<TarifHistoryDto>(
+                `${this.baseUrl}/${residenceId}/tarifs/${tarifId}/history/${historyId}`,
+                dto
+            ).pipe(
+                map(history => this.normalizeHistoryDates(history))
             )
         );
     }

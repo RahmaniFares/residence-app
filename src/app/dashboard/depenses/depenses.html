@@ -1,215 +1,222 @@
-<header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
-    <div class="flex justify-between items-center gap-4">
-        <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Dépenses</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Suivez et gérez les dépenses de la résidence.</p>
+<div class="animate-in fade-in duration-500">
+    <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+        <div class="flex justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Dépenses</h1>
+                <p class="text-sm text-gray-500 font-medium mt-1">Suivez et gérez les dépenses de la résidence.</p>
+            </div>
+            <button
+                class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+                (click)="openAddForm()">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Nouvelle Dépense
+            </button>
         </div>
-        <button
-            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
-            (click)="openAddForm()">
-            <span class="material-symbols-outlined text-[20px]">add</span>
-            Nouvelle Dépense
-        </button>
-    </div>
-</header>
+    </header>
 
-<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
 
-    <!-- Error Banner -->
-    <div *ngIf="errorMessage()"
-        class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl flex items-center justify-between">
-        <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-red-500">error</span>
-            <span class="text-sm font-medium">{{ errorMessage() }}</span>
+        <!-- Error Banner -->
+        <div *ngIf="errorMessage()"
+            class="bg-red-50 border border-red-200 text-red-700 px-5 py-4 rounded-xl flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-red-500">error</span>
+                <span class="text-sm font-medium">{{ errorMessage() }}</span>
+            </div>
+            <button class="text-red-400 hover:text-red-600 transition-colors" (click)="dismissError()">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
         </div>
-        <button class="text-red-400 hover:text-red-600 transition-colors" (click)="dismissError()">
-            <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-    </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-5 rounded-2xl shadow-lg text-white">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-blue-700 text-xs font-bold uppercase tracking-wider">Total Dépenses</p>
-                    <p class="text-2xl text-blue-700 font-extrabold mt-1">{{formatCurrency(totalDepenses())}}</p>
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-5 rounded-2xl shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-700 text-xs font-bold uppercase tracking-wider">Total Dépenses</p>
+                        <p class="text-2xl text-blue-700 font-extrabold mt-1">{{formatCurrency(totalDepenses())}}</p>
+                    </div>
+                    <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <span class="text-blue-700 material-symbols-outlined text-2xl">account_balance_wallet</span>
+                    </div>
                 </div>
-                <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span class="text-blue-700 material-symbols-outlined text-2xl">account_balance_wallet</span>
+            </div>
+            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-emerald-700 text-xs font-bold uppercase tracking-wider">Ce Mois</p>
+                        <p class="text-2xl text-emerald-700 font-extrabold mt-1">{{formatCurrency(depensesThisMonth())}}</p>
+                    </div>
+                    <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <span class="text-emerald-700 material-symbols-outlined text-2xl">calendar_month</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-violet-500 to-purple-600 p-5 rounded-2xl shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-violet-700 text-xs font-bold uppercase tracking-wider">Nombre</p>
+                        <p class="text-2xl text-violet-700 font-extrabold mt-1">{{ totalCount() }} entrées</p>
+                    </div>
+                    <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
+                        <span class="text-violet-700 material-symbols-outlined text-2xl">receipt_long</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-lg text-white">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-emerald-700 text-xs font-bold uppercase tracking-wider">Ce Mois</p>
-                    <p class="text-2xl text-emerald-700 font-extrabold mt-1">{{formatCurrency(depensesThisMonth())}}</p>
-                </div>
-                <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span class="text-emerald-700 material-symbols-outlined text-2xl">calendar_month</span>
+
+        <!-- Filters -->
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+            <div class="relative w-full lg:flex-1">
+                <span class="material-symbols-outlined absolute left-3 bottom-2 text-gray-400">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                    placeholder="Rechercher par titre ou description..." type="text" [value]="searchQuery()"
+                    (input)="updateSearch($event)" />
+            </div>
+            <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar">
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px] flex-1"
+                    [value]="typeFilter()" (change)="updateTypeFilter($event)">
+                    <option value="all">Tous les types</option>
+                    <option *ngFor="let t of depenseTypes" [value]="t.value">{{ t.label }}</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loading Skeleton -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden" *ngIf="loading()">
+            <div class="p-6 space-y-4 animate-pulse">
+                <div *ngFor="let i of [1,2,3,4,5]" class="flex items-center gap-6">
+                    <div class="size-10 bg-gray-100 rounded-xl"></div>
+                    <div class="h-4 bg-gray-100 rounded w-48"></div>
+                    <div class="h-4 bg-gray-100 rounded w-32"></div>
+                    <div class="h-4 bg-gray-100 rounded w-24"></div>
                 </div>
             </div>
         </div>
-        <div class="bg-gradient-to-br from-violet-500 to-purple-600 p-5 rounded-2xl shadow-lg text-white">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-violet-700 text-xs font-bold uppercase tracking-wider">Nombre</p>
-                    <p class="text-2xl text-violet-700 font-extrabold mt-1">{{ totalCount() }} entrées</p>
-                </div>
-                <div class="size-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span class="text-violet-700 material-symbols-outlined text-2xl">receipt_long</span>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Filters -->
-    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
-        <div class="relative w-full lg:flex-1">
-            <span class="material-symbols-outlined absolute left-3 bottom-2 text-gray-400">search</span>
-            <input
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
-                placeholder="Rechercher par titre ou description..." type="text" [value]="searchQuery()"
-                (input)="updateSearch($event)" />
-        </div>
-        <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar">
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[160px] flex-1"
-                [value]="typeFilter()" (change)="updateTypeFilter($event)">
-                <option value="all">Tous les types</option>
-                <option *ngFor="let t of depenseTypes" [value]="t.value">{{ t.label }}</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Loading Skeleton -->
-    <div *ngIf="isLoading()"
-        class="bg-white border border-gray-200 rounded-xl shadow-sm p-10 flex flex-col items-center gap-4">
-        <div class="size-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-        <p class="text-gray-500 text-sm font-medium">Chargement des dépenses...</p>
-    </div>
-
-    <!-- Depenses Table -->
-    <div *ngIf="!isLoading()" class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 border-b border-gray-200 hidden md:table-header-group">
-                    <tr>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Dépense</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Montant</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Images</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
-                            Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr *ngFor="let depense of filteredDepenses()"
-                        class="hover:bg-gray-50/50 flex flex-col md:table-row">
-                        <td class="px-6 py-4 md:table-cell">
-                            <div class="flex items-start gap-3">
-                                <div class="size-10 rounded-xl flex items-center justify-center shrink-0"
+        <!-- Depenses Table -->
+        <div *ngIf="!isLoading()" class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 border-b border-gray-200 hidden md:table-header-group">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Dépense</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Montant</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Images</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr *ngFor="let depense of filteredDepenses()"
+                            class="hover:bg-gray-50/50 flex flex-col md:table-row">
+                            <td class="px-6 py-4 md:table-cell">
+                                <div class="flex items-start gap-3">
+                                    <div class="size-10 rounded-xl flex items-center justify-center shrink-0"
+                                        [ngClass]="getTypeColor(depense.type)">
+                                        <span class="material-symbols-outlined text-lg">{{getTypeIcon(depense.type)}}</span>
+                                    </div>
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="font-bold text-gray-900 text-sm truncate">{{depense.title}}</span>
+                                        <span
+                                            class="text-xs text-gray-500 truncate max-w-[250px]">{{depense.description}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
                                     [ngClass]="getTypeColor(depense.type)">
-                                    <span class="material-symbols-outlined text-lg">{{getTypeIcon(depense.type)}}</span>
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <span class="font-bold text-gray-900 text-sm truncate">{{depense.title}}</span>
-                                    <span
-                                        class="text-xs text-gray-500 truncate max-w-[250px]">{{depense.description}}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
-                                [ngClass]="getTypeColor(depense.type)">
-                                <span class="material-symbols-outlined text-sm">{{getTypeIcon(depense.type)}}</span>
-                                {{ getTypeLabel(depense.type) }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <span class="text-sm text-gray-600">{{depense.expenseDate | date:'dd MMM yyyy'}}</span>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <span class="text-sm font-bold text-gray-900">{{formatCurrency(depense.amount)}}</span>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <div class="flex items-center gap-1" *ngIf="depense.images && depense.images.length > 0">
-                                <div *ngFor="let img of depense.images!.slice(0, 3)"
-                                    class="size-8 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
-                                    (click)="viewImage(img.imageUrl)">
-                                    <img [src]="img.imageUrl" class="w-full h-full object-cover" alt="Expense image" />
-                                </div>
-                                <span *ngIf="depense.images!.length > 3"
-                                    class="size-8 rounded-lg bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
-                                    +{{depense.images!.length - 3}}
+                                    <span class="material-symbols-outlined text-sm">{{getTypeIcon(depense.type)}}</span>
+                                    {{ getTypeLabel(depense.type) }}
                                 </span>
-                            </div>
-                            <span *ngIf="!depense.images || depense.images.length === 0"
-                                class="text-xs text-gray-400">Aucune</span>
-                        </td>
-                        <td class="px-6 py-4 md:table-cell text-right">
-                            <div class="flex gap-2 justify-end">
-                                <button
-                                    class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                                    (click)="editDepense(depense)" title="Modifier">
-                                    <span class="material-symbols-outlined text-lg">edit</span>
-                                </button>
-                                <button
-                                    class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                    (click)="deleteDepense(depense)" title="Supprimer">
-                                    <span class="material-symbols-outlined text-lg">delete</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngIf="filteredDepenses().length === 0">
-                        <td colspan="6" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center gap-3">
-                                <div class="size-16 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-3xl text-gray-400">receipt_long</span>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <span class="text-sm text-gray-600">{{depense.expenseDate | date:'dd MMM yyyy'}}</span>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <span class="text-sm font-bold text-gray-900">{{formatCurrency(depense.amount)}}</span>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <div class="flex items-center gap-1" *ngIf="depense.images && depense.images.length > 0">
+                                    <div *ngFor="let img of depense.images!.slice(0, 3)"
+                                        class="size-8 rounded-lg overflow-hidden border border-gray-200 cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                                        (click)="viewImage(img.imageUrl)">
+                                        <img [src]="img.imageUrl" class="w-full h-full object-cover" alt="Expense image" />
+                                    </div>
+                                    <span *ngIf="depense.images!.length > 3"
+                                        class="size-8 rounded-lg bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                                        +{{depense.images!.length - 3}}
+                                    </span>
                                 </div>
-                                <p class="text-gray-500 font-medium">Aucune dépense trouvée</p>
-                                <button class="text-primary font-bold text-sm hover:underline" (click)="openAddForm()">
-                                    Ajouter une dépense
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                <span *ngIf="!depense.images || depense.images.length === 0"
+                                    class="text-xs text-gray-400">Aucune</span>
+                            </td>
+                            <td class="px-6 py-4 md:table-cell text-right">
+                                <div class="flex gap-2 justify-end">
+                                    <button
+                                        class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                        (click)="editDepense(depense)" title="Modifier">
+                                        <span class="material-symbols-outlined text-lg">edit</span>
+                                    </button>
+                                    <button
+                                        class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                        (click)="deleteDepense(depense)" title="Supprimer">
+                                        <span class="material-symbols-outlined text-lg">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredDepenses().length === 0">
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="size-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-3xl text-gray-400">receipt_long</span>
+                                    </div>
+                                    <p class="text-gray-500 font-medium">Aucune dépense trouvée</p>
+                                    <button class="text-primary font-bold text-sm hover:underline" (click)="openAddForm()">
+                                        Ajouter une dépense
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- Pagination -->
-    <div *ngIf="!isLoading() && totalCount() > 0"
-        class="px-6 py-4 bg-gray-50/50 border border-gray-200 rounded-xl flex items-center justify-between">
-        <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span>
-            -
-            <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
-                class="font-bold text-gray-700">{{totalCount()}}</span> dépenses
-        </p>
-        <div class="flex gap-2 items-center">
-            <p class="text-sm text-gray-500">Par page:</p>
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary cursor-pointer min-w-[80px]"
-                [value]="pageSize()" (change)="setPageSize($any($event).target.value)">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
-            <button
-                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
-                [disabled]="currentPage() === 1" (click)="prevPage()">
-                <span class="material-symbols-outlined text-lg">chevron_left</span>
-            </button>
-            <button
-                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
-                [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
-                <span class="material-symbols-outlined text-lg">chevron_right</span>
-            </button>
+        <!-- Pagination -->
+        <div *ngIf="!isLoading() && totalCount() > 0"
+            class="px-6 py-4 bg-gray-50/50 border border-gray-200 rounded-xl flex items-center justify-between">
+            <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span>
+                -
+                <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
+                    class="font-bold text-gray-700">{{totalCount()}}</span> dépenses
+            </p>
+            <div class="flex gap-2 items-center">
+                <p class="text-sm text-gray-500">Par page:</p>
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary cursor-pointer min-w-[80px]"
+                    [value]="pageSize()" (change)="setPageSize($any($event).target.value)">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <button
+                    class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                    [disabled]="currentPage() === 1" (click)="prevPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                </button>
+                <button
+                    class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                    [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

@@ -10,14 +10,16 @@ import { HouseStatus } from '../houses/house-model';
 import { PaymentStatus } from '../payments/payment-model';
 import { IncidentStatus } from '../incidents/incident-model';
 import { DepenseServices } from '../depenses/depense-services';
+import { ExpenseType, EXPENSE_TYPE_LABELS } from '../depenses/depense-model';
 import { environment } from '../../../environments/environment';
-import { DepenseModel } from '../depenses/depense-model';
+import { UserRole } from '../users/user-model';
+import { ResidentHome } from '../resident-home/resident-home';
 import { map } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, RouterLink],
+  imports: [CommonModule, ResidentHome],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -48,14 +50,170 @@ export class Home {
   // Computed - User
   userName = computed(() => {
     const user = this.settings().user;
-    return `${user.firstName} ${user.lastName}`;
+    return user ? `${user.firstName} ${user.lastName}` : 'Utilisateur';
   });
+
+  // Mock Stats for the dashboard
+  stats = computed(() => {
+    const occupancy = this.occupancyRate();
+    const collections = this.monthlyCollections();
+    const outstanding = this.outstandingPayments();
+    const expenses = this.monthlyExpenses();
+    const residents = this.residentCount();
+
+    return {
+      today: new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+      cards: [
+        {
+          label: 'Taux d\'occupancy',
+          value: `${occupancy}%`,
+          icon: 'home',
+          color: 'bg-blue-50 text-blue-600',
+          trend: '+2.5%',
+          trendUp: true
+        },
+        {
+          label: 'Collections (Mois)',
+          value: `${collections.toFixed(0)} TND`,
+          icon: 'payments',
+          color: 'bg-green-50 text-green-600',
+          trend: '+12%',
+          trendUp: true
+        },
+        {
+          label: 'Paiements En Attente',
+          value: `${outstanding.toFixed(0)} TND`,
+          icon: 'pending_actions',
+          color: 'bg-orange-50 text-orange-600',
+          trend: 'Attention',
+          trendUp: false
+        },
+        {
+          label: 'Dépenses (Mois)',
+          value: `${expenses.toFixed(0)} TND`,
+          icon: 'receipt_long',
+          color: 'bg-purple-50 text-purple-600',
+          trend: '+5%',
+          trendUp: true
+        },
+        {
+          label: 'Résidents',
+          value: `${residents}`,
+          icon: 'group',
+          color: 'bg-pink-50 text-pink-600',
+          trend: '+1',
+          trendUp: true
+        }
+      ]
+    };
+  });
+
+  // Mock Chart Data
+  chartData = signal([
+    { month: 'Jan', revenue: 45 },
+    { month: 'Fév', revenue: 52 },
+    { month: 'Mar', revenue: 48 },
+    { month: 'Avr', revenue: 61 },
+    { month: 'Mai', revenue: 55 },
+    { month: 'Juin', revenue: 67 }
+  ]);
+
+  // Mock Recent Activities
+  recentActivities = signal([
+    { id: 1, title: 'Paiement reçu', desc: 'Appartement B12 - 150 TND', time: 'Il y a 2h', icon: 'payments', color: 'bg-green-50 text-green-600' },
+    { id: 2, title: 'Nouvel incident', desc: 'Fuite d\'eau signalée au Bloc C', time: 'Il y a 4h', icon: 'report_problem', color: 'bg-red-50 text-red-600' },
+    { id: 3, title: 'Nouveau résident', desc: 'M. Ali Ben Salem - Bloc A', time: 'Hier', icon: 'person_add', color: 'bg-blue-50 text-blue-600' }
+  ]);
 
   // Computed - Budget
   budgetTotal = computed(() => this.settings().residence.initialBudget);
 
   overduePaymentsCount = computed(() => {
     return this.payments().filter(p => p.status === PaymentStatus.Overdue).length;
+  });
+
+  // ---- Real Dashboard Metrics ----
+  occupancyRate = computed(() => {
+    const stats = this.houseStats();
+    return stats.occupiedPct;
+  });
+
+  monthlyCollections = computed(() => {
+    const now = new Date();
+    const thisMonth = this.payments().filter(p => {
+      const payDate = new Date(p.paymentDate || p.createdAt || new Date());
+      return payDate.getMonth() === now.getMonth() && payDate.getFullYear() === now.getFullYear()
+        && p.status === PaymentStatus.Paid;
+    });
+    return thisMonth.reduce((sum, p) => sum + p.amount, 0);
+  });
+
+  outstandingPayments = computed(() => {
+    const pending = this.payments().filter(p => p.status === PaymentStatus.Pending || p.status === PaymentStatus.Overdue);
+    return pending.reduce((sum, p) => sum + p.amount, 0);
+  });
+
+  monthlyExpenses = computed(() => {
+    const now = new Date();
+    const thisMonth = this.expenses().filter(e => {
+      const expDate = new Date(e.expenseDate || e.createdAt || new Date());
+      return expDate.getMonth() === now.getMonth() && expDate.getFullYear() === now.getFullYear();
+    });
+    return thisMonth.reduce((sum, e) => sum + e.amount, 0);
+  });
+
+  residentCount = computed(() => {
+    // Assuming we need to track residents - this can be fetched separately if needed
+    return this.payments()
+      .map(p => p.residentId)
+      .filter((id, idx, arr) => arr.indexOf(id) === idx).length;
+  });
+
+  paymentStatusBreakdown = computed(() => {
+    const allPayments = this.payments();
+    const paid = allPayments.filter(p => p.status === PaymentStatus.Paid).length;
+    const pending = allPayments.filter(p => p.status === PaymentStatus.Pending).length;
+    const overdue = allPayments.filter(p => p.status === PaymentStatus.Overdue).length;
+    const total = allPayments.length;
+
+    return {
+      paid,
+      pending,
+      overdue,
+      total,
+      paidPct: total > 0 ? Math.round((paid / total) * 100) : 0,
+      pendingPct: total > 0 ? Math.round((pending / total) * 100) : 0,
+      overduePct: total > 0 ? Math.round((overdue / total) * 100) : 0
+    };
+  });
+
+  topOutstandingResidents = computed(() => {
+    const pending = this.payments().filter(p => p.status === PaymentStatus.Pending || p.status === PaymentStatus.Overdue);
+
+    // Group by resident and sum
+    const residentMap = new Map<string, { residentId: string, totalAmount: number }>();
+    pending.forEach(p => {
+      const existing = residentMap.get(p.residentId) || { residentId: p.residentId, totalAmount: 0 };
+      existing.totalAmount += p.amount;
+      residentMap.set(p.residentId, existing);
+    });
+
+    return Array.from(residentMap.values())
+      .sort((a, b) => b.totalAmount - a.totalAmount)
+      .slice(0, 5);
+  });
+
+  topExpenseCategories = computed(() => {
+    const expenseMap = new Map<ExpenseType, number>();
+    this.expenses().forEach(e => {
+      const existing = expenseMap.get(e.type) || 0;
+      expenseMap.set(e.type, existing + e.amount);
+    });
+
+    return Array.from(expenseMap.entries())
+      .map(([type, amount]) => ({ type, label: EXPENSE_TYPE_LABELS[type], amount }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 5);
   });
 
   // Computed - Houses
@@ -122,7 +280,7 @@ export class Home {
       } else {
         currentBalance += e.amount; // already signed in aggregation
       }
-      
+
       let dateStr = '';
       if (period === 'day') dateStr = e.date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
       else if (period === 'month') dateStr = e.date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
@@ -143,7 +301,7 @@ export class Home {
     const maxBalance = Math.max(...balances);
     const minBalance = Math.min(...balances);
     const range = (maxBalance - minBalance) || 1;
-    
+
     // Add 10% padding top and bottom
     const pad = range * 0.1;
     const chartMin = minBalance - pad;
@@ -172,4 +330,8 @@ export class Home {
     if (!path) return '';
     return `${path} L 300,100 L 0,100 Z`;
   });
+  userRole = computed(() => {
+    return Number(this.settings().user.role);
+  });
+  UserRole = UserRole;
 }

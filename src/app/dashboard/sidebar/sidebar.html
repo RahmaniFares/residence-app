@@ -12,6 +12,7 @@
                 routerLinkActive="font-variation-settings: 'FILL' 1;">dashboard</span>
             <span class="font-semibold text-sm">Tableau de bord</span>
         </a>
+        @if (userRole() === UserRole.Admin) {
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/residents']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
@@ -30,30 +31,49 @@
                 routerLinkActive="font-variation-settings : 'FILL' 1;">payments</span>
             <span class="font-semibold text-sm">Paiements</span>
         </a>
-        <!-- <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-            [routerLink]="['/dashboard/incidents']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
-            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
-                routerLinkActive="font-variation-settings : 'FILL' 1;">report_problem</span>
-            <span class="font-semibold text-sm">Incidents</span>
-        </a> -->
-        <!-- <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-            [routerLink]="['/dashboard/posts']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
-            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
-                routerLinkActive="font-variation-settings : 'FILL' 1;">forum</span>
-            <span class="font-semibold text-sm">Posts</span>
-        </a> -->
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/depenses']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">receipt_long</span>
             <span class="font-semibold text-sm">Dépenses</span>
         </a>
+        }
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/rappels']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">notifications_active</span>
+            <span class="font-semibold text-sm">Rappels</span>
+        </a>
+
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/tarifs']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
                 routerLinkActive="font-variation-settings : 'FILL' 1;">sell</span>
             <span class="font-semibold text-sm">Tarifs</span>
         </a>
+
+        @if (userRole() === UserRole.Admin) {
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/users']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">manage_accounts</span>
+            <span class="font-semibold text-sm">Utilisateurs</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+            [routerLink]="['/dashboard/user-houses']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+            <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                routerLinkActive="font-variation-settings : 'FILL' 1;">assignment_ind</span>
+            <span class="font-semibold text-sm">Assignations</span>
+        </a>
+        }
+        <!-- @else {
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                [routerLink]="['/dashboard/user-houses']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
+                <span class="material-symbols-outlined group-hover:text-primary transition-colors"
+                    routerLinkActive="font-variation-settings : 'FILL' 1;">home</span>
+                <span class="font-semibold text-sm">Mes Maisons</span>
+            </a>
+        } -->
         <a class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors group text-gray-500 hover:bg-gray-50 hover:text-gray-900"
             [routerLink]="['/dashboard/settings']" routerLinkActive="bg-primary/5 text-primary active-nav-item">
             <span class="material-symbols-outlined group-hover:text-primary transition-colors"
@@ -69,7 +89,8 @@
             </div>
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-bold truncate text-gray-900">{{user().firstName}} {{user().lastName}}</p>
-                <p class="text-xs text-gray-500 truncate">Gestionnaire Admin</p>
+                <p class="text-xs text-gray-500 truncate">{{ userRole() === UserRole.Admin ? 'Administrateur' :
+                    'Résident' }}</p>
             </div>
             <button (click)="logout()"
                 class="size-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"

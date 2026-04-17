@@ -1,0 +1,242 @@
+<div class="animate-in fade-in duration-500">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-100 p-4 lg:p-6 sticky top-0 z-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Utilisateurs</h1>
+                <p class="text-sm text-gray-500 font-medium mt-1">Gérez les accès administrateurs et résidents</p>
+            </div>
+            <button
+                class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm active:scale-95"
+                (click)="openAddModal()">
+                <span class="material-symbols-outlined text-[20px]">person_add</span>
+                Ajouter un utilisateur
+            </button>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+        <!-- Filters & Search -->
+        <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+            <div class="relative w-full flex-1">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm outline-none bg-gray-50/50"
+                    placeholder="Rechercher par nom ou email..." type="text" 
+                    [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)" />
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="error()" class="bg-red-50 border border-red-100 text-red-700 p-4 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4">
+            <span class="material-symbols-outlined">error</span>
+            <p class="text-sm font-medium">{{error()}}</p>
+        </div>
+
+        <!-- Users Table (Desktop) -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hidden md:block">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-gray-50/50 border-b border-gray-100">
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Utilisateur</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Rôle</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Contact</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Date de création</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr *ngFor="let user of filteredUsers()" class="hover:bg-gray-50/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div [ngClass]="getAvatarColor(user)" class="size-10 rounded-full flex items-center justify-center font-bold text-white shadow-sm ring-2 ring-white">
+                                    {{user.firstName.charAt(0)}}{{user.lastName.charAt(0)}}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">{{user.getFullName()}}</p>
+                                    <p class="text-xs text-gray-400">{{user.email}}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span [ngClass]="getRoleColor(user.role)" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border">
+                                {{user.getRoleDisplayName()}}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm font-medium text-gray-600">{{user.phoneNumber || '—'}}</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <p class="text-sm text-gray-500">{{user.createdAt | date:'shortDate'}}</p>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2">
+                                <button (click)="openEditModal(user)" class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all">
+                                    <span class="material-symbols-outlined text-xl">edit</span>
+                                </button>
+                                <button (click)="deleteUser(user)" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                                    <span class="material-symbols-outlined text-xl">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div *ngIf="filteredUsers().length === 0 && !loading()" class="py-20 text-center">
+                <span class="material-symbols-outlined text-6xl text-gray-200">person_search</span>
+                <h3 class="mt-4 text-lg font-bold text-gray-900">Aucun utilisateur trouvé</h3>
+                <p class="text-gray-500 mt-1">Désolé, nous n'avons trouvé aucun utilisateur correspondant à votre recherche.</p>
+            </div>
+
+            <!-- Skeleton Loading -->
+            <div *ngIf="loading()" class="p-6 space-y-4 animate-pulse">
+                <div *ngFor="let i of [1,2,3,4,5]" class="flex items-center gap-4">
+                    <div class="size-10 bg-gray-100 rounded-full"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="h-4 bg-gray-100 rounded w-1/4"></div>
+                        <div class="h-3 bg-gray-50 rounded w-1/3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile View (Cards) -->
+        <div class="md:hidden space-y-4">
+            <div *ngFor="let user of filteredUsers()" class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div [ngClass]="getAvatarColor(user)" class="size-11 rounded-full flex items-center justify-center font-bold text-white shadow-sm ring-2 ring-white">
+                            {{user.firstName.charAt(0)}}{{user.lastName.charAt(0)}}
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900">{{user.getFullName()}}</p>
+                            <span [ngClass]="getRoleColor(user.role)" class="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border">
+                                {{user.getRoleDisplayName()}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button (click)="openEditModal(user)" class="p-2 text-gray-400 hover:bg-gray-50 rounded-lg">
+                            <span class="material-symbols-outlined text-xl">edit</span>
+                        </button>
+                        <button (click)="deleteUser(user)" class="p-2 text-red-400 hover:bg-red-50 rounded-lg">
+                            <span class="material-symbols-outlined text-xl">delete</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 py-3 border-y border-gray-50">
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email</p>
+                        <p class="text-sm font-bold text-gray-700 truncate">{{user.email}}</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Téléphone</p>
+                        <p class="text-sm font-bold text-gray-700">{{user.phoneNumber || '—'}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="p-5 bg-white rounded-2xl border border-gray-200 shadow-sm flex items-center justify-between">
+            <div class="hidden sm:block">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    Affichage de {{(pagination().pageNumber - 1) * pagination().pageSize + 1}} à 
+                    {{Math.min(pagination().pageNumber * pagination().pageSize, pagination().totalCount)}} sur 
+                    {{pagination().totalCount}} utilisateurs
+                </p>
+            </div>
+            <div class="flex items-center gap-2 flex-1 sm:flex-none justify-between sm:justify-start">
+                <button 
+                    class="size-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    [disabled]="!pagination().hasPreviousPage"
+                    (click)="onPageChange(pagination().pageNumber - 1)">
+                    <span class="material-symbols-outlined text-xl">chevron_left</span>
+                </button>
+                <span class="px-4 text-xs font-extrabold text-gray-900">Page {{pagination().pageNumber}} <span class="text-gray-400 font-medium">/ {{pagination().totalPages}}</span></span>
+                <button 
+                    class="size-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    [disabled]="!pagination().hasNextPage"
+                    (click)="onPageChange(pagination().pageNumber + 1)">
+                    <span class="material-symbols-outlined text-xl">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="showModal()" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm animate-in fade-in" (click)="closeModal()"></div>
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative z-10 overflow-hidden animate-in zoom-in duration-200">
+        <!-- Modal Header -->
+        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <div>
+                <h2 class="text-xl font-extrabold text-gray-900 leading-tight">
+                    {{isEditing() ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur'}}
+                </h2>
+                <p class="text-sm text-gray-500 mt-1">Fournissez les informations de compte</p>
+            </div>
+            <button (click)="closeModal()" class="p-2 hover:bg-gray-200/50 rounded-full transition-all text-gray-400">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="p-8 space-y-5">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Prénom</label>
+                    <input formControlName="firstName" type="text" placeholder="ex: Jean"
+                        class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all font-medium text-sm">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Nom</label>
+                    <input formControlName="lastName" type="text" placeholder="ex: Dupont"
+                        class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all font-medium text-sm">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Email</label>
+                <input formControlName="email" type="email" placeholder="jean.dupont@example.com"
+                    class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all font-medium text-sm disabled:opacity-50">
+            </div>
+
+            <div class="space-y-1.5" *ngIf="!isEditing()">
+                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Mot de passe</label>
+                <input formControlName="password" type="password" placeholder="••••••••"
+                    class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all font-medium text-sm">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Téléphone</label>
+                    <input formControlName="phoneNumber" type="tel" placeholder="06..."
+                        class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all font-medium text-sm">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Rôle</label>
+                    <select formControlName="role" 
+                        class="w-full px-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all font-medium text-sm appearance-none cursor-pointer">
+                        <option [ngValue]="UserRole.Admin">Administrateur</option>
+                        <option [ngValue]="UserRole.Resident">Résident</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 flex gap-3">
+                <button type="button" (click)="closeModal()"
+                    class="flex-1 px-6 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition-all active:scale-95 text-sm">
+                    Annuler
+                </button>
+                <button type="submit" [disabled]="userForm.invalid || loading()"
+                    class="flex-[2] px-6 py-3.5 bg-primary hover:bg-blue-700 text-white rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 disabled:opacity-50 text-sm">
+                    {{loading() ? 'Traitement...' : (isEditing() ? 'Enregistrer les modifications' : 'Créer le compte')}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

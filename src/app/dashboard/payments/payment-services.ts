@@ -31,6 +31,9 @@ export class PaymentServices {
     });
     pagination$ = this.paginationSubject.asObservable();
 
+    private loadingSubject = new BehaviorSubject<boolean>(false);
+    loading$ = this.loadingSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -41,21 +44,27 @@ export class PaymentServices {
             .set('pageNumber', pageNumber.toString())
             .set('pageSize', pageSize.toString());
 
+        this.loadingSubject.next(true);
         return this.http.get<PaginatedResult<PaymentDto>>(
             `${this.apiUrl}/${this.residenceId}/payments`,
             { params }
         ).pipe(
-            tap(result => {
-                const mapped = result.items.map(p => this.mapDtoToModel(p));
-                this.paymentsSubject.next(mapped);
-                this.paginationSubject.next({
-                    totalCount: result.totalCount,
-                    pageNumber: result.pageNumber,
-                    pageSize: result.pageSize,
-                    totalPages: result.totalPages,
-                    hasPreviousPage: result.hasPreviousPage,
-                    hasNextPage: result.hasNextPage,
-                });
+            tap({
+                next: (result) => {
+                    const mapped = result.items.map(p => this.mapDtoToModel(p));
+                    this.paymentsSubject.next(mapped);
+                    this.paginationSubject.next({
+                        totalCount: result.totalCount,
+                        pageNumber: result.pageNumber,
+                        pageSize: result.pageSize,
+                        totalPages: result.totalPages,
+                        hasPreviousPage: result.hasPreviousPage,
+                        hasNextPage: result.hasNextPage,
+                    });
+                    this.loadingSubject.next(false);
+                },
+                error: () => this.loadingSubject.next(false),
+                complete: () => this.loadingSubject.next(false)
             })
         );
     }
@@ -193,7 +202,8 @@ export class PaymentServices {
             periodEnd: dto.periodEnd.split('T')[0],
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,
-            status: dto.status
+            status: dto.status,
+            lines: dto.lines
         };
     }
 }

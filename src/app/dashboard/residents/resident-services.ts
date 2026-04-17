@@ -55,7 +55,6 @@ export class ResidentServices {
   private residentsSubject = new BehaviorSubject<ResidentModel[]>([]);
   residents$ = this.residentsSubject.asObservable();
 
-  // Pagination state
   private paginationSubject = new BehaviorSubject<Omit<PaginatedResult<any>, 'items'>>({
     totalCount: 0,
     pageNumber: 1,
@@ -65,6 +64,9 @@ export class ResidentServices {
     hasNextPage: false,
   });
   pagination$ = this.paginationSubject.asObservable();
+
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -77,22 +79,28 @@ export class ResidentServices {
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
 
+    this.loadingSubject.next(true);
     return this.http.get<PaginatedResult<ResidentDto>>(
       `${this.apiUrl}/${this.residenceId}/residents`,
       { params }
     ).pipe(
-      tap(result => {
-        // Map backend DTOs to local ResidentModel for backward compatibility
-        const mapped: ResidentModel[] = result.items.map(r => this.mapDtoToModel(r));
-        this.residentsSubject.next(mapped);
-        this.paginationSubject.next({
-          totalCount: result.totalCount,
-          pageNumber: result.pageNumber,
-          pageSize: result.pageSize,
-          totalPages: result.totalPages,
-          hasPreviousPage: result.hasPreviousPage,
-          hasNextPage: result.hasNextPage,
-        });
+      tap({
+        next: (result) => {
+          // Map backend DTOs to local ResidentModel for backward compatibility
+          const mapped: ResidentModel[] = result.items.map(r => this.mapDtoToModel(r));
+          this.residentsSubject.next(mapped);
+          this.paginationSubject.next({
+            totalCount: result.totalCount,
+            pageNumber: result.pageNumber,
+            pageSize: result.pageSize,
+            totalPages: result.totalPages,
+            hasPreviousPage: result.hasPreviousPage,
+            hasNextPage: result.hasNextPage,
+          });
+          this.loadingSubject.next(false);
+        },
+        error: () => this.loadingSubject.next(false),
+        complete: () => this.loadingSubject.next(false)
       })
     );
   }

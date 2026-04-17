@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IncidentServices } from './incident-services';
 import { IncidentModel, IncidentStatus } from './incident-model';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-incidents',
@@ -17,6 +18,7 @@ export class Incidents implements OnInit {
 
   // Signals
   incidents = signal<IncidentModel[]>([]);
+  loading = toSignal(this.incidentService.loading$, { initialValue: false });
   searchQuery = signal('');
   statusFilter = signal<string>('All Status');
   currentPage = signal(1);

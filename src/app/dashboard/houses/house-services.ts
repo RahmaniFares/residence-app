@@ -6,49 +6,68 @@ import { environment } from '../../../environments/environment';
 
 // --- DTOs matching backend API naming conventions ---
 
+export interface CreateHouseDto {
+    residentId?: string;
+    block: string;
+    unit: string;
+    floor?: string;
+}
+
+export interface UpdateHouseDto {
+    residentId?: string;
+    block: string;
+    unit: string;
+    floor?: string;
+    status: number;
+}
+
 export interface HouseDto {
     id: string;
     block: string;
     unit: string;
-    floor: string;
-    status: HouseStatus;
-    residentId?: string;
-    residenceId: string;
-    currentResident?: {
-        firstName: string;
-        lastName: string;
-    };
-}
-
-export interface HouseDetailsDto {
-    id: string;
-    block: string;
-    unit: string;
-    floor: string;
-    status: HouseStatus;
+    floor?: string;
+    status: number;
     currentResidentId?: string;
-    currentResident?: any;
-    totalResidents: number;
     createdAt: string;
-    updatedAt: string;
+    updatedAt?: string;
 }
 
-export interface CreateHouseDto {
-    block: string;
-    unit: string;
-    floor: string;
-    status: HouseStatus;
-    residentId?: string;
+export interface ResidentDto {
+    id: string;
+    houseId: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phoneNumber?: string;
+    address?: string;
+    birthDate?: string | null;
+    status: number;
+    moveInDate?: string | null;
+    moveOutDate?: string | null;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface HouseDetailsDto extends HouseDto {
+    currentResident?: ResidentDto | null;
+    residentsCount: number;
+}
+
+export interface HouseFinancialStatementDto {
+    houseId: string;
+    totalRappelPaid: number;
+    totalRappelToPay: number;
 }
 
 export interface PaginatedResult<T> {
     items: T[];
-    totalCount: number;
+    totalCount?: number;
+    total?: number;
     pageNumber: number;
     pageSize: number;
     totalPages: number;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
 }
 
 @Injectable({
@@ -61,6 +80,9 @@ export class HouseServices {
     private housesSubject = new BehaviorSubject<HouseModel[]>([]);
     houses$ = this.housesSubject.asObservable();
 
+    private loadingSubject = new BehaviorSubject<boolean>(false);
+    loading$ = this.loadingSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -72,13 +94,19 @@ export class HouseServices {
             .set('pageNumber', pageNumber.toString())
             .set('pageSize', pageSize.toString());
 
-        return this.http.get<PaginatedResult<HouseDto>>(
+        this.loadingSubject.next(true);
+        return this.http.get<PaginatedResult<HouseDetailsDto>>(
             `${this.apiUrl}/${this.residenceId}/houses`,
             { params }
         ).pipe(
-            tap(result => {
-                const mapped: HouseModel[] = result.items.map(h => this.mapDtoToModel(h));
-                this.housesSubject.next(mapped);
+            tap({
+                next: (result) => {
+                    const mapped: HouseModel[] = result.items.map(h => this.mapDtoToModel(h));
+                    this.housesSubject.next(mapped);
+                    this.loadingSubject.next(false);
+                },
+                error: () => this.loadingSubject.next(false),
+                complete: () => this.loadingSubject.next(false)
             })
         );
     }
@@ -110,6 +138,15 @@ export class HouseServices {
     }
 
     /**
+     * Get financial statement for a house from the backend (async).
+     */
+    getHouseFinancialStatement(id: string): Observable<HouseFinancialStatementDto> {
+        return this.http.get<HouseFinancialStatementDto>(
+            `${this.apiUrl}/${this.residenceId}/houses/${id}/financial-statement`
+        );
+    }
+
+    /**
      * Add a new house via backend API.
      */
     addHouse(house: Omit<HouseModel, 'id'>): Observable<HouseDto> {
@@ -117,7 +154,6 @@ export class HouseServices {
             block: house.block,
             unit: house.unit,
             floor: house.floor,
-            status: house.status,
             residentId: house.residentId
         };
 
@@ -136,9 +172,17 @@ export class HouseServices {
      * Update an existing house via backend API.
      */
     updateHouse(id: string, house: HouseModel): Observable<HouseDto> {
+        const updateDto: UpdateHouseDto = {
+            block: house.block,
+            unit: house.unit,
+            floor: house.floor,
+            status: house.status,
+            residentId: house.residentId
+        };
+
         return this.http.put<HouseDto>(
             `${this.apiUrl}/${this.residenceId}/houses/${id}`,
-            house
+            updateDto
         ).pipe(
             tap(updatedHouse => {
                 const currentHouses = this.housesSubject.value;
@@ -168,15 +212,16 @@ export class HouseServices {
     /**
      * Helper to map backend HouseDto to the application's HouseModel.
      */
-    private mapDtoToModel(dto: HouseDto): HouseModel {
+    private mapDtoToModel(dto: HouseDto | HouseDetailsDto): HouseModel {
+        const details = dto as HouseDetailsDto;
         return {
             id: dto.id,
             block: dto.block,
             unit: dto.unit,
-            floor: dto.floor,
+            floor: dto.floor || '1',
             status: dto.status,
-            residentId: dto.residentId,
-            residentName: dto.currentResident ? `${dto.currentResident.firstName} ${dto.currentResident.lastName}` : undefined
+            residentId: dto.currentResidentId,
+            residentName: details.currentResident ? `${details.currentResident.firstName} ${details.currentResident.lastName}` : undefined
         };
     }
 }

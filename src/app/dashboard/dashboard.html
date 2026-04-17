@@ -7,49 +7,81 @@
    </main>
    <!-- Mobile 'More' Menu Overlay -->
    <div *ngIf="showMobileMenu"
-      class="lg:hidden fixed bottom-24 right-4 bg-white rounded-xl shadow-2xl border border-gray-100 p-2 min-w-[200px] z-50 flex flex-col gap-1 animate-in slide-in-from-bottom-2 fade-in duration-200">
-      <a [routerLink]="['/dashboard/payments']" (click)="showMobileMenu = false"
-         routerLinkActive="bg-primary/10 text-primary"
+      class="lg:hidden fixed bottom-24 right-4 bg-white rounded-xl shadow-2xl border border-gray-100 p-2 min-w-[200px] max-h-[60vh] overflow-y-auto z-50 flex flex-col gap-1 animate-in slide-in-from-bottom-2 fade-in duration-200">
+      
+      <!-- Admin Specific More Links -->
+      <ng-container *ngIf="userRole() === UserRole.Admin">
+           <a [routerLink]="['/dashboard/depenses']" (click)="showMobileMenu = false" routerLinkActive="bg-primary/10 text-primary"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+               <span class="material-symbols-outlined text-xl" routerLinkActive="font-variation-settings: 'FILL' 1;">receipt_long</span>
+               <span class="font-medium text-sm">Dépenses</span>
+           </a>
+           <a [routerLink]="['/dashboard/users']" (click)="showMobileMenu = false" routerLinkActive="bg-primary/10 text-primary"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+               <span class="material-symbols-outlined text-xl" routerLinkActive="font-variation-settings: 'FILL' 1;">manage_accounts</span>
+               <span class="font-medium text-sm">Utilisateurs</span>
+           </a>
+           <a [routerLink]="['/dashboard/user-houses']" (click)="showMobileMenu = false" routerLinkActive="bg-primary/10 text-primary"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
+               <span class="material-symbols-outlined text-xl" routerLinkActive="font-variation-settings: 'FILL' 1;">assignment_ind</span>
+               <span class="font-medium text-sm">Assignations</span>
+           </a>
+      </ng-container>
+
+      <!-- Common More Links -->
+      <a [routerLink]="['/dashboard/rappels']" (click)="showMobileMenu = false" routerLinkActive="bg-primary/10 text-primary"
          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
-         <span class="material-symbols-outlined text-xl"
-            routerLinkActive="font-variation-settings: 'FILL' 1;">payments</span>
-         <span class="font-medium text-sm">Paiements</span>
+         <span class="material-symbols-outlined text-xl" routerLinkActive="font-variation-settings: 'FILL' 1;">notifications_active</span>
+         <span class="font-medium text-sm">Rappels</span>
       </a>
-      <a [routerLink]="['/dashboard/incidents']" (click)="showMobileMenu = false"
-         routerLinkActive="bg-primary/10 text-primary"
+      <a [routerLink]="['/dashboard/tarifs']" (click)="showMobileMenu = false" routerLinkActive="bg-primary/10 text-primary"
          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
-         <span class="material-symbols-outlined text-xl"
-            routerLinkActive="font-variation-settings: 'FILL' 1;">report_problem</span>
-         <span class="font-medium text-sm">Incidents</span>
+         <span class="material-symbols-outlined text-xl" routerLinkActive="font-variation-settings: 'FILL' 1;">sell</span>
+         <span class="font-medium text-sm">Tarifs</span>
       </a>
-      <a [routerLink]="['/dashboard/settings']" (click)="showMobileMenu = false"
-         routerLinkActive="bg-primary/10 text-primary"
+      <a [routerLink]="['/dashboard/settings']" (click)="showMobileMenu = false" routerLinkActive="bg-primary/10 text-primary"
          class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
-         <span class="material-symbols-outlined text-xl"
-            routerLinkActive="font-variation-settings: 'FILL' 1;">settings</span>
+         <span class="material-symbols-outlined text-xl" routerLinkActive="font-variation-settings: 'FILL' 1;">settings</span>
          <span class="font-medium text-sm">Paramètres</span>
       </a>
+
+      <!-- Logout Button -->
+      <div class="mt-2 pt-2 border-t border-gray-100">
+          <button (click)="logout()" 
+              class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors">
+              <span class="material-symbols-outlined text-xl">logout</span>
+              <span class="font-bold text-sm">Déconnexion</span>
+          </button>
+      </div>
    </div>
 
    <nav
-      class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 flex justify-around p-2 pb-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 flex justify-around p-2 pb-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
       <a [routerLink]="['/dashboard/home']" routerLinkActive="text-primary"
          class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
          <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">dashboard</span>
          <span class="text-[10px] font-bold">Accueil</span>
       </a>
 
-      <a [routerLink]="['/dashboard/residents']" routerLinkActive="text-primary"
-         class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
-         <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">group</span>
-         <span class="text-[10px] font-bold">Résidents</span>
-      </a>
+      <ng-container *ngIf="userRole() === UserRole.Admin">
+           <a [routerLink]="['/dashboard/residents']" routerLinkActive="text-primary"
+               class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
+               <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">group</span>
+               <span class="text-[10px] font-bold">Résidents</span>
+           </a>
 
-      <a [routerLink]="['/dashboard/houses']" routerLinkActive="text-primary"
-         class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
-         <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">apartment</span>
-         <span class="text-[10px] font-bold">Maisons</span>
-      </a>
+           <a [routerLink]="['/dashboard/houses']" routerLinkActive="text-primary"
+               class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
+               <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">apartment</span>
+               <span class="text-[10px] font-bold">Maisons</span>
+           </a>
+           
+           <a [routerLink]="['/dashboard/payments']" routerLinkActive="text-primary"
+               class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">
+               <span class="material-symbols-outlined" routerLinkActive="font-variation-settings: 'FILL' 1;">payments</span>
+               <span class="text-[10px] font-bold">Paiements</span>
+           </a>
+      </ng-container>
 
       <button (click)="toggleMobileMenu()" [class.text-primary]="showMobileMenu"
          class="flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors w-16">

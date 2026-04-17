@@ -170,6 +170,47 @@ export class SettingsService {
         );
     }
 
+    /** Clear all settings (called on logout) */
+    clearSettings() {
+        this.settingsSignal.set(this.buildInitialSettings());
+    }
+
+    /** Destroy the service (reset all state on logout) */
+    destroy() {
+        this.clearSettings();
+        // Reset to empty/default state
+        this.settingsSignal.set({
+            user: {
+                id: '',
+                username: '',
+                firstName: '',
+                lastName: '',
+                phone: '',
+                email: '',
+                role: '',
+                avatarUrl: '',
+                residentId: '',
+            },
+            resident: {
+                id: '',
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                birthDate: '',
+            },
+            residence: {
+                initialBudget: 0,
+                residenceName: '',
+                address: '',
+                city: '',
+                state: '',
+                zipCode: '',
+                description: '',
+            }
+        });
+    }
+
     /** Legacy – kept for backward compat with sidebar/home (local only) */
     updateSettings(newSettings: SettingsModel) {
         this.settingsSignal.set(newSettings);

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { SettingsService } from './settings-service';
 import { ResidentProfile, ResidenceSettings } from './settings-model';
+import { LoginService } from '../../login/login-service';
+import { UserRole } from '../users/user-model';
 
 @Component({
   selector: 'app-settings',
@@ -15,6 +17,7 @@ import { ResidentProfile, ResidenceSettings } from './settings-model';
 export class Settings implements OnInit {
   private settingsService = inject(SettingsService);
   private toastr = inject(ToastrService);
+  private loginService = inject(LoginService);
 
   // Read-only settings signal from service
   settings = this.settingsService.getSettings();
@@ -23,6 +26,7 @@ export class Settings implements OnInit {
   isLoading = signal(false);
   isSavingResident = signal(false);
   isSavingResidence = signal(false);
+  isResident = signal(false);
 
   // Section-level edit modes
   isEditingResident = signal(false);
@@ -48,6 +52,9 @@ export class Settings implements OnInit {
   }
 
   ngOnInit() {
+    const userRole = this.loginService.getCurrentUser()?.role;
+    this.isResident.set(Number(userRole) === UserRole.Resident);
+  
     // Load fresh residence data from API
     this.isLoading.set(true);
     this.settingsService.loadResidence().subscribe({
@@ -57,6 +64,19 @@ export class Settings implements OnInit {
         // Non-fatal: residence info may not be available
       }
     });
+  }
+
+  // Convert role enum to label
+  getRoleLabel(role: string | number): string {
+    const roleNum = Number(role);
+    switch (roleNum) {
+      case UserRole.Admin:
+        return 'Administrateur';
+      case UserRole.Resident:
+        return 'Résident';
+      default:
+        return 'Utilisateur';
+    }
   }
 
   // ---- Resident section ----

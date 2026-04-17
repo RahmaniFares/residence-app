@@ -1,5 +1,6 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, inject, OnInit, OnDestroy, Signal } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
 import { PaymentServices } from './payment-services';
 import { HouseServices } from '../houses/house-services';
 import { ResidentServices } from '../residents/resident-services';
@@ -13,11 +14,13 @@ import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-payments',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './payments.html',
   styleUrl: './payments.css',
 })
-export class Payments implements OnInit {
+export class Payments implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
   router = inject(Router);
   paymentService = inject(PaymentServices);
@@ -28,9 +31,23 @@ export class Payments implements OnInit {
   protected Math = Math;
 
   payments = toSignal(this.paymentService.payments$, { initialValue: [] });
-  pagination = toSignal(this.paymentService.pagination$, { initialValue: { totalCount: 0, pageNumber: 1, pageSize: 10, totalPages: 0, hasPreviousPage: false, hasNextPage: false } });
+  pagination: Signal<any> = toSignal(this.paymentService.pagination$, {
+    initialValue: {
+      totalCount: 0,
+      pageNumber: 1,
+      pageSize: 5,
+      totalPages: 0,
+      hasPreviousPage: false,
+      hasNextPage: false
+    }
+  }) as any;
+  loading = toSignal(this.paymentService.loading$, { initialValue: false });
   tarifs = signal<TarifDto[]>([]);
   tarifHistory = signal<TarifHistoryDto[]>([]);
+  pageSizes = [5, 10];
+
+  hasNextPage = computed(() => this.pagination().pageNumber < this.pagination().totalPages);
+  hasPreviousPage = computed(() => this.pagination().pageNumber > 1);
 
   budgetStats = computed(() => {
     const allPayments = this.payments() || [];
@@ -53,18 +70,28 @@ export class Payments implements OnInit {
   });
 
   ngOnInit() {
-    this.paymentService.loadPayments(1, 10).subscribe();
-    this.houseService.loadHouses(1, 100).subscribe();
-    this.residentService.loadResidents(1, 100).subscribe();
+    this.paymentService.loadPayments(1, 5).pipe(takeUntil(this.destroy$)).subscribe();
+    this.houseService.loadHouses(1, 100).pipe(takeUntil(this.destroy$)).subscribe();
+    this.residentService.loadResidents(1, 100).pipe(takeUntil(this.destroy$)).subscribe();
 
     // Load current tarifs and history to calculate expected monthly dues
-    this.tarifService.getTarifsByResidence(environment.residenceId).subscribe(t => this.tarifs.set(t));
-    this.tarifService.getResidenceTarifHistory(environment.residenceId).subscribe(h => this.tarifHistory.set(h));
+    this.tarifService.getTarifsByResidence(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(t => this.tarifs.set(t));
+    this.tarifService.getResidenceTarifHistory(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(h => this.tarifHistory.set(h));
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onPageChange(page: number) {
     if (page < 1 || page > this.pagination().totalPages) return;
-    this.paymentService.loadPayments(page, this.pagination().pageSize).subscribe();
+    this.paymentService.loadPayments(page, this.pagination().pageSize).pipe(takeUntil(this.destroy$)).subscribe();
+  }
+
+  onPageSizeChange(size: string) {
+    const pageSize = Number(size) || 10;
+    this.paymentService.loadPayments(1, pageSize).pipe(takeUntil(this.destroy$)).subscribe();
   }
 
   addPayment() {

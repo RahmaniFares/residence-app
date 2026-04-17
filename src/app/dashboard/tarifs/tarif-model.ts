@@ -32,7 +32,17 @@ export interface UpdateTarifDto {
     description?: string;
     amount?: number;
     currency?: string;
+    effectiveDate?: Date | string;
     notes?: string;
+    changeReason?: string;
+}
+
+export interface UpdateTarifHistoryDto {
+    previousAmount?: number;
+    newAmount?: number;
+    previousDescription?: string;
+    newDescription?: string;
+    effectiveDate?: Date | string;
     changeReason?: string;
 }
 

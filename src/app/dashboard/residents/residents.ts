@@ -19,6 +19,7 @@ export class Residents implements OnInit {
   residentServices = inject(ResidentServices);
   houseServices = inject(HouseServices);
   residents = toSignal(this.residentServices.residents$, { initialValue: [] });
+  loading = toSignal(this.residentServices.loading$, { initialValue: false });
 
   pageSizes = signal([5, 10, 25, 50]);
   page = signal(1);

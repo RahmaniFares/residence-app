@@ -8,7 +8,7 @@ import { ResidentServices } from '../residents/resident-services';
 import { ResidentModel } from '../residents/resident-model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { PaymentModel, CreatePaymentDto, PaymentStatus } from '../payments/payment-model';
+import { PaymentModel, CreatePaymentDto, PaymentStatus, PaymentMethod, PaymentLineDto } from '../payments/payment-model';
 import { TarifService } from '../tarifs/tarif-service';
 import { TarifDto, TarifHistoryDto } from '../tarifs/tarif-model';
 import { environment } from '../../../environments/environment';
@@ -39,6 +39,7 @@ export class AddPayment implements OnInit {
   isHouseFixed = signal(false);
   hideUpload = signal(false);
   housePayments = signal<PaymentModel[]>([]);
+  formMethod = signal<PaymentMethod>(PaymentMethod.Cash);
 
   paymentForm = this.fb.group({
     houseId: ['', Validators.required],
@@ -309,14 +310,65 @@ export class AddPayment implements OnInit {
       return;
     }
 
+    const startStr = formVal.startDate ?? '';
+    const endStr = formVal.endDate ?? '';
+
+    // ─── Build payment lines ──────────────────────────────────────────────────
+    // Group consecutive months that share the same tarif into a single line.
+    const lines: PaymentLineDto[] = [];
+    const startDate = new Date(startStr + '-01');
+    const endDate = new Date(endStr + '-01');
+    let current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+    const stop = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+
+    let lineStart: Date | null = null;
+    let currentTarif = 0;
+
+    while (current <= stop) {
+      const rate = this.getRateForDate(current);
+
+      if (lineStart === null) {
+        // Start first line
+        lineStart = new Date(current);
+        currentTarif = rate;
+      } else if (rate !== currentTarif) {
+        // Tarif changed — close previous line
+        const prev = new Date(current.getFullYear(), current.getMonth() - 1, 1);
+        lines.push({
+          fromMonth: lineStart.getMonth() + 1,
+          fromYear: lineStart.getFullYear(),
+          toMonth: prev.getMonth() + 1,
+          toYear: prev.getFullYear(),
+          tarif: currentTarif
+        });
+        // Start new line
+        lineStart = new Date(current);
+        currentTarif = rate;
+      }
+
+      current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+    }
+
+    // Close the last open line
+    if (lineStart !== null) {
+      lines.push({
+        fromMonth: lineStart.getMonth() + 1,
+        fromYear: lineStart.getFullYear(),
+        toMonth: endDate.getMonth() + 1,
+        toYear: endDate.getFullYear(),
+        tarif: currentTarif
+      });
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     const createDto: CreatePaymentDto = {
       houseId: house.id,
       residentId: resident.id,
       amount: this.totalAmount(),
-      periodStart: formVal.startDate + '-01',
-      periodEnd: (formVal.endDate || '') + '-28',
-      paymentDate: new Date().toISOString(),
-      status: PaymentStatus.Paid
+      method: this.formMethod(),
+      periodStart: new Date(startStr + '-01').toISOString(),
+      periodEnd: new Date(endStr + '-01').toISOString(),
+      lines
     };
 
     this.paymentService.addPayment(createDto).subscribe({

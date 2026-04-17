@@ -1,0 +1,136 @@
+<div class="p-6 max-w-7xl mx-auto animate-in fade-in duration-500">
+    <!-- Header -->
+    <header class="mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Bonjour, {{ user().firstName }} !</h1>
+                <p class="text-gray-500 mt-1">Bienvenue sur votre portail résident de la résidence {{ residence().residenceName }}.</p>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
+                <div class="size-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary">person</span>
+                </div>
+                <div class="pr-2">
+                    <p class="text-xs text-gray-400 font-medium leading-none">Rôle</p>
+                    <p class="text-sm font-bold text-gray-700">Résident</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats / Overview Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm group hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="size-12 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-blue-600">home</span>
+                </div>
+            </div>
+            <p class="text-sm font-medium text-gray-500">Mes Maisons</p>
+            <h3 class="text-2xl font-bold text-gray-900">{{ userHouses().length }}</h3>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm group hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="size-12 rounded-2xl bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-indigo-600">apartment</span>
+                </div>
+            </div>
+            <p class="text-sm font-medium text-gray-500">Résidence</p>
+            <h3 class="text-lg font-bold text-gray-900 truncate">{{ residence().residenceName }}</h3>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm group hover:shadow-md transition-all duration-300">
+            <div class="flex items-center justify-between mb-4">
+                <div class="size-12 rounded-2xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-emerald-600">verified_user</span>
+                </div>
+            </div>
+            <p class="text-sm font-medium text-gray-500">Statut Compte</p>
+            <h3 class="text-lg font-bold text-gray-900">Actif</h3>
+        </div>
+    </div>
+
+    <!-- Main Content: My Houses Card Grid -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+                <div class="size-10 rounded-xl bg-primary flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined">real_estate_agent</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">Mes Propriétés</h2>
+                    <p class="text-sm text-gray-500">Gérez et consultez les détails de vos logements</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="loading()" class="py-12 flex flex-col items-center justify-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+            <div class="animate-spin size-10 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+            <p class="text-gray-500 font-medium">Récupération de vos maisons...</p>
+        </div>
+
+        <!-- Cards Grid -->
+        <div *ngIf="!loading() && userHouses().length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let assignment of userHouses()" 
+                 [routerLink]="['/dashboard/house-details', assignment.house?.id]"
+                 class="group bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col">
+                
+                <!-- Card Header with Image/Icon placeholder -->
+                <div class="h-32 bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center relative overflow-hidden">
+                    <span class="material-symbols-outlined text-6xl text-primary/20 group-hover:scale-110 transition-transform duration-500">home</span>
+                    <div class="absolute top-4 right-4 animate-in fade-in zoom-in duration-700">
+                        <span [class]="'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm ' + getHouseStatusColor(assignment.house!.status)">
+                            {{ getHouseStatusDisplay(assignment) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-6 flex-1">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors">
+                            Unité {{ assignment.house?.unit || '-' }}
+                        </h3>
+                        <div class="size-10 rounded-xl bg-gray-50 flex flex-col items-center justify-center border border-gray-100 group-hover:bg-primary/5 transition-colors">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase leading-none mb-0.5">Bloc</span>
+                            <span class="text-lg font-black text-gray-700 group-hover:text-primary leading-none">{{ assignment.house?.block || '-' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mt-4">
+                        <div class="flex items-center gap-3 text-sm text-gray-600">
+                            <span class="material-symbols-outlined text-gray-400 text-lg">layers</span>
+                            <span>Étage <span class="font-bold text-gray-900">{{ assignment.house?.floor || '0' }}</span></span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm text-gray-600">
+                            <span class="material-symbols-outlined text-gray-400 text-lg">calendar_today</span>
+                            <span>Assigné depuis le <span class="font-bold text-gray-900">{{ assignment.assignedDate | date:'dd MMM yyyy' }}</span></span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                        <span class="text-xs font-bold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                            Voir les détails
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </span>
+                        <div *ngIf="assignment.notes" class="size-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600" [title]="assignment.notes">
+                            <span class="material-symbols-outlined text-lg">sticky_note_2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading() && !userHouses().length" class="p-16 text-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+            <div class="size-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="material-symbols-outlined text-gray-300 text-5xl">holiday_village</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Aucune maison assignée</h3>
+            <p class="text-gray-500 max-w-sm mx-auto">Vous n'avez pas encore de maison assignée à votre compte. Veuillez contacter l'administration.</p>
+        </div>
+    </div>
+</div>

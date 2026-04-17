@@ -72,6 +72,18 @@ export const routes: Routes = [
       {
         path: 'tarifs',
         loadComponent: () => import('./dashboard/tarifs/tarifs').then((m) => m.Tarifs),
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./dashboard/users/users').then((m) => m.Users),
+      },
+      {
+        path: 'user-houses',
+        loadComponent: () => import('./dashboard/user-houses/user-houses').then((m) => m.UserHouses),
+      },
+      {
+        path: 'rappels',
+        loadComponent: () => import('./dashboard/rappels/rappels').then((m) => m.Rappels),
       }
     ]
   }

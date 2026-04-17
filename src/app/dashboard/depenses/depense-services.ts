@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
     DepenseModel,
@@ -19,6 +19,9 @@ export class DepenseServices {
 
     private baseUrl = `${environment.apiUrl}/residences`;
 
+    private loadingSubject = new BehaviorSubject<boolean>(false);
+    loading$ = this.loadingSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -35,9 +38,16 @@ export class DepenseServices {
         if (pagination?.pageSize) {
             params = params.set('pageSize', pagination.pageSize.toString());
         }
+        this.loadingSubject.next(true);
         return this.http.get<PaginatedResponse<DepenseModel>>(
             `${this.baseUrl}/${residenceId}/expenses`,
             { params }
+        ).pipe(
+            tap({
+                next: () => this.loadingSubject.next(false),
+                error: () => this.loadingSubject.next(false),
+                complete: () => this.loadingSubject.next(false)
+            })
         );
     }
 

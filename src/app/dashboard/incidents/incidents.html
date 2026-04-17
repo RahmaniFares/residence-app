@@ -1,147 +1,158 @@
-<header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
-    <div class="flex justify-between items-center gap-4">
-        <div>
-            <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Incidents</h1>
-            <p class="text-sm text-gray-500 font-medium mt-1">Suivez et résolvez les problèmes de la résidence efficacement.</p>
-        </div>
-        <button
-            class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
-            (click)="addIncident()">
-            <span class="material-symbols-outlined text-[20px]">add</span>
-            Signaler un incident
-        </button>
-    </div>
-</header>
-<div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
-    <div class="grid grid-cols-3 gap-3">
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ouvert</span>
-            <span class="text-2xl font-extrabold text-danger mt-1">{{openCount()}}</span>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">En Cours</span>
-            <span class="text-2xl font-extrabold text-warning mt-1">{{inProgressCount()}}</span>
-        </div>
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Résolu</span>
-            <span class="text-2xl font-extrabold text-success mt-1">{{resolvedCount()}}</span>
-        </div>
-    </div>
-    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
-        <div class="relative w-full lg:flex-1">
-            <span class="material-symbols-outlined absolute left-3 bottom-2 text-gray-400">search</span>
-            <input
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
-                placeholder="Rechercher par résident ou description..." type="text" [value]="searchQuery()"
-                (input)="updateSearch($event)" />
-        </div>
-        <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar">
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1"
-                [value]="statusFilter()" (change)="updateStatus($event)">
-                <option value="All Status">Tous les statuts</option>
-                <option [value]="0">Ouvert</option>
-                <option [value]="1">En cours</option>
-                <option [value]="2">Résolu</option>
-                <option [value]="3">Fermé</option>
-            </select>
+<div class="animate-in fade-in duration-500">
+    <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+        <div class="flex justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Incidents</h1>
+                <p class="text-sm text-gray-500 font-medium mt-1">Suivez et résolvez les problèmes de la résidence efficacement.</p>
+            </div>
             <button
-                class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center">
-                <span class="material-symbols-outlined text-lg">filter_list</span>
+                class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+                (click)="addIncident()">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Signaler un incident
             </button>
         </div>
-    </div>
-    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 border-b border-gray-200 hidden md:table-header-group">
-                    <tr>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Résident</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date de signalement
-                        </th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Description</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
-                            Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr *ngFor="let incident of paginatedIncidents()"
-                        class="hover:bg-gray-50/50 flex flex-col md:table-row">
-                        <td class="px-6 py-4 md:table-cell">
-                            <div class="flex items-center gap-3">
-                                <div class="size-8 rounded-full flex items-center justify-center text-xs font-bold"
+    </header>
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ouvert</span>
+                <span class="text-2xl font-extrabold text-danger mt-1">{{openCount()}}</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">En Cours</span>
+                <span class="text-2xl font-extrabold text-warning mt-1">{{inProgressCount()}}</span>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Résolu</span>
+                <span class="text-2xl font-extrabold text-success mt-1">{{resolvedCount()}}</span>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+            <div class="relative w-full lg:flex-1">
+                <span class="material-symbols-outlined absolute left-3 bottom-2 text-gray-400">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                    placeholder="Rechercher par résident ou description..." type="text" [value]="searchQuery()"
+                    (input)="updateSearch($event)" />
+            </div>
+            <div class="flex flex-row gap-3 w-full lg:w-auto overflow-x-auto no-scrollbar">
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2.5 focus:ring-primary focus:border-primary cursor-pointer min-w-[130px] flex-1"
+                    [value]="statusFilter()" (change)="updateStatus($event)">
+                    <option value="All Status">Tous les statuts</option>
+                    <option [value]="0">Ouvert</option>
+                    <option [value]="1">En cours</option>
+                    <option [value]="2">Résolu</option>
+                    <option [value]="3">Fermé</option>
+                </select>
+                <button
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center">
+                    <span class="material-symbols-outlined text-lg">filter_list</span>
+                </button>
+            </div>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6 space-y-4 animate-pulse" *ngIf="loading()">
+                <div *ngFor="let i of [1,2,3,4,5]" class="flex items-center gap-6">
+                    <div class="size-8 bg-gray-100 rounded-full"></div>
+                    <div class="h-4 bg-gray-100 rounded w-40"></div>
+                    <div class="h-4 bg-gray-100 rounded w-28"></div>
+                    <div class="h-4 bg-gray-100 rounded w-24"></div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto" *ngIf="!loading()">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 border-b border-gray-200 hidden md:table-header-group">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Résident</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date de signalement
+                            </th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr *ngFor="let incident of paginatedIncidents()"
+                            class="hover:bg-gray-50/50 flex flex-col md:table-row">
+                            <td class="px-6 py-4 md:table-cell">
+                                <div class="flex items-center gap-3">
+                                    <div class="size-8 rounded-full flex items-center justify-center text-xs font-bold"
+                                        [ngClass]="{
+                                            'bg-red-100 text-red-700': incident.status === 0,
+                                            'bg-orange-100 text-orange-700': incident.status === 1,
+                                            'bg-green-100 text-green-700': incident.status === 2 || incident.status === 3
+                                        }">
+                                        {{(incident.residentName || 'AN').substring(0,2).toUpperCase()}}</div>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-gray-900 text-sm">{{incident.title}}</span>
+                                        <span class="text-xs text-gray-500">{{getCategoryLabel(incident.category)}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <span class="text-sm text-gray-600">{{incident.dateReported | date:'mediumDate'}}</span>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <p class="text-sm text-gray-600 truncate max-w-[200px]">{{incident.description}}</p>
+                            </td>
+                            <td class="px-6 py-2 md:py-4 md:table-cell">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
                                     [ngClass]="{
                                         'bg-red-100 text-red-700': incident.status === 0,
                                         'bg-orange-100 text-orange-700': incident.status === 1,
                                         'bg-green-100 text-green-700': incident.status === 2 || incident.status === 3
-                                    }">
-                                    {{(incident.residentName || 'AN').substring(0,2).toUpperCase()}}</div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-gray-900 text-sm">{{incident.title}}</span>
-                                    <span class="text-xs text-gray-500">{{getCategoryLabel(incident.category)}}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <span class="text-sm text-gray-600">{{incident.dateReported | date:'mediumDate'}}</span>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <p class="text-sm text-gray-600 truncate max-w-[200px]">{{incident.description}}</p>
-                        </td>
-                        <td class="px-6 py-2 md:py-4 md:table-cell">
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase"
-                                [ngClass]="{
-                                    'bg-red-100 text-red-700': incident.status === 0,
-                                    'bg-orange-100 text-orange-700': incident.status === 1,
-                                    'bg-green-100 text-green-700': incident.status === 2 || incident.status === 3
-                                }">{{getStatusLabel(incident.status)}}</span>
-                        </td>
-                        <td class="px-6 py-4 md:table-cell text-right">
-                            <div class="flex gap-2 justify-end">
-                                <button
-                                    class="px-3 py-1.5 text-xs font-bold text-primary border border-primary/20 bg-primary/5 rounded-md hover:bg-primary/10"
-                                    (click)="openIncident(incident.id)">Voir
-                                </button>
+                                    }">{{getStatusLabel(incident.status)}}</span>
+                            </td>
+                            <td class="px-6 py-4 md:table-cell text-right">
+                                <div class="flex gap-2 justify-end">
+                                    <button
+                                        class="px-3 py-1.5 text-xs font-bold text-primary border border-primary/20 bg-primary/5 rounded-md hover:bg-primary/10"
+                                        (click)="openIncident(incident.id)">Voir
+                                    </button>
 
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngIf="paginatedIncidents().length === 0">
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                            Aucun incident trouvé correspondant à vos critères.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="paginatedIncidents().length === 0">
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                Aucun incident trouvé correspondant à vos critères.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-        <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span> -
-            <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
-                class="font-bold text-gray-700">{{totalItems()}}</span> incidents
-        </p>
-        <div class="flex gap-2 items-center">
-            <p class="text-sm text-gray-500">Lignes par page :</p>
-            <select
-                class="form-select text-sm border-gray-200 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary cursor-pointer min-w-[80px]"
-                [value]="pageSize()" (change)="setPageSize($any($event).target.value)">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
-            <button
-                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
-                [disabled]="currentPage() === 1" (click)="prevPage()">
-                <span class="material-symbols-outlined text-lg">chevron_left</span>
-            </button>
-            <button
-                class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
-                [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
-                <span class="material-symbols-outlined text-lg">chevron_right</span>
-            </button>
+        <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
+            <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span> -
+                <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
+                    class="font-bold text-gray-700">{{totalItems()}}</span> incidents
+            </p>
+            <div class="flex gap-2 items-center">
+                <p class="text-sm text-gray-500">Lignes par page :</p>
+                <select
+                    class="form-select text-sm border-gray-200 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary cursor-pointer min-w-[80px]"
+                    [value]="pageSize()" (change)="setPageSize($any($event).target.value)">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <button
+                    class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                    [disabled]="currentPage() === 1" (click)="prevPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_left</span>
+                </button>
+                <button
+                    class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                    [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>

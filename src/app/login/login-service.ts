@@ -30,7 +30,7 @@ export interface AuthResponseDto {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    role: string;
+    role: number | string;
     avatarUrl: string;
     residentId?: string;
     resident?: any;
@@ -120,7 +120,7 @@ export class LoginService {
           email: response.user.email,
           fullName: `${registerRequest.firstName} ${registerRequest.lastName}`,
           phoneNumber: registerRequest.phone,
-          role: "Resident",
+          role: 2, // UserRole.Resident
           avatarUrl: response.user.avatarUrl,
           residentId: response.user.residentId,
           resident: response.user.resident
