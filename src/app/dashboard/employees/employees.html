@@ -3,7 +3,8 @@
         <div class="flex justify-between items-center gap-4">
             <div>
                 <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Employés</h1>
-                <p class="text-sm text-gray-500 font-medium mt-1">Gérez le personnel de la résidence et le suivi de la paie.</p>
+                <p class="text-sm text-gray-500 font-medium mt-1">Gérez le personnel de la résidence et le suivi de la
+                    paie.</p>
             </div>
             <button
                 class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
@@ -46,7 +47,8 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Masse Salariale</p>
-                        <p class="text-xl font-black text-amber-600">{{formatCurrency(payrollSummary()?.totalMonthlyPayroll || 0)}}</p>
+                        <p class="text-xl font-black text-amber-600">
+                            {{formatCurrency(payrollSummary()?.totalMonthlyPayroll || 0)}}</p>
                     </div>
                 </div>
             </div>
@@ -57,14 +59,16 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Salaire Moyen</p>
-                        <p class="text-xl font-black text-purple-600">{{formatCurrency(payrollSummary()?.averageSalary || 0)}}</p>
+                        <p class="text-xl font-black text-purple-600">{{formatCurrency(payrollSummary()?.averageSalary
+                            || 0)}}</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filters & Toolbar -->
-        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
+        <div
+            class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col lg:flex-row gap-4 items-center">
             <div class="relative w-full lg:flex-1">
                 <span class="material-symbols-outlined absolute left-3 bottom-2.5 text-gray-400">search</span>
                 <input
@@ -101,8 +105,10 @@
                             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Employé</th>
                             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Poste</th>
                             <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Statut</th>
-                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date d'embauche</th>
-                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date
+                                d'embauche</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">
+                                Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
@@ -111,11 +117,13 @@
                             (click)="openDetail(emp)">
                             <td class="px-6 py-4 md:table-cell">
                                 <div class="flex items-center gap-3">
-                                    <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                                    <div
+                                        class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
                                         {{getInitials(emp)}}
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="font-bold text-gray-900 text-sm">{{emp.firstName}} {{emp.lastName}}</span>
+                                        <span class="font-bold text-gray-900 text-sm">{{emp.firstName}}
+                                            {{emp.lastName}}</span>
                                         <span class="text-xs text-gray-500">{{emp.email || 'Pas d\'email'}}</span>
                                     </div>
                                 </div>
@@ -124,9 +132,11 @@
                                 <span class="text-sm text-gray-700 font-medium">{{emp.position}}</span>
                             </td>
                             <td class="px-6 py-4 md:table-cell">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase"
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase"
                                     [ngClass]="getStatusClass(emp.status)">
-                                    <span class="material-symbols-outlined text-[14px]">{{getStatusIcon(emp.status)}}</span>
+                                    <span
+                                        class="material-symbols-outlined text-[14px]">{{getStatusIcon(emp.status)}}</span>
                                     {{getStatusLabel(emp.status)}}
                                 </span>
                             </td>
@@ -135,11 +145,13 @@
                             </td>
                             <td class="px-6 py-4 md:table-cell text-right" (click)="$event.stopPropagation()">
                                 <div class="flex justify-end gap-2">
-                                    <button class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                    <button
+                                        class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                                         (click)="openEdit(emp)" title="Modifier">
                                         <span class="material-symbols-outlined text-[20px]">edit</span>
                                     </button>
-                                    <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                    <button
+                                        class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                                         (click)="confirmDelete(emp)" title="Supprimer">
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </button>
@@ -161,7 +173,8 @@
 
             <!-- Pagination -->
             <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
-                <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span> -
+                <p class="text-sm text-gray-500">Affichage <span
+                        class="font-bold text-gray-700">{{showingRangeStart()}}</span> -
                     <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
                         class="font-bold text-gray-700">{{totalItems()}}</span> employés
                 </p>
@@ -183,23 +196,27 @@
 </div>
 
 <!-- Modal Create/Edit -->
-<div *ngIf="showCreateModal() || showEditModal()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+<div *ngIf="showCreateModal() || showEditModal()"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-            <h2 class="text-xl font-extrabold text-gray-900">{{showCreateModal() ? 'Ajouter un employé' : 'Modifier l\'employé'}}</h2>
-            <button (click)="showCreateModal() ? closeCreate() : closeEdit()" class="p-2 hover:bg-gray-100 rounded-lg text-gray-500">
+            <h2 class="text-xl font-extrabold text-gray-900">{{showCreateModal() ? 'Ajouter un employé' : 'Modifier
+                l\'employé'}}</h2>
+            <button (click)="showCreateModal() ? closeCreate() : closeEdit()"
+                class="p-2 hover:bg-gray-100 rounded-lg text-gray-500">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
         <div class="p-6 overflow-y-auto space-y-4">
-            <div *ngIf="formError()" class="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">
+            <div *ngIf="formError()"
+                class="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium flex items-center gap-2">
                 <span class="material-symbols-outlined text-lg">error</span>
                 {{formError()}}
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label class="text-xs font-bold text-gray-500 uppercase">Prénom</label>
-                    <input type="text" [value]="showCreateModal() ? createForm().firstName : editForm().firstName" 
+                    <input type="text" [value]="showCreateModal() ? createForm().firstName : editForm().firstName"
                         (input)="showCreateModal() ? patchCreate('firstName', $any($event.target).value) : patchEdit('firstName', $any($event.target).value)"
                         class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
                 </div>
@@ -267,10 +284,12 @@
             </div>
         </div>
         <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-            <button (click)="showCreateModal() ? closeCreate() : closeEdit()" class="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-all">Annuler</button>
-            <button (click)="showCreateModal() ? saveCreate() : saveEdit()" [disabled]="isSaving()" 
+            <button (click)="showCreateModal() ? closeCreate() : closeEdit()"
+                class="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-all">Annuler</button>
+            <button (click)="showCreateModal() ? saveCreate() : saveEdit()" [disabled]="isSaving()"
                 class="px-6 py-2.5 bg-primary hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-sm flex items-center gap-2">
-                <span *ngIf="isSaving()" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                <span *ngIf="isSaving()"
+                    class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                 {{showCreateModal() ? 'Créer' : 'Enregistrer'}}
             </button>
         </div>
@@ -278,15 +297,18 @@
 </div>
 
 <!-- Modal Detail -->
-<div *ngIf="showDetailModal()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+<div *ngIf="showDetailModal()"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
         <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-primary text-white">
             <div class="flex items-center gap-4">
-                <div class="size-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl font-black">
+                <div
+                    class="size-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl font-black">
                     {{getInitials(selectedEmployee()!)}}
                 </div>
                 <div>
-                    <h2 class="text-2xl font-black">{{selectedEmployee()?.firstName}} {{selectedEmployee()?.lastName}}</h2>
+                    <h2 class="text-2xl font-black">{{selectedEmployee()?.firstName}} {{selectedEmployee()?.lastName}}
+                    </h2>
                     <p class="text-white/80 font-medium">{{selectedEmployee()?.position}}</p>
                 </div>
             </div>
@@ -294,7 +316,7 @@
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
-        
+
         <div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left: Info -->
             <div class="lg:col-span-1 space-y-6">
@@ -303,25 +325,29 @@
                     <div class="space-y-3">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-gray-400 text-lg">mail</span>
-                            <span class="text-sm text-gray-700 font-medium">{{selectedEmployee()?.email || 'N/A'}}</span>
+                            <span class="text-sm text-gray-700 font-medium">{{selectedEmployee()?.email ||
+                                'N/A'}}</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-gray-400 text-lg">call</span>
-                            <span class="text-sm text-gray-700 font-medium">{{selectedEmployee()?.phoneNumber || 'N/A'}}</span>
+                            <span class="text-sm text-gray-700 font-medium">{{selectedEmployee()?.phoneNumber ||
+                                'N/A'}}</span>
                         </div>
                     </div>
                 </section>
-                
+
                 <section>
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Statut & Emploi</h3>
                     <div class="space-y-3">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-gray-400 text-lg">event_available</span>
-                            <span class="text-sm text-gray-600">Embauché le {{selectedEmployee()?.hireDate | date:'longDate'}}</span>
+                            <span class="text-sm text-gray-600">Embauché le {{selectedEmployee()?.hireDate |
+                                date:'longDate'}}</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined text-gray-400 text-lg">info</span>
-                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
                                 [ngClass]="getStatusClass(selectedEmployee()!.status)">
                                 {{getStatusLabel(selectedEmployee()!.status)}}
                             </span>
@@ -331,7 +357,8 @@
 
                 <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
                     <p class="text-xs font-bold text-gray-400 uppercase mb-2">Notes</p>
-                    <p class="text-sm text-gray-600 italic leading-relaxed">{{selectedEmployee()?.notes || 'Aucune note particulière.'}}</p>
+                    <p class="text-sm text-gray-600 italic leading-relaxed">{{selectedEmployee()?.notes || 'Aucune note
+                        particulière.'}}</p>
                 </div>
             </div>
 
@@ -339,18 +366,22 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Suivi de la paie</h3>
-                    <button (click)="openSalary()" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                    <button (click)="openSalary()"
+                        class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">add</span>
                         Changer le salaire
                     </button>
                 </div>
 
                 <!-- Current Salary Card -->
-                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+                <div
+                    class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 flex items-center justify-between shadow-sm">
                     <div>
                         <p class="text-xs font-bold text-emerald-600 uppercase">Salaire Actuel</p>
-                        <p class="text-3xl font-black text-emerald-900 mt-1">{{formatCurrency(currentSalary()?.amount || 0)}}</p>
-                        <p class="text-xs text-emerald-700 mt-1">Effectif depuis le {{currentSalary()?.effectiveDate | date}}</p>
+                        <p class="text-3xl font-black text-emerald-900 mt-1">{{formatCurrency(currentSalary()?.amount ||
+                            0)}}</p>
+                        <p class="text-xs text-emerald-700 mt-1">Effectif depuis le {{currentSalary()?.effectiveDate |
+                            date}}</p>
                     </div>
                     <div class="size-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                         <span class="material-symbols-outlined text-4xl">payments</span>
@@ -361,17 +392,21 @@
                 <div>
                     <h4 class="text-sm font-bold text-gray-900 mb-4">Historique des changements</h4>
                     <div class="space-y-3">
-                        <div *ngFor="let history of salaryHistory()" class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-all">
+                        <div *ngFor="let history of salaryHistory()"
+                            class="flex items-center justify-between p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-all">
                             <div class="flex items-center gap-4">
-                                <div class="size-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                                <div
+                                    class="size-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
                                     <span class="material-symbols-outlined">history</span>
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold text-gray-900">{{formatCurrency(history.amount)}}</p>
-                                    <p class="text-xs text-gray-500">{{history.effectiveDate | date}} — {{history.reason || 'Mise à jour standard'}}</p>
+                                    <p class="text-xs text-gray-500">{{history.effectiveDate | date}} — {{history.reason
+                                        || 'Mise à jour standard'}}</p>
                                 </div>
                             </div>
-                            <span *ngIf="history.isCurrent" class="text-[10px] font-black uppercase text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Actuel</span>
+                            <span *ngIf="history.isCurrent"
+                                class="text-[10px] font-black uppercase text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Actuel</span>
                         </div>
                     </div>
                 </div>
@@ -381,7 +416,8 @@
 </div>
 
 <!-- Modal Salary Change -->
-<div *ngIf="showSalaryModal()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
+<div *ngIf="showSalaryModal()"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in zoom-in-95 duration-200">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="p-6 border-b border-gray-100">
             <h2 class="text-lg font-black text-gray-900">Mettre à jour le salaire</h2>
@@ -389,26 +425,31 @@
         <div class="p-6 space-y-4">
             <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-500 uppercase">Nouveau montant (TND)</label>
-                <input type="number" [value]="salaryForm().amount" (input)="patchSalary('amount', +$any($event.target).value)"
+                <input type="number" [value]="salaryForm().amount"
+                    (input)="patchSalary('amount', +$any($event.target).value)"
                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-xl text-primary">
             </div>
             <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-500 uppercase">Date d'effet</label>
-                <input type="date" [value]="salaryForm().effectiveDate" (input)="patchSalary('effectiveDate', $any($event.target).value)"
+                <input type="date" [value]="salaryForm().effectiveDate"
+                    (input)="patchSalary('effectiveDate', $any($event.target).value)"
                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
             </div>
             <div class="space-y-1">
                 <label class="text-xs font-bold text-gray-500 uppercase">Raison du changement</label>
-                <input type="text" [value]="salaryForm().reason" (input)="patchSalary('reason', $any($event.target).value)"
+                <input type="text" [value]="salaryForm().reason"
+                    (input)="patchSalary('reason', $any($event.target).value)"
                     placeholder="Ex: Augmentation annuelle, Promotion..."
                     class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
             </div>
         </div>
         <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-            <button (click)="closeSalary()" class="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-all">Annuler</button>
-            <button (click)="saveSalary()" [disabled]="isSaving()" 
+            <button (click)="closeSalary()"
+                class="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-all">Annuler</button>
+            <button (click)="saveSalary()" [disabled]="isSaving()"
                 class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold transition-all shadow-sm flex items-center gap-2">
-                <span *ngIf="isSaving()" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                <span *ngIf="isSaving()"
+                    class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                 Confirmer
             </button>
         </div>
@@ -416,18 +457,23 @@
 </div>
 
 <!-- Modal Delete Confirm -->
-<div *ngIf="showDeleteConfirm()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4 animate-in fade-in duration-200">
+<div *ngIf="showDeleteConfirm()"
+    class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4 animate-in fade-in duration-200">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
         <div class="p-8 text-center">
             <div class="size-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-4xl">warning</span>
             </div>
             <h3 class="text-xl font-black text-gray-900">Supprimer l'employé ?</h3>
-            <p class="text-sm text-gray-500 mt-2">Cette action est irréversible. L'employé <b>{{deleteTarget()?.firstName}} {{deleteTarget()?.lastName}}</b> sera définitivement supprimé.</p>
+            <p class="text-sm text-gray-500 mt-2">Cette action est irréversible. L'employé
+                <b>{{deleteTarget()?.firstName}} {{deleteTarget()?.lastName}}</b> sera définitivement supprimé.
+            </p>
         </div>
         <div class="p-6 border-t border-gray-100 flex gap-3">
-            <button (click)="cancelDelete()" class="flex-1 py-3 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-all">Annuler</button>
-            <button (click)="executeDelete()" class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-md">Supprimer</button>
+            <button (click)="cancelDelete()"
+                class="flex-1 py-3 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-all">Annuler</button>
+            <button (click)="executeDelete()"
+                class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-md">Supprimer</button>
         </div>
     </div>
 </div>
