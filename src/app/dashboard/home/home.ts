@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -23,7 +23,7 @@ import { map } from 'rxjs';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
+export class Home implements OnInit {
   private incidentService = inject(IncidentServices);
   private paymentService = inject(PaymentServices);
   private settingsService = inject(SettingsService);
@@ -108,15 +108,45 @@ export class Home {
     };
   });
 
-  // Mock Chart Data
-  chartData = signal([
-    { month: 'Jan', revenue: 45 },
-    { month: 'Fév', revenue: 52 },
-    { month: 'Mar', revenue: 48 },
-    { month: 'Avr', revenue: 61 },
-    { month: 'Mai', revenue: 55 },
-    { month: 'Juin', revenue: 67 }
-  ]);
+  // Dynamic Chart Data from API
+  chartData = signal<{ month: string, revenue: number, scaledHeight: number }[]>([]);
+
+  // Real API KPIs
+  totalKpi = signal<any>(null);
+  expenseStats = signal<any>(null);
+
+  ngOnInit() {
+    this.loadKpis();
+  }
+
+  loadKpis() {
+    const rId = this.settings().user?.residentId || this.residenceId;
+
+    this.depenseService.getTotalExpenseKpi(rId).subscribe({
+      next: (data) => this.totalKpi.set(data),
+      error: (e) => console.error(e)
+    });
+
+    this.depenseService.getExpenseStatsByType(rId).subscribe({
+      next: (data) => this.expenseStats.set(data),
+      error: (e) => console.error(e)
+    });
+
+    this.depenseService.getMonthlyExpenses(rId).subscribe({
+      next: (data) => {
+        if (!data.data || data.data.length === 0) return;
+        const maxAmount = Math.max(...data.data.map(d => d.totalAmount), 1);
+        const mappedData = data.data.map(d => {
+            // max height 180px
+            const scaledHeight = Math.max((d.totalAmount / maxAmount) * 180, 5); // min 5px height
+            return { month: d.monthName.substring(0, 3), revenue: d.totalAmount, scaledHeight };
+        }).reverse(); 
+
+        this.chartData.set(mappedData.slice(-6)); // Keep only last 6 months for chart if too many
+      },
+      error: (e) => console.error(e)
+    });
+  }
 
   // Mock Recent Activities
   recentActivities = signal([

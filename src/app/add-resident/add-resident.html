@@ -49,14 +49,15 @@
                     </label>
                     <!-- Date de naissance -->
                     <label class="flex flex-col group">
-                        <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Date de
-                            naissance</span>
-                        <input formControlName="birthDate"
-                            class="form-input flex w-full rounded-xl text-[#0e121b] dark:text-white border border-[#d0d7e7] dark:border-gray-700 bg-white dark:bg-gray-800 h-14 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all p-4 text-base font-normal leading-normal"
-                            type="date" />
-                        @if (residentForm.get('birthDate')?.invalid && residentForm.get('birthDate')?.touched) {
-                        <span class="text-red-500 text-xs mt-1 ml-1">Ce champ est requis</span>
-                        }
+                        <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Date de naissance</span>
+                        <mat-form-field appearance="outline" class="w-full">
+                            <input matInput [matDatepicker]="picker" formControlName="birthDate" placeholder="JJ/MM/AAAA">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                            @if (residentForm.get('birthDate')?.invalid && residentForm.get('birthDate')?.touched) {
+                            <mat-error>Ce champ est requis</mat-error>
+                            }
+                        </mat-form-field>
                     </label>
                 </div>
             </div>
@@ -97,6 +98,20 @@
                         <span class="text-red-500 text-xs mt-1 ml-1">Format d'email invalide</span>
                         }
                         }
+                    </label>
+
+                    <!-- Statut -->
+                    <label class="flex flex-col group">
+                        <span class="text-[#0e121b] dark:text-gray-200 text-sm font-semibold mb-1.5 ml-1">Statut</span>
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-select formControlName="status">
+                                <mat-option value="Active">Actif</mat-option>
+                                <mat-option value="Inactive">Inactif</mat-option>
+                            </mat-select>
+                            @if (residentForm.get('status')?.invalid && residentForm.get('status')?.touched) {
+                            <mat-error>Ce champ est requis</mat-error>
+                            }
+                        </mat-form-field>
                     </label>
                 </div>
             </div>

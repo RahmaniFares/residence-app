@@ -84,6 +84,14 @@ export const routes: Routes = [
       {
         path: 'rappels',
         loadComponent: () => import('./dashboard/rappels/rappels').then((m) => m.Rappels),
+      },
+      {
+        path: 'employees',
+        loadComponent: () => import('./dashboard/employees/employees').then((m) => m.Employees),
+      },
+      {
+        path: 'donations',
+        loadComponent: () => import('./dashboard/donations/donations').then((m) => m.Donations),
       }
     ]
   }

@@ -30,6 +30,7 @@ export interface UserResponse {
   role: UserRole;
   avatarUrl?: string;
   residentId?: string;
+  residenceId?: string;
   createdAt: string;
   updatedAt?: string;
 }
@@ -79,6 +80,7 @@ export class UserModel {
   role: UserRole;
   avatarUrl?: string;
   residentId?: string;
+  residenceId?: string;
   createdAt: string;
   updatedAt?: string;
 
@@ -91,6 +93,7 @@ export class UserModel {
     this.role = data.role;
     this.avatarUrl = data.avatarUrl;
     this.residentId = data.residentId;
+    this.residenceId = data.residenceId;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
   }

@@ -83,6 +83,9 @@ export class HouseServices {
     private loadingSubject = new BehaviorSubject<boolean>(false);
     loading$ = this.loadingSubject.asObservable();
 
+    private houseTotalSubject = new BehaviorSubject<number>(0);
+    houseTotal$ = this.houseTotalSubject.asObservable();
+
     constructor(private http: HttpClient) { }
 
     /**
@@ -104,6 +107,7 @@ export class HouseServices {
                     const mapped: HouseModel[] = result.items.map(h => this.mapDtoToModel(h));
                     this.housesSubject.next(mapped);
                     this.loadingSubject.next(false);
+                    this.houseTotalSubject.next(result.totalCount || 0);
                 },
                 error: () => this.loadingSubject.next(false),
                 complete: () => this.loadingSubject.next(false)

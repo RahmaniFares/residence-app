@@ -7,7 +7,8 @@ export enum PaymentStatus {
 export enum PaymentMethod {
     Cash = 0,
     Transfer = 1,
-    Card = 2
+    Card = 2,
+    Cheque = 3
 }
 
 /** One line in a payment: tracks a range of months and the tarif that applied. */
@@ -39,7 +40,8 @@ export interface CreatePaymentDto {
     amount: number;
     method: PaymentMethod;
     periodStart: string;   // ISO date string
-    periodEnd: string;     // ISO date string
+    periodEnd: string;
+    paymentDate?: string;
     notes?: string;
     lines: PaymentLineDto[];
 }

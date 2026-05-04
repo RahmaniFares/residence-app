@@ -1,0 +1,34 @@
+<div class="donation-list">
+  <h2>Donations</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+
+  <div *ngIf="!loading && donations.length === 0" class="no-data">
+	No donations found
+  </div>
+
+  <table *ngIf="!loading && donations.length > 0" class="table">
+	<thead>
+	  <tr>
+		<th>Date</th>
+		<th>Amount</th>
+		<th>House</th>
+		<th>Donor</th>
+		<th>Actions</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr *ngFor="let donation of donations"
+		  [class.selected]="selectedDonation?.id === donation.id">
+		<td>{{ donation.donationDate | date: 'short' }}</td>
+		<td>{{ donation.amount | currency: 'EUR' }}</td>
+		<td>{{ donation.houseId }}</td>
+		<td>{{ donation.donorId }}</td>
+		<td>
+		  <button (click)="selectDonation(donation)" class="btn-select">View</button>
+		  <button (click)="deleteDonation(donation.id)" class="btn-delete">Delete</button>
+		</td>
+	  </tr>
+	</tbody>
+  </table>
+</div>

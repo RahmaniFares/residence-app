@@ -98,6 +98,25 @@ export class Depenses implements OnInit, OnDestroy {
           this.isLoading.set(false);
         }
       });
+
+    // Load KPIs for the header stats
+    this.depenseService.getTotalExpenseKpi(this.residenceId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (kpi) => this.totalDepenses.set(kpi.totalAmount),
+        error: (err) => console.error('Error loading total KPI:', err)
+      });
+
+    this.depenseService.getMonthlyExpenses(this.residenceId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (monthly) => {
+          const now = new Date();
+          const currentMonthData = monthly.data.find(d => d.year === now.getFullYear() && d.month === now.getMonth() + 1);
+          this.depensesThisMonth.set(currentMonthData ? currentMonthData.totalAmount : 0);
+        },
+        error: (err) => console.error('Error loading monthly KPI:', err)
+      });
   }
 
   // ── Computed helpers ──────────────────────────────────────
@@ -121,17 +140,8 @@ export class Depenses implements OnInit, OnDestroy {
     return result;
   });
 
-  totalDepenses = computed(() => this.depenses().reduce((sum, d) => sum + d.amount, 0));
-
-  depensesThisMonth = computed(() => {
-    const now = new Date();
-    return this.depenses()
-      .filter(d => {
-        const date = new Date(d.expenseDate);
-        return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-      })
-      .reduce((sum, d) => sum + d.amount, 0);
-  });
+  totalDepenses = signal<number>(0);
+  depensesThisMonth = signal<number>(0);
 
   showingRangeStart = computed(() =>
     this.totalCount() === 0 ? 0 : (this.currentPage() - 1) * this.pageSize() + 1

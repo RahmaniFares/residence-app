@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, HostListener } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, HostListener, Signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HouseModel, HouseStatus } from '../houses/house-model';
 import { HouseServices, HouseFinancialStatementDto } from '../houses/house-services';
@@ -15,6 +15,9 @@ import { environment } from '../../../environments/environment';
 import { LoginService } from '../../login/login-service';
 import { UserRole } from '../users/user-model';
 import { RouterModule } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { UpdatePaymentDto } from '../payments/payment-model';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-house-details',
@@ -38,13 +41,39 @@ export class HouseDetails implements OnInit {
   showResidentModal = signal(false);
   selectedResidentId: string | undefined = undefined;
   isUpdating = signal(false);
-  payments = signal<PaymentModel[]>([]);
+  financialStatement = signal<HouseFinancialStatementDto | null>(null);
+  private destroy$ = new Subject<void>();
   showAllPayments = signal(false);
   isResident = signal(false);
   isNavHidden = signal(false);
   private lastScrollTop = 0;
 
-  financialStatement = signal<HouseFinancialStatementDto | null>(null);
+
+  payments = toSignal(this.paymentService.payments$, { initialValue: [] });
+  pagination: Signal<any> = toSignal(this.paymentService.pagination$, {
+    initialValue: {
+      totalCount: 0,
+      pageNumber: 1,
+      pageSize: 5,
+      totalPages: 0,
+      hasPreviousPage: false,
+      hasNextPage: false
+    }
+  }) as any;
+  loading = toSignal(this.paymentService.loading$, { initialValue: false });
+  pageSizes = [5, 10];
+  protected Math = Math;
+
+  // Modal States for Payments
+  showDeleteModalPayment = signal(false);
+  paymentToDelete = signal<PaymentModel | null>(null);
+
+  showEditModalPayment = signal(false);
+  paymentToEdit = signal<PaymentModel | null>(null);
+  editForm = signal<UpdatePaymentDto>({});
+
+  hasNextPage = computed(() => this.pagination().pageNumber < this.pagination().totalPages);
+  hasPreviousPage = computed(() => this.pagination().pageNumber > 1);
 
   tarifService = inject(TarifService);
   currentYear = signal(new Date().getFullYear());
@@ -155,30 +184,132 @@ export class HouseDetails implements OnInit {
     const userRole = this.loginService.getCurrentUser()?.role;
     this.isResident.set(Number(userRole) === UserRole.Resident);
 
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.loadHouseDetails(id);
 
         // Load payments for this specific house from the API
-        this.paymentService.loadPaymentsByHouse(id, 1, 50).subscribe();
-
-        // Subscribe to the shared payments stream
-        this.paymentService.payments$.subscribe(housePayments => {
-          this.payments.set(housePayments);
-        });
+        this.paymentService.loadPaymentsByHouse(id, 1, 5).subscribe();
 
         // Load tarifs
-        this.tarifService.getTarifsByResidence(environment.residenceId).subscribe(t => this.tarifs.set(t));
-        this.tarifService.getResidenceTarifHistory(environment.residenceId).subscribe(h => this.tarifHistory.set(h));
+        this.tarifService.getTarifsByResidence(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(t => this.tarifs.set(t));
+        this.tarifService.getResidenceTarifHistory(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(h => this.tarifHistory.set(h));
 
         // Load financial statement
-        this.houseService.getHouseFinancialStatement(id).subscribe({
+        this.houseService.getHouseFinancialStatement(id).pipe(takeUntil(this.destroy$)).subscribe({
           next: stmt => this.financialStatement.set(stmt),
           error: err => console.error('Failed to load financial statement:', err)
         });
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onPageChange(page: number) {
+    const id = this.house()?.id;
+    if (!id || page < 1 || page > this.pagination().totalPages) return;
+    this.paymentService.loadPaymentsByHouse(id, page, this.pagination().pageSize).pipe(takeUntil(this.destroy$)).subscribe();
+  }
+
+  onPageSizeChange(size: string) {
+    const id = this.house()?.id;
+    if (!id) return;
+    const pageSize = Number(size) || 5;
+    this.paymentService.loadPaymentsByHouse(id, 1, pageSize).pipe(takeUntil(this.destroy$)).subscribe();
+  }
+
+  openEditModalPayment(payment: PaymentModel) {
+    this.paymentToEdit.set(payment);
+    this.editForm.set({
+      amount: payment.amount,
+      periodStart: payment.periodStart,
+      periodEnd: payment.periodEnd,
+      paymentDate: payment.paymentDate,
+      status: payment.status
+    });
+    this.showEditModalPayment.set(true);
+  }
+
+  closeEditModalPayment() {
+    this.showEditModalPayment.set(false);
+    this.paymentToEdit.set(null);
+  }
+
+  savePaymentUpdate() {
+    const payment = this.paymentToEdit();
+    const form = this.editForm();
+    if (!payment) return;
+
+    this.paymentService.updatePayment(payment.id, form).subscribe({
+      next: () => {
+        this.toastr.success('Paiement mis à jour avec succès');
+        this.closeEditModalPayment();
+        // Refresh the current page
+        this.onPageChange(this.pagination().pageNumber);
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+        this.toastr.error('Échec de la mise à jour');
+      }
+    });
+  }
+
+  openDeleteModalPayment(payment: PaymentModel) {
+    this.paymentToDelete.set(payment);
+    this.showDeleteModalPayment.set(true);
+  }
+
+  closeDeleteModalPayment() {
+    this.showDeleteModalPayment.set(false);
+    this.paymentToDelete.set(null);
+  }
+
+  confirmDeletePayment() {
+    const payment = this.paymentToDelete();
+    if (!payment) return;
+
+    this.paymentService.deletePayment(payment.id).subscribe({
+      next: () => {
+        this.toastr.success('Paiement supprimé');
+        this.closeDeleteModalPayment();
+        // Refresh the current page
+        this.onPageChange(this.pagination().pageNumber);
+      },
+      error: (err) => {
+        console.error('Delete failed:', err);
+        this.toastr.error('Échec de la suppression');
+      }
+    });
+  }
+
+  getHouseDetails(houseId: string) {
+    const house = this.houseService.getHouseById(houseId);
+    return house ? ` ${house.block}  ${house.floor} - ${house.unit}` : 'Maison inconnue';
+  }
+
+  getResidentName(residentId: string) {
+    const resident = this.residentService.getResidentById(residentId);
+    return resident ? `${resident.firstName} ${resident.lastName}` : 'Résident inconnu';
+  }
+
+  getExpectedAmount(start: string, end: string): number {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    let total = 0;
+
+    let current = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+    const endMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+
+    while (current <= endMonth) {
+      total += this.getRateForDate(current, this.tarifs(), this.tarifHistory());
+      current = new Date(current.getFullYear(), current.getMonth() + 1, 1);
+    }
+    return total;
   }
 
   private loadHouseDetails(id: string) {

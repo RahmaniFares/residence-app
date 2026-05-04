@@ -1,0 +1,237 @@
+<div class="animate-in fade-in duration-500">
+    <header class="bg-white border-b border-gray-200 px-8 py-5 sticky top-0 z-10">
+        <div class="flex justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-extrabold text-gray-900 tracking-tight">Gestion des Dons</h1>
+                <p class="text-sm text-gray-500 font-medium mt-1">Suivez les contributions généreuses à la résidence.</p>
+            </div>
+            <button
+                class="bg-primary hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm text-sm"
+                (click)="openCreate()">
+                <span class="material-symbols-outlined text-[20px]">volunteer_activism</span>
+                Nouveau Don
+            </button>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto w-full p-4 lg:p-8 space-y-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined">payments</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Total Dons</p>
+                        <p class="text-xl font-black text-emerald-600">{{formatCurrency(stats().totalDonations)}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined">numbers</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Nombre de Dons</p>
+                        <p class="text-xl font-black text-gray-900">{{donations().length}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined">query_stats</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Don Moyen</p>
+                        <p class="text-xl font-black text-purple-600">{{formatCurrency(stats().averageDonation)}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined">star</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Plus Gros Don</p>
+                        <p class="text-xl font-black text-amber-600">{{formatCurrency(stats().largestDonation)}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Toolbar -->
+        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div class="relative w-full">
+                <span class="material-symbols-outlined absolute left-3 bottom-2.5 text-gray-400">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm outline-none"
+                    placeholder="Rechercher une description ou un donateur..." type="text" [value]="searchQuery()"
+                    (input)="updateSearch($event)" />
+            </div>
+        </div>
+
+        <!-- Donations Table -->
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <div *ngIf="loading()" class="p-12 flex flex-col items-center gap-3">
+                <div class="size-10 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+                <p class="text-gray-500 text-sm font-medium">Chargement des dons...</p>
+            </div>
+
+            <div *ngIf="!loading()" class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50/50 border-b border-gray-100 hidden md:table-header-group">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Donateur / Maison</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Montant</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Description</th>
+                            <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr *ngFor="let donation of paginatedDonations()"
+                            class="hover:bg-gray-50/50 flex flex-col md:table-row transition-colors">
+                            <td class="px-6 py-4 md:table-cell">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-gray-900 text-sm">{{getDonorLabel(donation.donorId)}}</span>
+                                    <span class="text-xs text-gray-500">{{getHouseLabel(donation.houseId)}}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 md:table-cell">
+                                <span class="text-sm font-black text-emerald-600">{{formatCurrency(donation.amount)}}</span>
+                            </td>
+                            <td class="px-6 py-4 md:table-cell">
+                                <span class="text-sm text-gray-600">{{donation.donationDate | date:'dd MMM yyyy'}}</span>
+                            </td>
+                            <td class="px-6 py-4 md:table-cell">
+                                <p class="text-sm text-gray-600 truncate max-w-[200px]">{{donation.description || '—'}}</p>
+                            </td>
+                            <td class="px-6 py-4 md:table-cell text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button class="p-2 text-gray-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                                        (click)="openEdit(donation)" title="Modifier">
+                                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                                    </button>
+                                    <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                        (click)="confirmDelete(donation)" title="Supprimer">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredDonations().length === 0 && !loading()">
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-4xl text-gray-300">volunteer_activism</span>
+                                    <p class="text-gray-500 font-medium">Aucun don trouvé</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
+                <p class="text-sm text-gray-500">Affichage <span class="font-bold text-gray-700">{{showingRangeStart()}}</span> -
+                    <span class="font-bold text-gray-700">{{showingRangeEnd()}}</span> sur <span
+                        class="font-bold text-gray-700">{{totalItems()}}</span> dons
+                </p>
+                <div class="flex gap-2 items-center">
+                    <button
+                        class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                        [disabled]="currentPage() === 1" (click)="prevPage()">
+                        <span class="material-symbols-outlined text-lg">chevron_left</span>
+                    </button>
+                    <button
+                        class="p-2 border border-gray-200 rounded-md bg-white hover:bg-gray-50 transition-colors disabled:opacity-40"
+                        [disabled]="currentPage() >= totalPages()" (click)="nextPage()">
+                        <span class="material-symbols-outlined text-lg">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create/Edit -->
+<div *ngIf="showCreateModal() || showEditModal()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+            <h2 class="text-xl font-extrabold text-gray-900">{{showCreateModal() ? 'Nouveau Don' : 'Modifier le don'}}</h2>
+            <button (click)="showCreateModal() ? closeCreate() : closeEdit()" class="p-2 hover:bg-gray-100 rounded-lg text-gray-500">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500 uppercase">Donateur</label>
+                <select [value]="showCreateModal() ? createForm().donorId : editForm().donorId"
+                    (change)="showCreateModal() ? patchCreate('donorId', $any($event.target).value) : patchEdit('donorId', $any($event.target).value)"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white">
+                    <option value="">Anonyme</option>
+                    <option *ngFor="let r of residents()" [value]="r.id">{{r.firstName}} {{r.lastName}}</option>
+                </select>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500 uppercase">Maison (optionnel)</label>
+                <select [value]="showCreateModal() ? createForm().houseId : editForm().houseId"
+                    (change)="showCreateModal() ? patchCreate('houseId', $any($event.target).value) : patchEdit('houseId', $any($event.target).value)"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white">
+                    <option value="">Aucune maison spécifique</option>
+                    <option *ngFor="let h of houses()" [value]="h.id">{{h.block}} - {{h.unit}}</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Montant (TND)</label>
+                    <input type="number" [value]="showCreateModal() ? createForm().amount : editForm().amount"
+                        (input)="showCreateModal() ? patchCreate('amount', +$any($event.target).value) : patchEdit('amount', +$any($event.target).value)"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-bold text-emerald-600">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-gray-500 uppercase">Date du don</label>
+                    <input type="date" [value]="showCreateModal() ? createForm().donationDate : editForm().donationDate"
+                        (input)="showCreateModal() ? patchCreate('donationDate', $any($event.target).value) : patchEdit('donationDate', $any($event.target).value)"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                </div>
+            </div>
+            <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500 uppercase">Description / Note</label>
+                <textarea [value]="showCreateModal() ? createForm().description : editForm().description"
+                    (input)="showCreateModal() ? patchCreate('description', $any($event.target).value) : patchEdit('description', $any($event.target).value)"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all h-24 resize-none"
+                    placeholder="Ex: Don pour les espaces verts..."></textarea>
+            </div>
+        </div>
+        <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+            <button (click)="showCreateModal() ? closeCreate() : closeEdit()" class="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-all">Annuler</button>
+            <button (click)="showCreateModal() ? saveCreate() : saveEdit()" [disabled]="isSaving()" 
+                class="px-6 py-2.5 bg-primary hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-sm flex items-center gap-2">
+                <span *ngIf="isSaving()" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                {{showCreateModal() ? 'Confirmer' : 'Enregistrer'}}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Delete Confirm -->
+<div *ngIf="showDeleteConfirm()" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4 animate-in fade-in duration-200">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div class="p-8 text-center">
+            <div class="size-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span class="material-symbols-outlined text-4xl">warning</span>
+            </div>
+            <h3 class="text-xl font-black text-gray-900">Supprimer ce don ?</h3>
+            <p class="text-sm text-gray-500 mt-2">Cette action est irréversible. Le don de <b>{{formatCurrency(deleteTarget()?.amount || 0)}}</b> sera supprimé.</p>
+        </div>
+        <div class="p-6 border-t border-gray-100 flex gap-3">
+            <button (click)="cancelDelete()" class="flex-1 py-3 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition-all">Annuler</button>
+            <button (click)="executeDelete()" class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-md">Supprimer</button>
+        </div>
+    </div>
+</div>

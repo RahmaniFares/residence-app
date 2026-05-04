@@ -19,6 +19,7 @@ export class Houses implements OnInit {
 
   houses = toSignal(this.houseService.houses$, { initialValue: [] });
   loading = toSignal(this.houseService.loading$, { initialValue: false });
+  houseTotal = toSignal(this.houseService.houseTotal$, { initialValue: 0 });
   HouseStatus = HouseStatus; // Make enum accessible in template
 
   searchQuery = signal('');
@@ -60,7 +61,7 @@ export class Houses implements OnInit {
 
   ngOnInit() {
     // Load houses from backend API
-    this.houseService.loadHouses(1, 100).subscribe({
+    this.houseService.loadHouses(1, 115).subscribe({
       error: (err) => console.error('Failed to load houses:', err)
     });
   }

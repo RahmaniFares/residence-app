@@ -6,16 +6,18 @@ import { HouseServices } from '../houses/house-services';
 import { ResidentServices } from '../residents/resident-services';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { PaymentStatus } from './payment-model';
+import { PaymentModel, PaymentStatus, UpdatePaymentDto } from './payment-model';
 import { TarifService } from '../tarifs/tarif-service';
 import { TarifDto, TarifHistoryDto } from '../tarifs/tarif-model';
 import { environment } from '../../../environments/environment';
 import { signal } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-payments',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './payments.html',
   styleUrl: './payments.css',
 })
@@ -29,6 +31,7 @@ export class Payments implements OnInit, OnDestroy {
   tarifService = inject(TarifService);
   PaymentStatus = PaymentStatus;
   protected Math = Math;
+  toastr = inject(ToastrService);
 
   payments = toSignal(this.paymentService.payments$, { initialValue: [] });
   pagination: Signal<any> = toSignal(this.paymentService.pagination$, {
@@ -45,6 +48,14 @@ export class Payments implements OnInit, OnDestroy {
   tarifs = signal<TarifDto[]>([]);
   tarifHistory = signal<TarifHistoryDto[]>([]);
   pageSizes = [5, 10];
+
+  // Modal States
+  showDeleteModal = signal(false);
+  paymentToDelete = signal<PaymentModel | null>(null);
+
+  showEditModal = signal(false);
+  paymentToEdit = signal<PaymentModel | null>(null);
+  editForm = signal<UpdatePaymentDto>({});
 
   hasNextPage = computed(() => this.pagination().pageNumber < this.pagination().totalPages);
   hasPreviousPage = computed(() => this.pagination().pageNumber > 1);
@@ -71,8 +82,8 @@ export class Payments implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.paymentService.loadPayments(1, 5).pipe(takeUntil(this.destroy$)).subscribe();
-    this.houseService.loadHouses(1, 100).pipe(takeUntil(this.destroy$)).subscribe();
-    this.residentService.loadResidents(1, 100).pipe(takeUntil(this.destroy$)).subscribe();
+    this.houseService.loadHouses(1, 115).pipe(takeUntil(this.destroy$)).subscribe();
+    this.residentService.loadResidents(1, 115).pipe(takeUntil(this.destroy$)).subscribe();
 
     // Load current tarifs and history to calculate expected monthly dues
     this.tarifService.getTarifsByResidence(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(t => this.tarifs.set(t));
@@ -98,6 +109,70 @@ export class Payments implements OnInit, OnDestroy {
     this.router.navigate(['/dashboard/add-payment']);
   }
 
+  openEditModal(payment: PaymentModel) {
+    this.paymentToEdit.set(payment);
+    this.editForm.set({
+      amount: payment.amount,
+      periodStart: payment.periodStart,
+      periodEnd: payment.periodEnd,
+      paymentDate: payment.paymentDate,
+      status: payment.status
+    });
+    this.showEditModal.set(true);
+  }
+
+  closeEditModal() {
+    this.showEditModal.set(false);
+    this.paymentToEdit.set(null);
+  }
+
+  savePaymentUpdate() {
+    const payment = this.paymentToEdit();
+    const form = this.editForm();
+    if (!payment) return;
+
+    this.paymentService.updatePayment(payment.id, form).subscribe({
+      next: () => {
+        this.toastr.success('Paiement mis à jour avec succès');
+        this.closeEditModal();
+        // Refresh the current page
+        this.onPageChange(this.pagination().pageNumber);
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+        this.toastr.error('Échec de la mise à jour');
+      }
+    });
+  }
+
+  openDeleteModal(payment: PaymentModel) {
+    this.paymentToDelete.set(payment);
+    this.showDeleteModal.set(true);
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal.set(false);
+    this.paymentToDelete.set(null);
+  }
+
+  confirmDelete() {
+    const payment = this.paymentToDelete();
+    if (!payment) return;
+
+    this.paymentService.deletePayment(payment.id).subscribe({
+      next: () => {
+        this.toastr.success('Paiement supprimé');
+        this.closeDeleteModal();
+        // Refresh the current page
+        this.onPageChange(this.pagination().pageNumber);
+      },
+      error: (err) => {
+        console.error('Delete failed:', err);
+        this.toastr.error('Échec de la suppression');
+      }
+    });
+  }
+
   getHouseDetails(houseId: string) {
     const house = this.houseService.getHouseById(houseId);
     return house ? ` ${house.block}  ${house.floor} - ${house.unit}` : 'Unknown House';
@@ -111,8 +186,9 @@ export class Payments implements OnInit, OnDestroy {
   getMonthsCount(start: string, end: string): number {
     const startDate = new Date(start);
     const endDate = new Date(end);
-    // Rough calculation
-    return Math.max(1, Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30)));
+    
+    // Accurate month difference including the end month
+    return (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth()) + 1;
   }
 
   getPaymentStatusLabel(status: PaymentStatus): string {

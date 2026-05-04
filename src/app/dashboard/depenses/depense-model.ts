@@ -98,3 +98,50 @@ export interface PaginationDto {
     pageNumber?: number;
     pageSize?: number;
 }
+
+// ============================================================
+// KPI & Statistics DTOs
+// ============================================================
+
+export interface TotalExpenseKpiDto {
+    totalAmount: number;
+    totalExpenseCount: number;
+    averageExpense: number;
+    maxExpense: number;
+    minExpense: number;
+    earliestExpenseDate: string | null;
+    latestExpenseDate: string | null;
+}
+
+export interface MonthlyExpenseDto {
+    year: number;
+    month: number;
+    monthName: string;
+    totalAmount: number;
+    expenseCount: number;
+    averageExpense: number;
+}
+
+export interface MonthlyExpensesDto {
+    data: MonthlyExpenseDto[];
+    totalAmount: number;
+    totalExpenseCount: number;
+    monthsWithData: number;
+}
+
+export interface ExpenseTypeStatsDto {
+    type: ExpenseType;
+    typeName: string;
+    count: number;
+    totalAmount: number;
+    averageAmount: number;
+    percentageOfTotal: number;
+}
+
+export interface ExpenseStatsDto {
+    data: ExpenseTypeStatsDto[];
+    totalAmount: number;
+    totalExpenseCount: number;
+    highestCategory: ExpenseTypeStatsDto;
+    lowestCategory: ExpenseTypeStatsDto;
+}

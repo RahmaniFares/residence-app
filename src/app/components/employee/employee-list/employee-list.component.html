@@ -1,0 +1,42 @@
+<div class="employee-list">
+  <h2>Employees</h2>
+
+  <div *ngIf="loading" class="loading">Loading...</div>
+
+  <div *ngIf="!loading && employees.length === 0" class="no-data">
+	No employees found
+  </div>
+
+  <table *ngIf="!loading && employees.length > 0" class="table">
+	<thead>
+	  <tr>
+		<th>Name</th>
+		<th>Position</th>
+		<th>Email</th>
+		<th>Phone</th>
+		<th>Status</th>
+		<th>Hire Date</th>
+		<th>Actions</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr *ngFor="let employee of employees"
+		  [class.selected]="selectedEmployee?.id === employee.id">
+		<td>{{ employee.firstName }} {{ employee.lastName }}</td>
+		<td>{{ employee.position }}</td>
+		<td>{{ employee.email }}</td>
+		<td>{{ employee.phoneNumber }}</td>
+		<td>
+		  <span [class]="'status-' + employee.status">
+			{{ getStatusLabel(employee.status) }}
+		  </span>
+		</td>
+		<td>{{ employee.hireDate | date: 'short' }}</td>
+		<td>
+		  <button (click)="selectEmployee(employee)" class="btn-select">View</button>
+		  <button (click)="deleteEmployee(employee.id)" class="btn-delete">Delete</button>
+		</td>
+	  </tr>
+	</tbody>
+  </table>
+</div>

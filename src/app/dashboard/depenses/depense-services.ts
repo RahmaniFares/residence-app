@@ -9,7 +9,10 @@ import {
     CreateExpenseImageDto,
     ExpenseImageDto,
     PaginatedResponse,
-    PaginationDto
+    PaginationDto,
+    TotalExpenseKpiDto,
+    MonthlyExpensesDto,
+    ExpenseStatsDto
 } from './depense-model';
 
 @Injectable({
@@ -109,6 +112,28 @@ export class DepenseServices {
     removeImageFromExpense(residenceId: string, imageId: string): Observable<void> {
         return this.http.delete<void>(
             `${this.baseUrl}/${residenceId}/expenses/images/${imageId}`
+        );
+    }
+
+    // ============================================================
+    // KPI & Statistics
+    // ============================================================
+
+    getTotalExpenseKpi(residenceId: string): Observable<TotalExpenseKpiDto> {
+        return this.http.get<TotalExpenseKpiDto>(
+            `${this.baseUrl}/${residenceId}/expenses/kpi/total`
+        );
+    }
+
+    getMonthlyExpenses(residenceId: string): Observable<MonthlyExpensesDto> {
+        return this.http.get<MonthlyExpensesDto>(
+            `${this.baseUrl}/${residenceId}/expenses/kpi/monthly`
+        );
+    }
+
+    getExpenseStatsByType(residenceId: string): Observable<ExpenseStatsDto> {
+        return this.http.get<ExpenseStatsDto>(
+            `${this.baseUrl}/${residenceId}/expenses/kpi/by-type`
         );
     }
 }

@@ -1,4 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, LOCALE_ID } from '@angular/core';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { registerLocaleData } from '@angular/common';
 import localeFr from '@angular/common/locales/fr';
 
@@ -12,6 +13,7 @@ import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideAnimations(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),

@@ -41,22 +41,81 @@
             </div>
             }
         </div>
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md transition-all duration-300">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dépenses Totales</h3>
+                <p class="text-2xl font-black text-primary mt-2">{{ totalKpi()?.totalAmount | number: '1.2-2' }} TND</p>
+                <small class="text-gray-400 font-medium mt-1">{{ totalKpi()?.totalExpenseCount }} dépenses</small>
+            </div>
 
-        <!-- Main Content Grid -->
+            <div
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md transition-all duration-300">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dépense Moyenne</h3>
+                <p class="text-2xl font-black text-gray-800 mt-2">{{ totalKpi()?.averageExpense | number: '1.2-2' }} TND
+                </p>
+            </div>
+
+            <div
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md transition-all duration-300">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dépense Max</h3>
+                <p class="text-2xl font-black text-orange-600 mt-2">{{ totalKpi()?.maxExpense | number: '1.2-2' }} TND
+                </p>
+            </div>
+
+            <div
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col group hover:shadow-md transition-all duration-300">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dépense Min</h3>
+                <p class="text-2xl font-black text-emerald-600 mt-2">{{ totalKpi()?.minExpense | number: '1.2-2' }} TND
+                </p>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Highest & Lowest Categories -->
+            <div
+                class="lg:col-span-1 bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Top & Flop Catégories</h3>
+
+                    <div class="p-4 bg-orange-50 rounded-2xl border border-orange-100 flex flex-col gap-1 mb-4">
+                        <h4 class="text-[10px] font-bold text-orange-600 uppercase tracking-wider">Catégorie la plus
+                            coûteuse</h4>
+                        <p class="text-lg font-black text-gray-900 mt-1">{{ expenseStats()?.highestCategory?.typeName ||
+                            'N/A' }}</p>
+                        <p class="text-orange-700 font-bold text-base">{{ expenseStats()?.highestCategory?.totalAmount |
+                            number: '1.2-2' }} TND</p>
+                        <small class="text-orange-600/80 font-medium">{{ expenseStats()?.highestCategory?.count || 0 }}
+                            dépenses</small>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex flex-col gap-1">
+                    <h4 class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Catégorie la moins
+                        coûteuse</h4>
+                    <p class="text-lg font-black text-gray-900 mt-1">{{ expenseStats()?.lowestCategory?.typeName ||
+                        'N/A' }}</p>
+                    <p class="text-emerald-700 font-bold text-base">{{ expenseStats()?.lowestCategory?.totalAmount |
+                        number: '1.2-2' }} TND</p>
+                    <small class="text-emerald-600/80 font-medium">{{ expenseStats()?.lowestCategory?.count || 0 }}
+                        dépenses</small>
+                </div>
+            </div>
+
             <!-- Transactions Chart -->
             <div
                 class="lg:col-span-2 bg-white rounded-3xl border border-gray-100 shadow-sm p-6 overflow-hidden relative">
                 <div class="flex items-center justify-between mb-8">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">Aperçu Financier</h3>
-                        <p class="text-sm text-gray-500">Flux de trésorerie mensuel des 6 derniers mois</p>
+                        <h3 class="text-lg font-bold text-gray-900">Dépenses Mensuelles</h3>
+                        <p class="text-sm text-gray-500">Somme des dépenses par mois (6 derniers mois)</p>
                     </div>
                     <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-xl">
                         <button
-                            class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-gray-900">Revenus</button>
+                            class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 hover:text-gray-900">Revenus</button>
                         <button
-                            class="px-3 py-1.5 text-xs font-bold rounded-lg text-gray-500 hover:text-gray-900">Dépenses</button>
+                            class="px-3 py-1.5 text-xs font-bold rounded-lg bg-white shadow-sm text-gray-900">Dépenses</button>
                     </div>
                 </div>
 
@@ -73,20 +132,21 @@
                     @for (point of chartData(); track point.month) {
                     <div class="flex-1 flex flex-col items-center gap-3 group relative z-10">
                         <div class="w-full max-w-[40px] relative">
-                            <div [style.height.px]="point.revenue"
+                            <div [style.height.px]="point.scaledHeight"
                                 class="w-full bg-primary/20 rounded-t-xl group-hover:bg-primary/30 transition-all duration-300">
                             </div>
-                            <div [style.height.px]="point.revenue * 0.6"
+                            <div [style.height.px]="point.scaledHeight * 0.6"
                                 class="absolute bottom-0 w-full bg-primary rounded-t-xl shadow-lg shadow-primary/20 transition-all duration-300">
                             </div>
                         </div>
-                        <span class="text-xs font-bold text-gray-400 group-hover:text-gray-900 transition-colors">{{
+                        <span
+                            class="text-xs font-bold text-gray-400 group-hover:text-gray-900 transition-colors uppercase">{{
                             point.month }}</span>
 
                         <!-- Tooltip -->
                         <div
                             class="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
-                            {{ point.revenue }}k $
+                            {{ point.revenue | number: '1.2-2' }} TND
                         </div>
                     </div>
                     }
@@ -209,30 +269,36 @@
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-medium text-gray-700">Payés</span>
-                            <span class="text-sm font-bold text-green-600">{{ paymentStatusBreakdown().paidPct }}%</span>
+                            <span class="text-sm font-bold text-green-600">{{ paymentStatusBreakdown().paidPct
+                                }}%</span>
                         </div>
                         <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div [style.width.%]="paymentStatusBreakdown().paidPct" class="h-full bg-green-500 rounded-full transition-all"></div>
+                            <div [style.width.%]="paymentStatusBreakdown().paidPct"
+                                class="h-full bg-green-500 rounded-full transition-all"></div>
                         </div>
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-medium text-gray-700">En attente</span>
-                            <span class="text-sm font-bold text-orange-600">{{ paymentStatusBreakdown().pendingPct }}%</span>
+                            <span class="text-sm font-bold text-orange-600">{{ paymentStatusBreakdown().pendingPct
+                                }}%</span>
                         </div>
                         <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div [style.width.%]="paymentStatusBreakdown().pendingPct" class="h-full bg-orange-500 rounded-full transition-all"></div>
+                            <div [style.width.%]="paymentStatusBreakdown().pendingPct"
+                                class="h-full bg-orange-500 rounded-full transition-all"></div>
                         </div>
                     </div>
 
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-medium text-gray-700">Impayés</span>
-                            <span class="text-sm font-bold text-red-600">{{ paymentStatusBreakdown().overduePct }}%</span>
+                            <span class="text-sm font-bold text-red-600">{{ paymentStatusBreakdown().overduePct
+                                }}%</span>
                         </div>
                         <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div [style.width.%]="paymentStatusBreakdown().overduePct" class="h-full bg-red-500 rounded-full transition-all"></div>
+                            <div [style.width.%]="paymentStatusBreakdown().overduePct"
+                                class="h-full bg-red-500 rounded-full transition-all"></div>
                         </div>
                     </div>
                 </div>
@@ -266,7 +332,8 @@
                     @for (resident of topOutstandingResidents(); track resident.residentId) {
                     <div class="flex items-center justify-between p-3 bg-red-50/50 rounded-lg border border-red-100">
                         <span class="text-sm font-medium text-gray-900">{{ resident.residentId | slice:0:10 }}...</span>
-                        <span class="text-sm font-bold text-red-600">{{ resident.totalAmount | currency:'TND':'symbol' }}</span>
+                        <span class="text-sm font-bold text-red-600">{{ resident.totalAmount | currency:'TND':'symbol'
+                            }}</span>
                     </div>
                     }
                     @if (topOutstandingResidents().length === 0) {
@@ -291,7 +358,8 @@
                     @for (expense of topExpenseCategories(); track expense.type) {
                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <span class="text-sm font-medium text-gray-900">{{ expense.label }}</span>
-                        <span class="text-sm font-bold text-gray-900">{{ expense.amount | currency:'TND':'symbol' }}</span>
+                        <span class="text-sm font-bold text-gray-900">{{ expense.amount | currency:'TND':'symbol'
+                            }}</span>
                     </div>
                     }
                     @if (topExpenseCategories().length === 0) {
@@ -308,28 +376,38 @@
         <div class="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 mt-6">
             <h3 class="text-lg font-bold text-gray-900 mb-6">Actions Rapides</h3>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <button class="flex flex-col items-center justify-center py-4 px-3 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors group">
-                    <span class="material-symbols-outlined text-2xl text-blue-600 group-hover:scale-110 transition-transform mb-2">person_add</span>
+                <button
+                    class="flex flex-col items-center justify-center py-4 px-3 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-2xl text-blue-600 group-hover:scale-110 transition-transform mb-2">person_add</span>
                     <span class="text-xs font-bold text-gray-900 text-center">Ajouter Résident</span>
                 </button>
 
-                <button class="flex flex-col items-center justify-center py-4 px-3 bg-green-50 hover:bg-green-100 rounded-xl transition-colors group">
-                    <span class="material-symbols-outlined text-2xl text-green-600 group-hover:scale-110 transition-transform mb-2">payments</span>
+                <button
+                    class="flex flex-col items-center justify-center py-4 px-3 bg-green-50 hover:bg-green-100 rounded-xl transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-2xl text-green-600 group-hover:scale-110 transition-transform mb-2">payments</span>
                     <span class="text-xs font-bold text-gray-900 text-center">Enregistrer Paiement</span>
                 </button>
 
-                <button class="flex flex-col items-center justify-center py-4 px-3 bg-orange-50 hover:bg-orange-100 rounded-xl transition-colors group">
-                    <span class="material-symbols-outlined text-2xl text-orange-600 group-hover:scale-110 transition-transform mb-2">receipt_long</span>
+                <button
+                    class="flex flex-col items-center justify-center py-4 px-3 bg-orange-50 hover:bg-orange-100 rounded-xl transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-2xl text-orange-600 group-hover:scale-110 transition-transform mb-2">receipt_long</span>
                     <span class="text-xs font-bold text-gray-900 text-center">Nouvelle Dépense</span>
                 </button>
 
-                <button class="flex flex-col items-center justify-center py-4 px-3 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group">
-                    <span class="material-symbols-outlined text-2xl text-purple-600 group-hover:scale-110 transition-transform mb-2">apartment</span>
+                <button
+                    class="flex flex-col items-center justify-center py-4 px-3 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-2xl text-purple-600 group-hover:scale-110 transition-transform mb-2">apartment</span>
                     <span class="text-xs font-bold text-gray-900 text-center">Ajouter Maison</span>
                 </button>
 
-                <button class="flex flex-col items-center justify-center py-4 px-3 bg-pink-50 hover:bg-pink-100 rounded-xl transition-colors group">
-                    <span class="material-symbols-outlined text-2xl text-pink-600 group-hover:scale-110 transition-transform mb-2">description</span>
+                <button
+                    class="flex flex-col items-center justify-center py-4 px-3 bg-pink-50 hover:bg-pink-100 rounded-xl transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-2xl text-pink-600 group-hover:scale-110 transition-transform mb-2">description</span>
                     <span class="text-xs font-bold text-gray-900 text-center">Générer Rapport</span>
                 </button>
             </div>

@@ -6,10 +6,24 @@ import { HouseServices } from '../dashboard/houses/house-services';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ResidentModel } from '../dashboard/residents/resident-model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-add-resident',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   templateUrl: './add-resident.html',
   styleUrl: './add-resident.css',
 })

@@ -273,6 +273,214 @@
             </ng-container>
 
             <!-- Spacing for Mobile Bottom Nav -->
+            <div class="h-8"></div>
+
+            <!-- Detailed Payments Grid (Same as Payments Page) -->
+            <section class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-5 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-xl">list_alt</span>
+                            Historique des Transactions
+                        </h2>
+                        <p class="text-xs text-gray-500 mt-0.5 font-medium">Liste complète des paiements enregistrés pour
+                            cette maison
+                        </p>
+                    </div>
+                </div>
+                <div class="p-6 space-y-4 animate-pulse" *ngIf="loading()">
+                    <div *ngFor="let i of [1,2,3]" class="flex items-center gap-6">
+                        <div class="h-4 bg-gray-100 rounded w-20"></div>
+                        <div class="h-4 bg-gray-100 rounded w-40"></div>
+                        <div class="h-4 bg-gray-100 rounded w-28"></div>
+                        <div class="h-4 bg-gray-100 rounded w-24"></div>
+                    </div>
+                </div>
+
+                <!-- Desktop Table View -->
+                <div class="hidden lg:block overflow-x-auto no-scrollbar" *ngIf="!loading()">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/50">
+                                <th
+                                    class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                    Date de paiement</th>
+                                <th
+                                    class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                    Période (Mois)</th>
+                                <th
+                                    class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                    Montant</th>
+                                <th
+                                    class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                                    Statut</th>
+                                <th
+                                    class="px-5 py-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100 text-right">
+                                    Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <tr *ngFor="let payment of payments()" class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-5 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-semibold text-gray-600">{{payment.paymentDate ?
+                                        (payment.paymentDate | date) : '-'}}</span>
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-gray-500">{{payment.periodStart |
+                                            date:'mediumDate'}} - {{payment.periodEnd | date:'mediumDate'}}</span>
+                                        <span
+                                            class="text-[10px] font-bold text-primary uppercase tracking-wider">{{getMonthsCount(payment.periodStart,
+                                            payment.periodEnd)}} Mois</span>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap">
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-extrabold" [ngClass]="{
+                                                'text-red-500': payment.amount < getExpectedAmount(payment.periodStart, payment.periodEnd), 
+                                                'text-green-500': payment.amount > getExpectedAmount(payment.periodStart, payment.periodEnd),
+                                                'text-gray-900': payment.amount === getExpectedAmount(payment.periodStart, payment.periodEnd)
+                                            }">
+                                            {{payment.amount | currency:'TND':'symbol'}}
+                                        </span>
+                                        <span class="text-[10px] text-gray-400"
+                                            *ngIf="getExpectedAmount(payment.periodStart, payment.periodEnd) > 0">
+                                            Attendu : {{getExpectedAmount(payment.periodStart, payment.periodEnd) |
+                                            currency:'TND':'symbol'}}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap">
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase"
+                                        [ngClass]="{
+                                            'bg-green-100 text-green-700': payment.status === PaymentStatus.Paid,
+                                            'bg-yellow-100 text-yellow-700': payment.status === PaymentStatus.Pending,
+                                            'bg-red-100 text-red-700': payment.status === PaymentStatus.Overdue
+                                        }">
+                                        {{getPaymentStatusLabel(payment.status)}}
+                                    </span>
+                                </td>
+                                <td class="px-5 py-4 whitespace-nowrap text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button (click)="openEditModalPayment(payment)"
+                                            class="flex items-center justify-center size-8 rounded-full text-amber-500 hover:bg-amber-50 transition-colors"
+                                            title="Modifier">
+                                            <span class="material-symbols-outlined text-[20px]">edit</span>
+                                        </button>
+                                        <button (click)="openDeleteModalPayment(payment)"
+                                            class="flex items-center justify-center size-8 rounded-full text-red-500 hover:bg-red-50 transition-colors"
+                                            title="Supprimer">
+                                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div class="lg:hidden p-4 space-y-4" *ngIf="!loading()">
+                    <div *ngFor="let payment of payments()"
+                        class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm space-y-4">
+
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="size-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined text-xl">payments</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-black text-gray-900">{{payment.paymentDate ? (payment.paymentDate | date:'dd MMM yyyy') : 'Date non définie'}}</h3>
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">Paiement</p>
+                                </div>
+                            </div>
+                            <span
+                                class="inline-flex items-center px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm"
+                                [ngClass]="{
+                                    'bg-green-100 text-green-700': payment.status === PaymentStatus.Paid,
+                                    'bg-yellow-100 text-yellow-700': payment.status === PaymentStatus.Pending,
+                                    'bg-red-100 text-red-700': payment.status === PaymentStatus.Overdue
+                                }">
+                                {{getPaymentStatusLabel(payment.status)}}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 pb-4 border-b border-gray-50">
+                            <div>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                    Période</p>
+                                <p class="text-xs font-bold text-gray-700">{{getMonthsCount(payment.periodStart,
+                                    payment.periodEnd)}} Mois</p>
+                                <p class="text-[10px] text-gray-400 mt-0.5">{{payment.periodStart | date:'MMM y'}} -
+                                    {{payment.periodEnd | date:'MMM y'}}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                    Montant</p>
+                                <p class="text-sm font-black" [ngClass]="{
+                                        'text-red-500': payment.amount < getExpectedAmount(payment.periodStart, payment.periodEnd), 
+                                        'text-green-500': payment.amount > getExpectedAmount(payment.periodStart, payment.periodEnd),
+                                        'text-gray-900': payment.amount === getExpectedAmount(payment.periodStart, payment.periodEnd)
+                                    }">
+                                    {{payment.amount | currency:'TND':'symbol'}}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end pt-1 gap-2">
+                            <button (click)="openEditModalPayment(payment)"
+                                class="size-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                            </button>
+                            <button (click)="openDeleteModalPayment(payment)"
+                                class="size-8 rounded-xl bg-red-50 flex items-center justify-center text-red-500">
+                                <span class="material-symbols-outlined text-[18px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination (Same as Payments Page) -->
+                <div
+                    class="p-5 border-t border-gray-100 bg-gray-50/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                            Affichage de {{(pagination().pageNumber - 1) * pagination().pageSize + 1}} à
+                            {{Math.min(pagination().pageNumber * pagination().pageSize, pagination().totalCount)}} sur
+                            {{pagination().totalCount}} enregistrements
+                        </p>
+                        <div class="flex items-center gap-2">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Lignes :</label>
+                            <select
+                                class="text-xs border border-gray-200 rounded-lg px-3 py-1 bg-white focus:ring-primary focus:border-primary outline-none"
+                                [value]="pagination().pageSize" (change)="onPageSizeChange($any($event).target.value)">
+                                <option *ngFor="let size of pageSizes" [value]="size">{{size}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="size-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                            [disabled]="!hasPreviousPage()" (click)="onPageChange(pagination().pageNumber - 1)">
+                            <span class="material-symbols-outlined text-xl">chevron_left</span>
+                        </button>
+
+                        <div class="flex items-center">
+                            <span class="px-4 text-xs font-extrabold text-gray-900">Page {{pagination().pageNumber}} <span
+                                    class="text-gray-400 font-medium">/ {{pagination().totalPages}}</span></span>
+                        </div>
+
+                        <button
+                            class="size-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                            [disabled]="!hasNextPage()" (click)="onPageChange(pagination().pageNumber + 1)">
+                            <span class="material-symbols-outlined text-xl">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Spacing for Mobile Bottom Nav -->
             <div class="h-16 lg:hidden"></div>
 
         </div>
@@ -347,4 +555,106 @@
             <button class="mt-4 text-primary font-bold text-sm hover:underline" (click)="back()">Retourner</button>
         </div>
     </div>
-</div>
+
+    <!-- Edit Payment Modal -->
+    <div *ngIf="showEditModalPayment()" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" (click)="closeEditModalPayment()"></div>
+        <div
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <div>
+                    <h3 class="text-lg font-extrabold text-gray-900">Modifier le paiement</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mt-0.5">Mise à jour des
+                        informations de transaction</p>
+                </div>
+                <button (click)="closeEditModalPayment()"
+                    class="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-400">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-1">Montant
+                            (TND)</label>
+                        <input type="number" [(ngModel)]="editForm().amount"
+                            class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-bold text-gray-700 outline-none transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label
+                            class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-1">Statut</label>
+                        <select [(ngModel)]="editForm().status"
+                            class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-bold text-gray-700 outline-none transition-all appearance-none">
+                            <option [value]="PaymentStatus.Paid">Payé</option>
+                            <option [value]="PaymentStatus.Pending">En attente</option>
+                            <option [value]="PaymentStatus.Overdue">En retard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-1">Date de
+                        paiement</label>
+                    <input type="date" [(ngModel)]="editForm().paymentDate"
+                        class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-bold text-gray-700 outline-none transition-all">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-1">Début
+                            Période</label>
+                        <input type="date" [(ngModel)]="editForm().periodStart"
+                            class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-bold text-gray-700 outline-none transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest px-1">Fin
+                            Période</label>
+                        <input type="date" [(ngModel)]="editForm().periodEnd"
+                            class="w-full px-4 py-3 bg-gray-50 border-2 border-transparent focus:border-primary focus:bg-white rounded-2xl text-sm font-bold text-gray-700 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-gray-100 bg-gray-50/50 flex gap-3">
+                <button (click)="closeEditModalPayment()"
+                    class="flex-1 py-3.5 px-4 rounded-2xl text-sm font-extrabold text-gray-500 hover:bg-gray-200 transition-all">
+                    Annuler
+                </button>
+                <button (click)="savePaymentUpdate()"
+                    class="flex-1 py-3.5 px-4 rounded-2xl text-sm font-extrabold text-white bg-primary hover:bg-blue-700 shadow-md shadow-primary/20 transition-all">
+                    Enregistrer les modifications
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div *ngIf="showDeleteModalPayment()" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" (click)="closeDeleteModalPayment()"></div>
+        <div
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-8 text-center">
+                <div class="size-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="material-symbols-outlined text-4xl">delete_forever</span>
+                </div>
+                <h3 class="text-xl font-extrabold text-gray-900 mb-2">Confirmer la suppression</h3>
+                <p class="text-sm text-gray-500 font-medium leading-relaxed">
+                    Êtes-vous sûr de vouloir supprimer ce paiement de <span
+                        class="font-black text-gray-900">{{paymentToDelete()?.amount | currency:'TND'}}</span> ? Cette
+                    action est irréversible.
+                </p>
+            </div>
+            <div class="p-6 bg-gray-50 flex gap-3">
+                <button (click)="closeDeleteModalPayment()"
+                    class="flex-1 py-3.5 px-4 rounded-2xl text-sm font-extrabold text-gray-500 hover:bg-gray-200 transition-all">
+                    Annuler
+                </button>
+                <button (click)="confirmDeletePayment()"
+                    class="flex-1 py-3.5 px-4 rounded-2xl text-sm font-extrabold text-white bg-red-500 hover:bg-red-600 shadow-md shadow-red-200 transition-all">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
