@@ -220,7 +220,7 @@
 
             <!-- Financial Statement Highlight -->
             <ng-container *ngIf="financialStatement() as stmt">
-                <section id="financial-section"
+                <section *ngIf="stmt.totalRappelToPay !== 0 || stmt.totalRappelPaid !== 0" id="financial-section"
                     [ngClass]="stmt.totalRappelToPay === 0 ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'"
                     class="border rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
 

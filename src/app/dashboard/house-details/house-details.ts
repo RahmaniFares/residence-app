@@ -6,7 +6,7 @@ import { ResidentServices } from '../residents/resident-services';
 import { ResidentModel } from '../residents/resident-model';
 import { PaymentServices } from '../payments/payment-services';
 import { PaymentModel, PaymentStatus } from '../payments/payment-model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TarifService } from '../tarifs/tarif-service';
@@ -18,6 +18,7 @@ import { RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UpdatePaymentDto } from '../payments/payment-model';
 import { Subject, takeUntil } from 'rxjs';
+import { UserHouseServices } from '../user-houses/user-house-services';
 
 @Component({
   selector: 'app-house-details',
@@ -34,6 +35,8 @@ export class HouseDetails implements OnInit {
   paymentService = inject(PaymentServices);
   toastr = inject(ToastrService);
   loginService = inject(LoginService);
+  location = inject(Location);
+  userHouseService = inject(UserHouseServices);
 
   house = signal<HouseModel | undefined>(undefined);
   resident = signal<ResidentModel | undefined>(undefined);
@@ -180,27 +183,56 @@ export class HouseDetails implements OnInit {
     this.currentYear.update(y => y - 1);
   }
 
+  private loadHouseData(id: string) {
+    this.loadHouseDetails(id);
+
+    // Load payments for this specific house from the API
+    this.paymentService.loadPaymentsByHouse(id, 1, 5).subscribe();
+
+    // Load tarifs
+    this.tarifService.getTarifsByResidence(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(t => this.tarifs.set(t));
+    this.tarifService.getResidenceTarifHistory(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(h => this.tarifHistory.set(h));
+
+    // Load financial statement
+    this.houseService.getHouseFinancialStatement(id).pipe(takeUntil(this.destroy$)).subscribe({
+      next: stmt => this.financialStatement.set(stmt),
+      error: err => console.error('Failed to load financial statement:', err)
+    });
+  }
+
   ngOnInit() {
     const userRole = this.loginService.getCurrentUser()?.role;
-    this.isResident.set(Number(userRole) === UserRole.Resident);
+    const isResident = Number(userRole) === UserRole.Resident;
+    this.isResident.set(isResident);
 
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.loadHouseDetails(id);
-
-        // Load payments for this specific house from the API
-        this.paymentService.loadPaymentsByHouse(id, 1, 5).subscribe();
-
-        // Load tarifs
-        this.tarifService.getTarifsByResidence(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(t => this.tarifs.set(t));
-        this.tarifService.getResidenceTarifHistory(environment.residenceId).pipe(takeUntil(this.destroy$)).subscribe(h => this.tarifHistory.set(h));
-
-        // Load financial statement
-        this.houseService.getHouseFinancialStatement(id).pipe(takeUntil(this.destroy$)).subscribe({
-          next: stmt => this.financialStatement.set(stmt),
-          error: err => console.error('Failed to load financial statement:', err)
-        });
+        if (isResident) {
+          const userId = this.loginService.getCurrentUserId();
+          if (userId) {
+            this.userHouseService.isUserAssignedToHouse(environment.residenceId, userId, id).pipe(takeUntil(this.destroy$)).subscribe({
+              next: (isAssigned) => {
+                if (!isAssigned) {
+                  this.toastr.error("Vous n'avez pas l'autorisation d'accéder à cette maison.");
+                  this.router.navigate(['dashboard/home']);
+                } else {
+                  this.loadHouseData(id);
+                }
+              },
+              error: (err) => {
+                console.error('Failed to check house assignment:', err);
+                this.toastr.error("Erreur lors de la vérification des permissions.");
+                this.router.navigate(['dashboard/home']);
+              }
+            });
+          } else {
+            this.toastr.error("Utilisateur non identifié.");
+            this.router.navigate(['dashboard/home']);
+          }
+        } else {
+          this.loadHouseData(id);
+        }
       }
     });
   }
@@ -356,7 +388,7 @@ export class HouseDetails implements OnInit {
   }
 
   back() {
-    this.router.navigate(['dashboard/houses']);
+    this.location.back();
   }
 
   showPaymentForm() {
